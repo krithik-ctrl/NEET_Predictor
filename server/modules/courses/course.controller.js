@@ -10,17 +10,14 @@ export const createCourseController = async (
   next
 ) => {
   try {
-    const course = await createCourse(req.body);
-const existingCourse = await Course.findOne({
-  name: payload.name,
-});
+    const course = await createCourse(
+      req.body
+    );
 
-if (existingCourse) {
-  throw new Error("Course already exists");
-}
     res.status(201).json({
       success: true,
-      message: "Course created successfully",
+      message:
+        "Course created successfully",
       data: course,
     });
   } catch (error) {
@@ -34,7 +31,8 @@ export const getCoursesController = async (
   next
 ) => {
   try {
-    const courses = await getCourses();
+    const courses =
+      await getCourses();
 
     res.status(200).json({
       success: true,
@@ -51,7 +49,10 @@ export const getCourseByIdController = async (
   next
 ) => {
   try {
-    const course = await getCourseById(req.params.id);
+    const course =
+      await getCourseById(
+        req.params.id
+      );
 
     res.status(200).json({
       success: true,

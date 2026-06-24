@@ -2,6 +2,7 @@ import {
   createUser,
   getUserByEmail,
   getUserById,
+  createGoogleUser,
 } from "./user.service.js";
 import { setAuthCookie } from "../../auth/utils/setAuthCookie.js";
 import {
@@ -9,6 +10,7 @@ import {
   loginUserSchema,
 } from "./user.validation.js";
 
+import { verifyGoogleToken } from "../../auth/strategies/google.strategy.js";
 import { comparePassword } from "../../auth/utils/comparePassword.js";
 import { generateToken } from "../../auth/utils/generateToken.js";
 
@@ -127,3 +129,57 @@ export const logoutController = (
       "Logout successful",
   });
 };
+
+export const googleLoginController =
+  async (req, res, next) => {
+    try {
+      const { token } = req.body;
+
+      if (!token) {
+        throw new Error(
+          "Google token is required"
+        );
+      }
+
+      const googleUser =
+        await verifyGoogleToken(
+          token
+        );
+
+      const user =
+        await createGoogleUser(
+          googleUser
+        );
+
+      user.lastLogin =
+        new Date();
+
+      await user.save();
+
+      const jwtToken =
+        generateToken(user);
+
+      setAuthCookie(
+        res,
+        jwtToken
+      );
+
+      res.status(200).json({
+        success: true,
+        message:
+          "Google login successful",
+        data: {
+          user: {
+            id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            provider:
+              user.provider,
+          },
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  };

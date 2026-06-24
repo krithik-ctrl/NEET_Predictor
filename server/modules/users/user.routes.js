@@ -5,6 +5,7 @@ import {
   loginUserController,
   logoutController,
   getMeController,
+  googleLoginController
 } from "./user.controller.js";
 
 import { authenticate } from "../../auth/middleware/authenticate.js";
@@ -43,4 +44,10 @@ router.get(
     });
   }
 );
+
+router.post(
+  "/google-login",
+  googleLoginController
+);
+
 export default router;

@@ -40,3 +40,27 @@ export const getUserById = async (
 ) => {
   return await User.findById(id);
 };
+
+export const createGoogleUser =
+  async (payload) => {
+    let user =
+      await User.findOne({
+        email: payload.email,
+      });
+
+    if (user) {
+      return user;
+    }
+
+    user = await User.create({
+      name: payload.name,
+      email: payload.email,
+      avatar:
+        payload.avatar || "",
+      provider: "google",
+      password: null,
+      role: "student",
+    });
+
+    return user;
+  };
