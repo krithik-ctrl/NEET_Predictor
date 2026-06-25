@@ -1,5 +1,6 @@
 import { StudentProfile } from "../student-profile/studentProfile.model.js";
 import { Cutoff } from "../cutoffs/cutoff.model.js";
+import { createPredictionHistory } from "../prediction-history/predictionHistory.service.js";
 
 export const predictColleges = async (
   userId
@@ -151,7 +152,36 @@ export const predictColleges = async (
       a.closingRank -
       b.closingRank
   );
+await createPredictionHistory(
+  userId,
+  {
+    courseId:
+      profile.preferredCourse,
 
+    rank:
+      profile.rank,
+
+    category:
+      profile.category,
+
+    quota:
+      profile.quota,
+
+    totalResults:
+      safe.length +
+      moderate.length +
+      risky.length,
+
+    safeCount:
+      safe.length,
+
+    moderateCount:
+      moderate.length,
+
+    riskyCount:
+      risky.length,
+  }
+);
   return {
     profile: {
       rank: profile.rank,

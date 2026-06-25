@@ -5,6 +5,16 @@ import studentProfileRoutes from "../modules/student-profile/studentProfile.rout
 import collegeRoutes from "../modules/colleges/college.routes.js";
 import cutoffRoutes from "../modules/cutoffs/cutoff.routes.js";
 import predictorRoutes from "../modules/predictor/predictor.routes.js";
+import savedCollegeRoutes
+from "../modules/saved-colleges/savedCollege.routes.js";
+import choiceListRoutes from "../modules/choice-list/choiceList.routes.js";
+import predictionHistoryRoutes
+from "../modules/prediction-history/predictionHistory.routes.js";
+
+
+
+
+
 const router = Router();
 
 router.get("/health", (req, res) => {
@@ -33,4 +43,19 @@ router.use(
   "/predictor",
   predictorRoutes
 );
+router.use(
+  "/saved-colleges",
+  savedCollegeRoutes
+);
+
+router.use(
+  "/choice-lists",
+  choiceListRoutes
+);
+
+router.use(
+  "/prediction-history",
+  predictionHistoryRoutes
+);
+
 export default router;
