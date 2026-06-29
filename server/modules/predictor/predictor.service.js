@@ -1,10 +1,38 @@
 import { StudentProfile } from "../student-profile/studentProfile.model.js";
 import { Cutoff } from "../cutoffs/cutoff.model.js";
-import { createPredictionHistory } from "../prediction-history/predictionHistory.service.js";
+import { createPredictionHistory, countTodayPredictions,} from "../prediction-history/predictionHistory.service.js";
+import {
+  checkSubscription,
+} from "../subscription/subscription.helper.js";
+
 
 export const predictColleges = async (
   userId
 ) => {
+
+  const subscription =
+  await checkSubscription(
+    userId
+  );
+
+if (
+  subscription.isFree
+) {
+
+  const todayPredictions =
+    await countTodayPredictions(
+      userId
+    );
+
+  if (
+    todayPredictions >= 3
+  ) {
+    throw new Error(
+      "Daily prediction limit reached. Upgrade to Premium for unlimited predictions."
+    );
+  }
+
+}
 
   const profile =
     await StudentProfile.findOne({

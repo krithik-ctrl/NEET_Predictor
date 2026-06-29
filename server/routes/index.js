@@ -10,8 +10,18 @@ from "../modules/saved-colleges/savedCollege.routes.js";
 import choiceListRoutes from "../modules/choice-list/choiceList.routes.js";
 import predictionHistoryRoutes
 from "../modules/prediction-history/predictionHistory.routes.js";
-
-
+import dashboardRoutes
+from "../modules/dashboard/dashboard.routes.js";
+import planRoutes
+from "../modules/plans/plan.routes.js";
+import subscriptionRoutes
+from "../modules/subscription/subscription.routes.js";
+import paymentRoutes
+from "../modules/payment/payment.routes.js";
+import adminDashboardRoutes
+from "../modules/admin-dashboard/adminDashboard.routes.js";
+import counsellorDashboardRoutes
+from "../modules/counsellor-dashboard/counsellorDashboard.routes.js";
 
 
 
@@ -57,5 +67,31 @@ router.use(
   "/prediction-history",
   predictionHistoryRoutes
 );
+router.use(
+  "/dashboard",
+  dashboardRoutes
+);
+router.use(
+  "/plans",
+  planRoutes
+);
 
+router.use(
+  "/subscriptions",
+  subscriptionRoutes
+);
+
+router.use(
+  "/payments",
+  paymentRoutes
+);
+
+router.use(
+"/admin-dashboard",
+adminDashboardRoutes
+);
+router.use(
+  "/counsellor-dashboard",
+  counsellorDashboardRoutes
+);
 export default router;

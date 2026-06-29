@@ -2,6 +2,9 @@ import mongoose from "mongoose";
 
 import { SavedCollege } from "./savedCollege.model.js";
 import { College } from "../colleges/college.model.js";
+import {
+  checkSubscription,
+} from "../subscription/subscription.helper.js";
 
 export const saveCollege =
 async (
@@ -35,7 +38,29 @@ if (!college) {
     "College not found"
   );
 }
+const subscription =
+  await checkSubscription(
+    userId
+  );
 
+if (
+  subscription.isFree
+) {
+
+  const savedCount =
+    await SavedCollege.countDocuments({
+      userId,
+    });
+
+  if (
+    savedCount >= 20
+  ) {
+    throw new Error(
+      "Free plan allows saving up to 20 colleges. Upgrade to Premium for unlimited saved colleges."
+    );
+  }
+
+}
 const existing =
   await SavedCollege.findOne({
     userId,

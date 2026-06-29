@@ -2,6 +2,9 @@ import mongoose from "mongoose";
 
 import { ChoiceList } from "./choiceList.model.js";
 import { ChoiceListItem } from "./choiceListItem.model.js";
+import {
+  checkSubscription,
+} from "../subscription/subscription.helper.js";
 
 import { College } from "../colleges/college.model.js";
 
@@ -16,6 +19,30 @@ if (!userId) {
   throw new Error(
     "User ID is required"
   );
+}
+
+const subscription =
+  await checkSubscription(
+    userId
+  );
+
+if (
+  subscription.isFree
+) {
+
+  const totalLists =
+    await ChoiceList.countDocuments({
+      userId,
+    });
+
+  if (
+    totalLists >= 1
+  ) {
+    throw new Error(
+      "Free plan allows only one Choice List. Upgrade to Premium for unlimited Choice Lists."
+    );
+  }
+
 }
 
 return await ChoiceList.create({
@@ -119,6 +146,30 @@ if (
   throw new Error(
     "Invalid college ID"
   );
+}
+
+const subscription =
+  await checkSubscription(
+    userId
+  );
+
+if (
+  subscription.isFree
+) {
+
+  const totalColleges =
+    await ChoiceListItem.countDocuments({
+      choiceListId: listId,
+    });
+
+  if (
+    totalColleges >= 15
+  ) {
+    throw new Error(
+      "Free plan allows only 15 colleges in a Choice List. Upgrade to Premium for unlimited colleges."
+    );
+  }
+
 }
 
 const choiceList =
