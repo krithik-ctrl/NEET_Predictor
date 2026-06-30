@@ -48,3 +48,24 @@ export const getStudentProfile =
         "preferredCourse"
       );
   };
+
+  
+
+export const createStudentProfile =
+  async (userId) => {
+
+    const existingProfile =
+      await StudentProfile.findOne({
+        userId,
+      });
+
+    if (existingProfile) {
+      return existingProfile;
+    }
+
+    return await StudentProfile.create({
+      userId,
+      profileCompleted: false,
+    });
+
+  };

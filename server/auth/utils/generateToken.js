@@ -6,8 +6,7 @@ export const generateToken = (
 ) => {
   return jwt.sign(
     {
-      userId: user._id,
-      role: user.role,
+      userId: user._id
     },
     env.JWT_SECRET,
     {

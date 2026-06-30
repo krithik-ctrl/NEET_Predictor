@@ -1,6 +1,4 @@
 import {
-  createUser,
-  getUserByEmail,
   getUserById,
   createGoogleUser,
 } from "./user.service.js";
@@ -11,94 +9,9 @@ import {
 } from "./user.validation.js";
 
 import { verifyGoogleToken } from "../../auth/strategies/google.strategy.js";
-import { comparePassword } from "../../auth/utils/comparePassword.js";
+
 import { generateToken } from "../../auth/utils/generateToken.js";
 
-export const registerUserController =
-  async (req, res, next) => {
-    try {
-      const validatedData =
-        registerUserSchema.parse(req.body);
-
-      const user = await createUser(
-        validatedData
-      );
-
-      res.status(201).json({
-        success: true,
-        message:
-          "User registered successfully",
-        data: {
-          id: user._id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
-  };
-
-export const loginUserController =
-  async (req, res, next) => {
-    try {
-      const validatedData =
-        loginUserSchema.parse(req.body);
-
-      const user =
-        await getUserByEmail(
-          validatedData.email
-        );
-
-      if (!user) {
-        throw new Error(
-          "Invalid credentials"
-        );
-      }
-
-      const isPasswordValid =
-        await comparePassword(
-          validatedData.password,
-          user.password
-        );
-
-      if (!isPasswordValid) {
-        throw new Error(
-          "Invalid credentials"
-        );
-      }
-
-      user.lastLogin =
-        new Date();
-
-      await user.save();
-
-      const token =
-        generateToken(user);
-
-      setAuthCookie(
-        res,
-        token
-      );
-
-      res.status(200).json({
-        success: true,
-        message:
-          "Login successful",
-        data: {
-          user: {
-            id: user._id,
-            name: user.name,
-            email: user.email,
-            role: user.role,
-          },
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
-  };
 export const getMeController =
   async (req, res, next) => {
     try {

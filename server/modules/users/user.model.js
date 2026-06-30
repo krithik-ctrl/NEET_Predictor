@@ -8,18 +8,14 @@ const userSchema = new mongoose.Schema(
       trim: true,
     },
 
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-      lowercase: true,
-      trim: true,
-    },
-
-    password: {
-      type: String,
-      default: null,
-    },
+   email: {
+  type: String,
+  lowercase: true,
+  trim: true,
+  unique: true,
+  sparse: true,
+},
+  
 
     provider: {
       type: String,
@@ -27,11 +23,7 @@ const userSchema = new mongoose.Schema(
       default: "local",
     },
 
-    role: {
-      type: String,
-      enum: ["student", "admin", "counsellor"],
-      default: "student",
-    },
+  
 
     avatar: {
       type: String,
@@ -47,6 +39,21 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    mobile: {
+  type: String,
+  default: "",
+  required: true,
+  unique: true,
+  match: [
+    /^[6-9]\d{9}$/,
+    "Please enter a valid 10-digit mobile number starting with 6, 7, 8, or 9.",
+  ],
+},
+
+isVerified: {
+  type: Boolean,
+  default: false,
+},
   },
   {
     timestamps: true,

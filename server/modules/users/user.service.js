@@ -1,83 +1,151 @@
 import { User } from "./user.model.js";
-import { hashPassword } from "../../auth/utils/hashPassword.js";
 
 import {
   createFreeSubscription,
-}
-from "../subscription/subscription.helper.js";
+} from "../subscription/subscription.helper.js";
 
-export const createUser = async (
-  payload
-) => {
+export const createUser =
+  async (payload) => {
 
-  const existingUser =
-    await User.findOne({
-      email: payload.email,
+    const existingUser =
+      await User.findOne({
+        mobile: payload.mobile,
+      });
+
+    if (existingUser) {
+      throw new Error(
+        "User already exists"
+      );
+    }
+
+    const user =
+      await User.create({
+        name: payload.name,
+        mobile: payload.mobile,
+        email:
+          payload.email || undefined,
+        provider:
+          payload.provider ||
+          "local",
     });
 
-  if (existingUser) {
-    throw new Error(
-      "User already exists"
+    await createFreeSubscription(
+      user._id
     );
-  }
 
-  const hashedPassword =
-    await hashPassword(
-      payload.password
-    );
+    return user;
 
-  const user =
-    await User.create({
-      ...payload,
-      password:
-        hashedPassword,
-    });
-
-await createFreeSubscription(
-  user._id
-);
-
-  return user;
-
-};
-
-export const getUserByEmail =
-  async (email) => {
-    return await User.findOne({
-      email,
-    });
   };
 
-export const getUserById = async (
-  id
-) => {
-  return await User.findById(id);
-};
+
+
+export const getUserByMobile =
+  async (mobile) => {
+
+    return await User.findOne({
+      mobile,
+    });
+
+  };
+
+
+
+export const getUserById =
+  async (id) => {
+
+    return await User.findById(id);
+
+  };
+
+
+export const createOtpUser =
+  async ({
+    name,
+    mobile,
+    email,
+  }) => {
+
+    const user =
+      await User.create({
+
+        name,
+
+        mobile,
+
+        email:
+          email || undefined,
+
+        provider:
+          "local",
+
+      });
+
+    await createFreeSubscription(
+      user._id
+    );
+
+    return user;
+
+  };
+
+
+
+export const updateLastLogin =
+  async (userId) => {
+
+    return await User.findByIdAndUpdate(
+
+      userId,
+
+      {
+        lastLogin:
+          new Date(),
+      },
+
+      {
+        new: true,
+      }
+
+    );
+
+  };
+
+
 
 export const createGoogleUser =
   async (payload) => {
+
     let user =
       await User.findOne({
-        email: payload.email,
+        email:
+          payload.email,
       });
 
     if (user) {
       return user;
     }
 
-  user = await User.create({
-  name: payload.name,
-  email: payload.email,
-  avatar:
-    payload.avatar || "",
-  provider: "google",
-  password: null,
-  role: "student",
-});
+    user =
+      await User.create({
 
-await createFreeSubscription(
-  user._id
-);
+        name:
+          payload.name,
 
-return user;
+        email:
+          payload.email,
+
+        avatar:
+          payload.avatar || "",
+
+        provider:
+          "google",
+
+      });
+
+    await createFreeSubscription(
+      user._id
+    );
+
+    return user;
+
   };
