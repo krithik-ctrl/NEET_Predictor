@@ -1,9 +1,18 @@
-import { StudentProfile } from "../student-profile/studentProfile.model.js";
+import { buildPredictionFilter } from "./services/predictionFilter.service.js";
 import { Cutoff } from "../cutoffs/cutoff.model.js";
 import { createPredictionHistory, countTodayPredictions,} from "../prediction-history/predictionHistory.service.js";
 import {
   checkSubscription,
 } from "../subscription/subscription.helper.js";
+
+
+import {
+  getEligibility
+} from "./services/eligibility.service.js";
+
+import {
+  getCategories,
+} from "./services/category.service.js";
 
 
 export const predictColleges = async (
@@ -228,4 +237,54 @@ await createPredictionHistory(
     moderate,
     risky,
   };
+};
+
+export const getSeatTypes = async ({
+  counsellingType,
+  predictorState,
+  domicileState,
+}) => {
+
+  const seatTypes =
+    await getEligibility({
+
+      counsellingType,
+
+      predictorState,
+
+      domicileState,
+
+    });
+
+  return seatTypes;
+
+};
+
+export const getCategoriesType = async ({
+  counsellingType,
+  predictorState,
+  domicileState,
+  seatType,
+}) => {
+
+  const {
+    config,
+  } = getEligibility({
+
+    counsellingType,
+
+    predictorState,
+
+    domicileState,
+
+  });
+
+  return getCategories({
+
+    config,
+
+    seatType,
+
+  });
+
 };

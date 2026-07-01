@@ -1,7 +1,8 @@
 import express from "express";
 
 import {
-  predictCollegesController,
+  predictCollegesController,getCategoriesController,getSeatTypesController
+
 } from "./predictor.controller.js";
 
 import {
@@ -10,6 +11,20 @@ import {
 
 const router =
   express.Router();
+
+router.post(
+  "/seat-types",
+  authenticate,
+  getSeatTypesController
+);
+
+router.post(
+  "/categories",
+  authenticate,
+  getCategoriesController
+);
+
+
 
 router.get(
   "/",

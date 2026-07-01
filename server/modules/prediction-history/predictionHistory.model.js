@@ -20,12 +20,37 @@ const predictionHistorySchema =
         required: true,
       },
 
+      counsellingType: {
+        type: String,
+        required: true,
+        trim: true,
+      },
+
+      predictorState: {
+        type: String,
+        trim: true,
+        default: null,
+      },
+
+      domicileState: {
+        type: String,
+        trim: true,
+        default: null,
+      },
+
+      seatType: {
+        type: String,
+        required: true,
+        trim: true,
+      },
+
       category: {
         type: String,
         required: true,
+        trim: true,
       },
 
-      quota: {
+      round: {
         type: String,
         required: true,
       },
@@ -59,6 +84,17 @@ const predictionHistorySchema =
       timestamps: true,
     }
   );
+
+/*
+|--------------------------------------------------------------------------
+| Search History Index
+|--------------------------------------------------------------------------
+*/
+
+predictionHistorySchema.index({
+  userId: 1,
+  createdAt: -1,
+});
 
 export const PredictionHistory =
   mongoose.model(
