@@ -24,6 +24,10 @@ import counsellorDashboardRoutes
 from "../modules/counsellor-dashboard/counsellorDashboard.routes.js";
 import adminProfileRoutes
 from "../modules/admin-profile/adminProfile.routes.js";
+import admin from "../modules/admin/admin.routes.js";
+
+import adminAuthRoutes
+  from "../modules/admin-auth/adminAuth.routes.js";
 
 
 const router = Router();
@@ -100,4 +104,18 @@ router.use(
   "/admin-profile",
   adminProfileRoutes
 );
+
+router.use(
+"/admin",
+admin
+)
+
+router.use(
+  "/admin-auth",
+  adminAuthRoutes
+);
+
+
+
+
 export default router;

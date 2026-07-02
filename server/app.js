@@ -9,11 +9,16 @@ import routes from "./routes/index.js";
 
 import notFound from "./common/middlewares/notFound.js";
 import errorHandler from "./common/middlewares/errorHandler.js";
-
+import "dotenv/config"
 const app = express();
-
+console.log("CLIENT_URL:", process.env.CLIENT_URL);
 app.use(helmet());
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+    credentials: true,
+  })
+);
 app.use(morgan("dev"));
 
 app.use(express.json());

@@ -149,3 +149,63 @@ export const createGoogleUser =
     return user;
 
   };
+
+export const createPendingUser =
+  async ({
+    firstName,
+    lastName,
+    email,
+    mobile,
+  }) => {
+
+    const existingMobile =
+      await User.findOne({
+        mobile,
+      });
+
+    if (existingMobile) {
+      throw new Error(
+        "Mobile number already registered."
+      );
+    }
+
+    if (email) {
+
+      const existingEmail =
+        await User.findOne({
+          email,
+        });
+
+      if (existingEmail) {
+        throw new Error(
+          "Email already exists."
+        );
+      }
+
+    }
+
+    const user =
+      await User.create({
+
+        firstName,
+
+        lastName,
+
+        email:
+          email || undefined,
+
+        mobile,
+
+        provider: "local",
+
+        isVerified: false,
+
+      });
+
+    await createFreeSubscription(
+      user._id
+    );
+
+    return user;
+
+  };

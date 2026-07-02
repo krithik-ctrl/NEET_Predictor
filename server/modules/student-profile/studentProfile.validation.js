@@ -2,27 +2,6 @@ import { z } from "zod";
 
 export const studentProfileSchema =
   z.object({
-    rank: z.number().optional(),
-
-    score: z.number().optional(),
-
-    category: z
-      .enum([
-        "General",
-        "OBC",
-        "SC",
-        "ST",
-        "EWS",
-      ])
-      .optional(),
-
-    quota: z
-      .enum([
-        "AIQ",
-        "State",
-        "Management",
-      ])
-      .optional(),
 
     gender: z
       .enum([
@@ -38,7 +17,7 @@ export const studentProfileSchema =
     state:
       z.string().optional(),
 
-    domicileState:
+    city:
       z.string().optional(),
 
     budget:
@@ -46,4 +25,10 @@ export const studentProfileSchema =
 
     preferredCourse:
       z.string().optional(),
+      firstName: z.string().optional(),
+
+lastName: z.string().optional(),
+
+avatar: z.string().optional(),
+
   });

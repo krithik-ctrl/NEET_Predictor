@@ -1,17 +1,19 @@
-export const authorize =
+export const authorizeAdmin =
   (...roles) =>
   (req, res, next) => {
 
-    console.log(req.user);
-
     if (
-      !roles.includes(req.user.role)
+      !roles.includes(
+        req.admin.role
+      )
     ) {
       return res.status(403).json({
         success: false,
-        message: "Access denied",
+        message:
+          "Access denied.",
       });
     }
 
     next();
+
   };

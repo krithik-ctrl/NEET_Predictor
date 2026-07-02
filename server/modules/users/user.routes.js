@@ -4,6 +4,7 @@ import {
   getMeController,
   logoutController,
   googleLoginController,
+    createPendingUserController
 } from "./user.controller.js";
 
 import {
@@ -47,6 +48,11 @@ router.get(
   "/me",
   authenticate,
   getMeController
+);
+
+router.post(
+  "/create-user",
+  createPendingUserController
 );
 
 export default router;

@@ -9,7 +9,9 @@ import {
 
 export const upsertStudentProfileController =
   async (req, res, next) => {
+
     try {
+
       const validatedData =
         studentProfileSchema.parse(
           req.body
@@ -22,29 +24,46 @@ export const upsertStudentProfileController =
         );
 
       res.status(200).json({
+
         success: true,
+
         message:
-          "Profile saved successfully",
+          "Profile updated successfully",
+
         data: profile,
+
       });
+
     } catch (error) {
+
       next(error);
+
     }
+
   };
 
 export const getStudentProfileController =
   async (req, res, next) => {
+
     try {
+
       const profile =
         await getStudentProfile(
-          req.user.id
+          req.user.userId
         );
 
       res.status(200).json({
+
         success: true,
+
         data: profile,
+
       });
+
     } catch (error) {
+
       next(error);
+
     }
+
   };

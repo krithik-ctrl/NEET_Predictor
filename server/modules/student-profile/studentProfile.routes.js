@@ -1,6 +1,5 @@
 import express from "express";
 
-
 import {
   getStudentProfileController,
   upsertStudentProfileController,
@@ -8,7 +7,7 @@ import {
 
 import {
   authenticate,
-} from "../../auth/middleware/authenticate.js"
+} from "../../auth/middleware/authenticate.js";
 
 import {
   authorize,
@@ -20,19 +19,14 @@ const router =
 router.get(
   "/",
   authenticate,
-  authorize(
-    "student",
-    "admin"
-  ),
+  
   getStudentProfileController
 );
 
-router.put(
+router.patch(
   "/",
   authenticate,
-  authorize(
-    "student"
-  ),
+  
   upsertStudentProfileController
 );
 

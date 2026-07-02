@@ -9,48 +9,47 @@ import {
 } from "./subscription.controller.js";
 
 import {
-  authenticate,
-} from "../../auth/middleware/authenticate.js";
+  authenticateAdmin,
+} from "../../auth/middleware/authenticateAdmin.js";
 
 import {
-  authorize,
-} from "../../auth/middleware/authorize.js";
-
+  authorizeAdmin,
+} from "../../auth/middleware/authorizeAdmin.js";
 const router =
   Router();
 
 router.post(
   "/",
-  authenticate,
-  authorize("admin"),
+  authenticateAdmin,
+  authorizeAdmin("admin"),
   createSubscriptionController
 );
 
 router.get(
   "/",
-  authenticate,
-  authorize("admin"),
+  authenticateAdmin,
+ authorizeAdmin("admin"),
   getSubscriptionsController
 );
 
 router.get(
   "/:id",
-  authenticate,
-  authorize("admin"),
+  authenticateAdmin,
+  authorizeAdmin("admin"),
   getSubscriptionByIdController
 );
 
 router.patch(
   "/:id",
-  authenticate,
-  authorize("admin"),
+  authenticateAdmin,
+  authorizeAdmin("admin"),
   updateSubscriptionController
 );
 
 router.delete(
   "/:id",
-  authenticate,
-  authorize("admin"),
+  authenticateAdmin,
+  authorizeAdmin("admin"),
   deleteSubscriptionController
 );
 

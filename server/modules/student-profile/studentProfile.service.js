@@ -1,5 +1,9 @@
 import { StudentProfile } from "./studentProfile.model.js";
 import { Course } from "../courses/course.model.js";
+import { User } from "../users/user.model.js";
+
+
+
 export const upsertStudentProfile =
   async (
     userId,
@@ -12,7 +16,10 @@ export const upsertStudentProfile =
       );
     }
 
-    if (payload.preferredCourse) {
+    if (
+      payload.preferredCourse
+    ) {
+
       const course =
         await Course.findById(
           payload.preferredCourse
@@ -23,14 +30,67 @@ export const upsertStudentProfile =
           "Course not found"
         );
       }
+
     }
 
-    return await StudentProfile.findOneAndUpdate(
-      { userId },
+    // Update User information
+
+    await User.findByIdAndUpdate(
+      userId,
       {
-        ...payload,
-        profileCompleted: true,
+        ...(payload.firstName && {
+          firstName:
+            payload.firstName,
+        }),
+
+        ...(payload.lastName && {
+          lastName:
+            payload.lastName,
+        }),
+
+        ...(payload.avatar !==
+          undefined && {
+          avatar:
+            payload.avatar,
+        }),
       },
+      {
+        new: true,
+      }
+    );
+
+    // Remove User fields before updating Student Profile
+
+    delete payload.firstName;
+    delete payload.lastName;
+    delete payload.avatar;
+
+    const existingProfile =
+      await StudentProfile.findOne({
+        userId,
+      });
+
+    const updatedData = {
+
+      ...(existingProfile?.toObject() ||
+        {}),
+
+      ...payload,
+
+    };
+
+    updatedData.profileCompleted =
+      Boolean(
+        updatedData.gender &&
+          updatedData.state &&
+          updatedData.city
+      );
+
+    return await StudentProfile.findOneAndUpdate(
+      {
+        userId,
+      },
+      updatedData,
       {
         new: true,
         upsert: true,
@@ -38,18 +98,33 @@ export const upsertStudentProfile =
     ).populate(
       "preferredCourse"
     );
+
   };
 
 export const getStudentProfile =
   async (userId) => {
-    return await StudentProfile
-      .findOne({ userId })
-      .populate(
-        "preferredCourse"
-      );
-  };
 
-  
+   const profile = await StudentProfile
+  .findOne({ userId })
+  .populate("preferredCourse");
+
+const user = await User.findById(userId);
+return {
+  firstName: user.firstName,
+  lastName: user.lastName,
+  email: user.email,
+  mobile: user.mobile,
+  avatar: user.avatar,
+
+  gender: profile.gender,
+  pwdStatus: profile.pwdStatus,
+  state: profile.state,
+  city: profile.city,
+  budget: profile.budget,
+  preferredCourse: profile.preferredCourse,
+  profileCompleted: profile.profileCompleted,
+};
+};
 
 export const createStudentProfile =
   async (userId) => {
@@ -68,4 +143,4 @@ export const createStudentProfile =
       profileCompleted: false,
     });
 
-  };
+};

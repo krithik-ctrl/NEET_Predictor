@@ -10,38 +10,6 @@ const studentProfileSchema =
         unique: true,
       },
 
-      rank: {
-        type: Number,
-        default: null,
-      },
-
-      score: {
-        type: Number,
-        default: null,
-      },
-
-      category: {
-        type: String,
-        enum: [
-          "General",
-          "OBC",
-          "SC",
-          "ST",
-          "EWS",
-        ],
-        default: "General",
-      },
-
-      quota: {
-        type: String,
-        enum: [
-          "AIQ",
-          "State",
-          "Management",
-        ],
-        default: "AIQ",
-      },
-
       gender: {
         type: String,
         enum: [
@@ -60,7 +28,7 @@ const studentProfileSchema =
         type: String,
       },
 
-      domicileState: {
+      city: {
         type: String,
       },
 

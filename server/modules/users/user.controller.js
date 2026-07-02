@@ -1,6 +1,7 @@
 import {
   getUserById,
   createGoogleUser,
+  createPendingUser,
 } from "./user.service.js";
 import { setAuthCookie } from "../../auth/utils/setAuthCookie.js";
 import {
@@ -95,4 +96,39 @@ export const googleLoginController =
     } catch (error) {
       next(error);
     }
+  };
+  export const createPendingUserController =
+  async (req, res, next) => {
+
+    try {
+
+      const user =
+        await createPendingUser(
+          req.body
+        );
+
+      res.status(201).json({
+
+        success: true,
+
+        message:
+          "User created successfully.",
+
+        data: {
+
+          id: user._id,
+
+          mobile:
+            user.mobile,
+
+        },
+
+      });
+
+    } catch (error) {
+
+      next(error);
+
+    }
+
   };

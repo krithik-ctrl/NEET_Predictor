@@ -14,10 +14,26 @@ import {
   getCategories,
 } from "./services/category.service.js";
 
-
+import {User} from "../users/user.model.js";
 export const predictColleges = async (
-  userId
+  userId,
+   payload
 ) => {
+
+const {
+  rank,
+  courseId,
+  counsellingType,
+  predictorState,
+  domicileState,
+  seatType,
+  category,
+  round,
+  year,
+  budget,
+  
+} = payload;
+
 
   const subscription =
   await checkSubscription(
@@ -43,33 +59,34 @@ if (
 
 }
 
-  const profile =
-    await StudentProfile.findOne({
-      userId,
-    });
+  const user = await User.findById(userId);
 
-  if (!profile) {
-    throw new Error(
-      "Student profile not found"
-    );
-  }
+if (!user) {
+  throw new Error(
+    "User not found"
+  );
+}
 
-  if (
-    !profile.profileCompleted
-  ) {
-    throw new Error(
-      "Complete your profile first"
-    );
-  }
+if (!user.isVerified) {
+  throw new Error(
+    "Verify your mobile number first"
+  );
+}
 
-  const query = {
-    courseId:
-      profile.preferredCourse,
-    category:
-      profile.category,
-    quota: profile.quota,
-    status: "active",
-  };
+if (!user.isActive) {
+  throw new Error(
+    "Your account is inactive"
+  );
+}
+
+ const query = buildPredictionFilter({
+  courseId,
+  counsellingType,
+  seatType,
+  category,
+  round,
+  year,
+});
 
   let cutoffs =
     await Cutoff.find(query)
@@ -81,96 +98,84 @@ if (
       )
       .lean();
 
-  if (
-    profile.quota ===
-      "State" &&
-    profile.domicileState
-  ) {
-    cutoffs = cutoffs.filter(
-      (cutoff) =>
-        cutoff.collegeId
-          ?.state ===
-        profile.domicileState
-    );
-  }
-
-  if (profile.budget) {
-    cutoffs = cutoffs.filter(
-      (cutoff) =>
-        cutoff.fees <=
-        profile.budget
-    );
-  }
-
+ if (budget) {
+  cutoffs = cutoffs.filter(
+    (cutoff) =>
+      cutoff.fees <= budget
+  );
+}
   const safe = [];
   const moderate = [];
   const risky = [];
 
+
+
   for (const cutoff of cutoffs) {
 
-    const closingRank =
-      cutoff.closingRank;
+  const closingRank =
+    cutoff.closingRank;
 
-    const safeLimit =
-      Math.floor(
-        closingRank * 0.8
-      );
+  const safeLimit =
+    Math.floor(
+      closingRank * 0.8
+    );
 
-    const result = {
-      cutoffId:
-        cutoff._id,
+  const result = {
 
-      college:
-        cutoff.collegeId,
+    cutoffId: cutoff._id,
 
-      course:
-        cutoff.courseId,
+    college: cutoff.collegeId,
 
-      quota:
-        cutoff.quota,
+    course: cutoff.courseId,
 
-      category:
-        cutoff.category,
+    quota: cutoff.quota,
 
-      fees:
-        cutoff.fees,
+    seatType: cutoff.seatType,
 
-      openingRank:
-        cutoff.openingRank,
+    category: cutoff.category,
 
-      closingRank:
-        cutoff.closingRank,
+    round: cutoff.round,
 
-      studentRank:
-        profile.rank,
-    };
+    year: cutoff.year,
 
-    if (
-      profile.rank <=
-      safeLimit
-    ) {
-      safe.push({
-        ...result,
-        prediction:
-          "SAFE",
-      });
-    } else if (
-      profile.rank <=
-      closingRank
-    ) {
-      moderate.push({
-        ...result,
-        prediction:
-          "MODERATE",
-      });
-    } else {
-      risky.push({
-        ...result,
-        prediction:
-          "RISKY",
-      });
-    }
+    fees: cutoff.fees,
+
+    openingRank:
+      cutoff.openingRank,
+
+    closingRank:
+      cutoff.closingRank,
+
+    studentRank: rank,
+
+  };
+
+  if (rank <= safeLimit) {
+
+    safe.push({
+      ...result,
+      prediction: "SAFE",
+    });
+
+  } else if (
+    rank <= closingRank
+  ) {
+
+    moderate.push({
+      ...result,
+      prediction: "MODERATE",
+    });
+
+  } else {
+
+    risky.push({
+      ...result,
+      prediction: "RISKY",
+    });
+
   }
+
+}
 
   safe.sort(
     (a, b) =>
@@ -192,17 +197,23 @@ if (
 await createPredictionHistory(
   userId,
   {
-    courseId:
-      profile.preferredCourse,
+    courseId,
 
-    rank:
-      profile.rank,
+    rank,
 
-    category:
-      profile.category,
+    category,
 
-    quota:
-      profile.quota,
+    counsellingType,
+
+    predictorState,
+
+    domicileState,
+
+    seatType,
+
+    round,
+
+    year,
 
     totalResults:
       safe.length +
@@ -219,24 +230,26 @@ await createPredictionHistory(
       risky.length,
   }
 );
-  return {
-    profile: {
-      rank: profile.rank,
-      category:
-        profile.category,
-      quota:
-        profile.quota,
-    },
+ return {
+  profile: {
+    rank,
+    category,
+    counsellingType,
+    predictorState,
+    domicileState,
+    seatType,
+    round,
+  },
 
-    totalResults:
-      safe.length +
-      moderate.length +
-      risky.length,
+  totalResults:
+    safe.length +
+    moderate.length +
+    risky.length,
 
-    safe,
-    moderate,
-    risky,
-  };
+  safe,
+  moderate,
+  risky,
+};
 };
 
 export const getSeatTypes = async ({
