@@ -1,16 +1,24 @@
-import { StudentProfile } from "../student-profile/studentProfile.model.js";
-import { SavedCollege } from "../saved-colleges/savedCollege.model.js";
-import { ChoiceList } from "../choice-list/choiceList.model.js";
-import { PredictionHistory } from "../prediction-history/predictionHistory.model.js";
+import {
+  getPredictionDashboard,
+} from "./services/prediction-dashboard.service.js";
+
+import {
+  getSavedCollegeDashboard,
+} from "./services/saved-college-dashboard.service.js";
+
+import {
+  getChoiceListDashboard,
+} from "./services/choice-list-dashboard.service.js";
+
+import {
+  getRecentActivity,
+} from "./services/recent-activity.service.js";
+
 import {
   checkSubscription,
 } from "../subscription/subscription.helper.js";
 
-import {
-  countTodayPredictions,
-} from "../prediction-history/predictionHistory.service.js";
-
-
+import { StudentProfile } from "../student-profile/studentProfile.model.js";
 
 export const getDashboard =
   async (userId) => {
@@ -25,126 +33,275 @@ const subscription =
     userId
   );
 
-const predictionsToday =
-  await countTodayPredictions(
+
+  const [
+  profile,
+  predictionDashboard,
+  savedCollegeDashboard,
+  choiceListDashboard,
+  recentActivity,
+] = await Promise.all([
+
+  StudentProfile.findOne({
+    userId,
+  })
+    .populate(
+      "preferredCourse"
+    )
+    .populate(
+      "userId",
+      "firstName lastName avatar"
+    )
+    .lean(),
+
+  getPredictionDashboard(
     userId
-  );
-    const [
-      profile,
-      savedColleges,
-      choiceLists,
-      predictionCount,
-      latestPrediction,
-    ] = await Promise.all([
-    StudentProfile.findOne({
-  userId,
-})
-.populate("preferredCourse")
-.populate(
-  "userId",
-  "name"
-),
+  ),
 
-      SavedCollege.countDocuments({
-        userId,
-      }),
+  getSavedCollegeDashboard(
+    userId
+  ),
 
-      ChoiceList.countDocuments({
-        userId,
-      }),
+  getChoiceListDashboard(
+    userId
+  ),
 
-      PredictionHistory.countDocuments(
-        {
-          userId,
-        }
-      ),
+  getRecentActivity(
+    userId
+  ),
 
-      PredictionHistory.findOne({
-        userId,
-      })
-        .populate("courseId")
-        .sort({
-          createdAt: -1,
-        }),
-    ]);
+]);
+
+
+let readinessScore = 0;
+
+if (profile?.profileCompleted) {
+  readinessScore += 25;
+}
+
+if (
+  predictionDashboard.predictionCount >= 5
+) {
+  readinessScore += 25;
+}
+
+if (
+  savedCollegeDashboard.savedColleges >= 8
+) {
+  readinessScore += 25;
+}
+
+if (
+  choiceListDashboard.choiceLists >= 1
+) {
+  readinessScore += 25;
+}
+
+let readinessStatus =
+  "Getting Started";
+
+if (readinessScore === 100) {
+
+  readinessStatus =
+    "Counselling Ready";
+
+} else if (
+  readinessScore >= 75
+) {
+
+  readinessStatus =
+    "Almost Ready";
+
+} else if (
+  readinessScore >= 50
+) {
+
+  readinessStatus =
+    "In Progress";
+
+}
+
+let nextAction = {
+
+  title:
+    "You're all set!",
+
+  description:
+    "Continue exploring colleges.",
+
+};
+
+if (
+  !profile?.profileCompleted
+) {
+
+  nextAction = {
+
+    title:
+      "Complete Profile",
+
+    description:
+      "Complete your profile to unlock personalized predictions.",
+
+  };
+
+} else if (
+  predictionDashboard.predictionCount < 5
+) {
+
+  nextAction = {
+
+    title:
+      "Generate Predictions",
+
+    description:
+      "Generate more predictions to improve your counselling preparation.",
+
+  };
+
+} else if (
+  savedCollegeDashboard.savedColleges < 8
+) {
+
+  nextAction = {
+
+    title:
+      "Save Colleges",
+
+    description:
+      "Save your preferred colleges for easy comparison.",
+
+  };
+
+} else if (
+  choiceListDashboard.choiceLists === 0
+) {
+
+  nextAction = {
+
+    title:
+      "Create Choice List",
+
+    description:
+      "Organize your saved colleges into a choice list.",
+
+  };
+
+}
+
+
 
     return {
-      profile: profile
-        ? {
-           name:
-  profile.userId?.name,
-            course:
-              profile
-                .preferredCourse
-                ?.name || null,
-            rank: profile.rank,
-            category:
-              profile.category,
-            quota:
-              profile.quota,
-            profileCompleted:
-              profile.profileCompleted,
-          }
-        : null,
 
-      statistics: {
-        savedColleges,
-        choiceLists,
-        predictionCount,
-      },
-subscription: {
+  profile:
+    profile
+      ? {
 
-  currentPlan:
-    subscription.plan,
+          firstName:
+            profile.userId
+              ?.firstName,
 
-  isPremium:
-    subscription.isPremium,
+          lastName:
+            profile.userId
+              ?.lastName,
 
-},
+          avatar:
+            profile.userId
+              ?.avatar,
 
-usage: {
+          preferredCourse:
+            profile
+              ?.preferredCourse
+              ?.name || null,
 
-  predictionsToday,
+          profileCompleted:
+            profile
+              ?.profileCompleted,
 
-  predictionLimit:
-    subscription.isPremium
-      ? "Unlimited"
-      : 3,
+        }
+      : null,
 
-  savedColleges,
+  statistics: {
 
-  savedCollegeLimit:
-    subscription.isPremium
-      ? "Unlimited"
-      : 20,
+    predictionCount:
+      predictionDashboard.predictionCount,
 
-  choiceLists,
+    savedColleges:
+      savedCollegeDashboard.savedColleges,
 
-  choiceListLimit:
-    subscription.isPremium
-      ? "Unlimited"
-      : 1,
+    choiceLists:
+      choiceListDashboard.choiceLists,
 
-},
-      latestPrediction:
-        latestPrediction
-          ? {
-              course:
-                latestPrediction
-                  .courseId?.name,
-              rank:
-                latestPrediction.rank,
-              totalResults:
-                latestPrediction.totalResults,
-              safeCount:
-                latestPrediction.safeCount,
-              moderateCount:
-                latestPrediction.moderateCount,
-              riskyCount:
-                latestPrediction.riskyCount,
-              generatedAt:
-                latestPrediction.generatedAt,
-            }
-          : null,
-    };
+    choiceListColleges:
+      choiceListDashboard.choiceListColleges,
+
+  },
+
+  subscription: {
+
+    currentPlan:
+      subscription.plan,
+
+    isPremium:
+      subscription.isPremium,
+
+  },
+
+  usage: {
+
+    predictionsToday:
+      predictionDashboard.predictionsToday,
+
+    predictionLimit:
+      subscription.isPremium
+        ? "Unlimited"
+        : 3,
+
+    savedColleges:
+      savedCollegeDashboard.savedColleges,
+
+    savedCollegeLimit:
+      subscription.isPremium
+        ? "Unlimited"
+        : 20,
+
+    choiceLists:
+      choiceListDashboard.choiceLists,
+
+    choiceListLimit:
+      subscription.isPremium
+        ? "Unlimited"
+        : 1,
+
+  },
+
+  readiness: {
+
+    score:
+      readinessScore,
+
+    status:
+      readinessStatus,
+
+  },
+
+  nextAction,
+
+  latestPredictions:
+    predictionDashboard
+      .latestPredictions,
+
+  recentSavedColleges:
+    savedCollegeDashboard
+      .recentSavedColleges,
+
+  recentChoiceLists:
+    choiceListDashboard
+      .recentChoiceLists,
+
+  recentActivity:
+    recentActivity
+      .recentActivity,
+
+};
   };
