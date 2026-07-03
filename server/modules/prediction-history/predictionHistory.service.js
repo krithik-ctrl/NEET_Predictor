@@ -18,6 +18,7 @@ export const createPredictionHistory =
       {
         userId,
         ...payload,
+          round: payload.round ?? null,
       }
     );
   };

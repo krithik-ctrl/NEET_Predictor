@@ -15,10 +15,11 @@ const predictionHistorySchema =
         required: true,
       },
 
-      rank: {
-        type: Number,
-        required: true,
-      },
+      round: {
+  type: String,
+  required: false,
+  default: null,
+},
 
       counsellingType: {
         type: String,
@@ -50,11 +51,7 @@ const predictionHistorySchema =
         trim: true,
       },
 
-      round: {
-        type: String,
-        required: true,
-      },
-
+     
       totalResults: {
         type: Number,
         default: 0,

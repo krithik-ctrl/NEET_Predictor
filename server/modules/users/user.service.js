@@ -158,15 +158,18 @@ export const createPendingUser =
     mobile,
   }) => {
 
-    const existingMobile =
+    const existingUser =
       await User.findOne({
         mobile,
       });
 
-    if (existingMobile) {
-      throw new Error(
-        "Mobile number already registered."
-      );
+    if (existingUser) {
+
+      return {
+        user: existingUser,
+        isNewUser: false,
+      };
+
     }
 
     if (email) {
@@ -206,6 +209,12 @@ export const createPendingUser =
       user._id
     );
 
-    return user;
+    return {
+
+      user,
+
+      isNewUser: true,
+
+    };
 
   };

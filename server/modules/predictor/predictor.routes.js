@@ -14,13 +14,12 @@ const router =
 
 router.post(
   "/seat-types",
-  authenticate,
+  
   getSeatTypesController
 );
 
 router.post(
   "/categories",
-  authenticate,
   getCategoriesController
 );
 

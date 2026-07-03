@@ -97,29 +97,39 @@ export const googleLoginController =
       next(error);
     }
   };
-  export const createPendingUserController =
+
+  
+export const createPendingUserController =
   async (req, res, next) => {
 
     try {
 
-      const user =
+      const {
+        user,
+        isNewUser,
+      } =
         await createPendingUser(
           req.body
         );
 
-      res.status(201).json({
+      res.status(200).json({
 
         success: true,
 
         message:
-          "User created successfully.",
+          isNewUser
+            ? "User created successfully."
+            : "Existing user found.",
 
         data: {
 
-          id: user._id,
+          id:
+            user._id,
 
           mobile:
             user.mobile,
+
+          isNewUser,
 
         },
 

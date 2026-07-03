@@ -21,7 +21,7 @@ export const getEligibility = ({
   if (counsellingType === "AIQ") {
 
     const config =
-      stateConfigs.aiq;
+      stateConfigs.AIQ;
 
     return {
 
