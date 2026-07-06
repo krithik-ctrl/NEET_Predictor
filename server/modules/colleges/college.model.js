@@ -9,6 +9,11 @@ const collegeSchema =
         trim: true,
         unique: true,
       },
+      shortName: {
+  type: String,
+  trim: true,
+  default: "",
+},
 
       state: {
         type: String,
@@ -53,6 +58,7 @@ const collegeSchema =
         type: String,
         default: "",
       },
+      //level
 
       status: {
         type: String,
@@ -67,6 +73,27 @@ const collegeSchema =
       timestamps: true,
     }
   );
+
+
+collegeSchema.index({
+  state: 1,
+});
+
+collegeSchema.index({
+  collegeType: 1,
+});
+
+collegeSchema.index({
+  ownership: 1,
+});
+
+collegeSchema.index({
+  courses: 1,
+});
+
+collegeSchema.index({
+  level: 1,
+});
 
 export const College =
   mongoose.model(

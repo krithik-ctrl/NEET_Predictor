@@ -18,17 +18,16 @@ import subscriptionRoutes
 from "../modules/subscription/subscription.routes.js";
 import paymentRoutes
 from "../modules/payment/payment.routes.js";
-import adminDashboardRoutes
-from "../modules/admin-dashboard/adminDashboard.routes.js";
+
 import counsellorDashboardRoutes
 from "../modules/counsellor-dashboard/counsellorDashboard.routes.js";
 import adminProfileRoutes
 from "../modules/admin-profile/adminProfile.routes.js";
-import admin from "../modules/admin/admin.routes.js";
+
 
 import adminAuthRoutes
   from "../modules/admin-auth/adminAuth.routes.js";
-
+import adminOperationRoutes from "../modules/admin-dashboard/adminIndex.route.js";
 
 const router = Router();
 
@@ -91,10 +90,7 @@ router.use(
   paymentRoutes
 );
 
-router.use(
-"/admin-dashboard",
-adminDashboardRoutes
-);
+
 router.use(
   "/counsellor-dashboard",
   counsellorDashboardRoutes
@@ -105,9 +101,10 @@ router.use(
   adminProfileRoutes
 );
 
+
 router.use(
 "/admin",
-admin
+adminOperationRoutes
 )
 
 router.use(

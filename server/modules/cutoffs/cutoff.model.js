@@ -46,7 +46,7 @@ const cutoffSchema = new mongoose.Schema(
         "Mop-Up",
         "Stray Vacancy",
       ],
-      required: true,
+      default: null,
     },
 
     openingRank: {
@@ -114,10 +114,11 @@ cutoffSchema.index(
 
 cutoffSchema.index({
   courseId: 1,
+  year: -1,
   quota: 1,
   seatType: 1,
   category: 1,
-  year: 1,
+  closingRank: 1,
 });
 
 cutoffSchema.index({

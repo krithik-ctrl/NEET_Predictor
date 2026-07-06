@@ -13,6 +13,11 @@ const courseSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+        level: {
+      type: String,
+      enum: ["UG", "PG"],
+      required: true,
+    },
 
     status: {
       type: String,

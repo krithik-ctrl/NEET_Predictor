@@ -1,0 +1,107 @@
+import { Router } from "express";
+
+// import adminDashboardRoutes
+//   from "../admin-dashboard/adminDashboard.routes.js";
+
+import adminUsersRoutes
+  from "../admin-users/adminUsers.routes.js";
+
+import {
+  getAdminUsersController,
+  createAdminController,
+  updateAdminController,
+    getUserDetailsController,
+  getAdminDetailsController,
+} from "./adminUsers.controller.js";
+
+import {authenticateAdmin} from "../../../auth/middleware/authenticateAdmin.js";
+
+import {authorizeAdmin} from "../../../auth/middleware/authorizeAdmin.js";
+const router =
+  Router();
+
+/*
+|--------------------------------------------------------------------------
+| Dashboard
+|--------------------------------------------------------------------------
+*/
+
+// router.use(
+//   "/dashboard",
+//   adminDashboardRoutes
+// );
+
+/*
+|--------------------------------------------------------------------------
+| Users
+|--------------------------------------------------------------------------
+*/
+
+
+
+/*
+|--------------------------------------------------------------------------
+| Get Users
+|--------------------------------------------------------------------------
+*/
+
+router.get(
+  "/",
+  authenticateAdmin,
+  authorizeAdmin("admin"),
+  getAdminUsersController
+);
+
+/*
+|--------------------------------------------------------------------------
+| Create Admin
+|--------------------------------------------------------------------------
+*/
+
+router.post(
+  "/",
+  authenticateAdmin,
+  authorizeAdmin("admin"),
+  createAdminController
+);
+
+/*
+|--------------------------------------------------------------------------
+| Update Admin
+|--------------------------------------------------------------------------
+*/
+
+router.patch(
+  "/:adminId",
+  authenticateAdmin,
+  authorizeAdmin("admin"),
+  updateAdminController
+);
+/*
+|--------------------------------------------------------------------------
+| Student Details
+|--------------------------------------------------------------------------
+*/
+
+router.get(
+  "/student/:userId",
+  authenticateAdmin,
+  authorizeAdmin("admin"),
+  getUserDetailsController
+);
+
+/*
+|--------------------------------------------------------------------------
+| Admin Details
+|--------------------------------------------------------------------------
+*/
+
+router.get(
+  "/:adminId",
+  authenticateAdmin,
+  authorizeAdmin("admin"),
+  getAdminDetailsController
+);
+
+
+export default router;

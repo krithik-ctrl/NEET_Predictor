@@ -21,6 +21,10 @@ lastName: {
   unique: true,
   sparse: true,
 },
+role:{
+  type: String,
+  default: "student",
+},
   
 
     provider: {
