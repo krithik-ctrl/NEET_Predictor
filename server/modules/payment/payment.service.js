@@ -1,5 +1,10 @@
 import mongoose from "mongoose";
-
+import {
+  verifyRazorpaySignature,
+} from "./razorpay.helper.js";
+import {
+  createRazorpayOrder,
+} from "./razorpay.helper.js";
 import { Payment }
 from "./payment.model.js";
 
@@ -39,25 +44,51 @@ export const createPayment =
       );
     }
 
-    return await Payment.create({
+    const razorpayOrder =
+      await createRazorpayOrder(
+        plan.price,
+        "INR"
+      );
 
-      userId,
+    const payment =
+      await Payment.create({
 
-      planId,
+        userId,
+
+        planId,
+
+        amount: plan.price,
+
+        currency: "INR",
+
+        status: "pending",
+
+        paymentProvider: "razorpay",
+
+        orderId:
+          razorpayOrder.id,
+
+      });
+
+    return {
+
+      paymentId:
+        payment._id,
+
+      orderId:
+        razorpayOrder.id,
 
       amount:
-        plan.price,
+        razorpayOrder.amount,
 
       currency:
-        "INR",
+        razorpayOrder.currency,
 
-      status:
-        "pending",
+      keyId:
+      
+        process.env.RAZORPAYTEST_KEY_ID,
 
-      paymentProvider:
-        "razorpay",
-
-    });
+    };
 
   };
 
@@ -182,6 +213,77 @@ export const updatePaymentStatus =
         new Date();
 
     }
+
+    await payment.save();
+
+    return payment;
+
+  };
+
+  export const verifyPayment =
+  async ({
+    orderId,
+    paymentId,
+    signature,
+  }) => {
+
+    if (
+      !orderId ||
+      !paymentId ||
+      !signature
+    ) {
+
+      throw new Error(
+        "Payment verification data is required"
+      );
+
+    }
+
+    const isValid =
+      verifyRazorpaySignature({
+
+        orderId,
+
+        paymentId,
+
+        signature,
+
+      });
+
+    if (!isValid) {
+
+      throw new Error(
+        "Invalid payment signature"
+      );
+
+    }
+
+    const payment =
+      await Payment.findOne({
+
+        orderId,
+
+      });
+
+    if (!payment) {
+
+      throw new Error(
+        "Payment not found"
+      );
+
+    }
+
+    payment.paymentId =
+      paymentId;
+
+    payment.signature =
+      signature;
+
+    payment.status =
+      "success";
+
+    payment.paidAt =
+      new Date();
 
     await payment.save();
 

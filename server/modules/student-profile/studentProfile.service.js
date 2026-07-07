@@ -104,27 +104,33 @@ export const upsertStudentProfile =
 export const getStudentProfile =
   async (userId) => {
 
-   const profile = await StudentProfile
-  .findOne({ userId })
-  .populate("preferredCourse");
+    const profile =
+      await StudentProfile
+        .findOne({ userId })
+        .populate("preferredCourse");
 
-const user = await User.findById(userId);
-return {
-  firstName: user.firstName,
-  lastName: user.lastName,
-  email: user.email,
-  mobile: user.mobile,
-  avatar: user.avatar,
+    const user =
+      await User.findById(userId);
 
-  gender: profile.gender,
-  pwdStatus: profile.pwdStatus,
-  state: profile.state,
-  city: profile.city,
-  budget: profile.budget,
-  preferredCourse: profile.preferredCourse,
-  profileCompleted: profile.profileCompleted,
-};
-};
+    return {
+
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      mobile: user.mobile,
+      avatar: user.avatar,
+
+      gender: profile?.gender ?? null,
+      pwdStatus: profile?.pwdStatus ?? false,
+      state: profile?.state ?? null,
+      city: profile?.city ?? null,
+      budget: profile?.budget ?? null,
+      preferredCourse: profile?.preferredCourse ?? null,
+      profileCompleted: profile?.profileCompleted ?? false,
+
+    };
+
+  };
 
 export const createStudentProfile =
   async (userId) => {

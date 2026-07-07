@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Razorpay Test</title>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+
+<body>
+
+    <button id="payButton">
+        Pay ₹499
+    </button>
+
+    <script>
+
+        document
+            .getElementById("payButton")
+            .onclick = function () {
+
+                const options = {
+
+                    key: "rzp_test_TAWuRtBp2HzPtk",
+
+                    amount: 49900,
+
+                    currency: "INR",
+
+                    name: "NEET College Predictor",
+
+                    description: "Premium Plan",
+
+                    order_id: "order_TAXtY6b7E9XrNC",
+
+                    handler: function (response) {
+
+                        console.log("Payment Success");
+
+                        console.log(response);
+
+                        alert(
+                            JSON.stringify(
+                                response,
+                                null,
+                                2
+                            )
+                        );
+
+                    },
+
+                    prefill: {
+
+                        name: "Test User",
+
+                        email: "test11@example.com",
+
+                        contact: "9876543210"
+
+                    },
+
+                    theme: {
+
+                        color: "#2563eb"
+
+                    }
+
+                };
+
+                const razorpay =
+                    new Razorpay(
+                        options
+                    );
+
+                razorpay.open();
+
+            };
+
+    </script>
+
+</body>
+
+</html>

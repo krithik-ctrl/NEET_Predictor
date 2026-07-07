@@ -57,7 +57,8 @@ export const createFreeSubscription =
     return subscription;
 
   };
-
+    
+  
   export const checkSubscription =
   async (userId) => {
 

@@ -19,3 +19,17 @@ export const updatePaymentStatusSchema =
     ]),
 
   });
+
+  export const verifyPaymentSchema =
+  z.object({
+
+    orderId:
+      z.string(),
+
+    paymentId:
+      z.string(),
+
+    signature:
+      z.string(),
+
+  });

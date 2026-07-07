@@ -14,6 +14,7 @@ import {
   getAllPaymentsController,
   getPaymentByIdController,
   updatePaymentStatusController,
+    verifyPaymentController,
 } from "./payment.controller.js";
 
 const router =
@@ -22,18 +23,13 @@ const router =
 router.post(
   "/",
   authenticate,
-  authorize(
-    "student"
-  ),
+  
   createPaymentController
 );
 
 router.get(
   "/my-payments",
   authenticate,
-  authorize(
-    "student"
-  ),
   getMyPaymentsController
 );
 
@@ -62,6 +58,15 @@ router.patch(
     "admin"
   ),
   updatePaymentStatusController
+);
+
+router.post(
+  "/verify",
+  authenticate,
+  authorize(
+    "student"
+  ),
+  verifyPaymentController
 );
 
 export default router;

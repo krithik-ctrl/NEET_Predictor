@@ -17,6 +17,7 @@ const studentProfileSchema =
           "Female",
           "Other",
         ],
+      
       },
 
       pwdStatus: {
