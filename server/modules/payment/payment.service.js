@@ -11,6 +11,10 @@ from "./payment.model.js";
 import { Plan }
 from "../plans/plan.model.js";
 
+import {activatePremiumSubscription} from "../subscription/subscription.helper.js"
+
+
+
 export const createPayment =
   async (
     userId,
@@ -86,7 +90,7 @@ export const createPayment =
 
       keyId:
       
-        process.env.RAZORPAYTEST_KEY_ID,
+        process.env.RAZORPAY_KEY_ID,
 
     };
 
@@ -272,7 +276,9 @@ export const updatePaymentStatus =
       );
 
     }
-
+if (payment.status === "success") {
+  return payment;
+}
     payment.paymentId =
       paymentId;
 
@@ -286,6 +292,10 @@ export const updatePaymentStatus =
       new Date();
 
     await payment.save();
+    await activatePremiumSubscription(
+  payment.userId,
+  payment.planId
+);
 
     return payment;
 

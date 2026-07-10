@@ -76,6 +76,64 @@ const predictionHistorySchema =
         type: Date,
         default: Date.now,
       },
+
+predictedColleges: [
+  {
+    collegeId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "College",
+      required: true,
+    },
+
+    collegeName: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    state: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+ courseId: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "Course",
+  default: null,
+},
+
+    cutoffId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Cutoff",
+      required: true,
+    },
+
+    predictionType: {
+      type: String,
+      enum: ["SAFE", "MODERATE", "RISKY"],
+      required: true,
+    },
+
+    quota: String,
+
+    seatType: String,
+
+    category: String,
+
+    round: String,
+
+    year: Number,
+
+    openingRank: Number,
+
+    closingRank: Number,
+
+    studentRank: Number,
+
+    fees: Number,
+  }
+]
     },
     {
       timestamps: true,

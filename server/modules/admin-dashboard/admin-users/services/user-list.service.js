@@ -1,120 +1,132 @@
 import { User } from "../../../users/user.model.js";
 
-import {
-  buildSearchQuery,
-  buildFilters,
-} from "./user-query.service.js";
+import { StudentProfile } from "../../../student-profile/studentProfile.model.js";
 
-const DEFAULT_PAGE = 1;
+import { Subscription } from "../../../subscription/subscription.model.js";
 
-const DEFAULT_LIMIT = 10;
+import { Plan } from "../../../plans/plan.model.js";
 
-const DEFAULT_SORT = {
-  createdAt: -1,
-};
+import { PredictionHistory } from "../../../prediction-history/predictionHistory.model.js";
 
 export const getUserList =
-  async (query) => {
-
-    const {
-
-      page = DEFAULT_PAGE,
-
-      limit = DEFAULT_LIMIT,
-
-      search,
-
-      sortBy = "createdAt",
-
-      order = "desc",
-
-      role,
-
-      status,
-
-      verified,
-
-      profileCompleted,
-
-    } = query;
-
-    const {
-
-      userFilter,
-
-    } = buildFilters({
-
-      role,
-
-      status,
-
-      verified,
-
-      profileCompleted,
-
-    });
-
-    const searchQuery =
-      buildSearchQuery(
-        search
-      );
-
-    const finalQuery = {
-
-      ...userFilter,
-
-      ...searchQuery,
-
-    };
-
-    const sort = {
-
-      [sortBy]:
-        order === "asc"
-          ? 1
-          : -1,
-
-    };
+  async () => {
 
     const users =
-      await User.find(
-        finalQuery
-      )
-        .sort(sort)
-        .skip(
-          (page - 1) * limit
-        )
-        .limit(
-          Number(limit)
-        )
+      await User.find()
         .lean();
 
-    const total =
-      await User.countDocuments(
-        finalQuery
+    const userIds =
+      users.map(
+        (user) => user._id
       );
 
-    return {
+    const [
 
-      users,
+      profiles,
 
-      pagination: {
+      subscriptions,
 
-        page:
-          Number(page),
+      plans,
 
-        limit:
-          Number(limit),
+      predictions,
 
-        total,
+    ] = await Promise.all([
 
-        pages:
-          Math.ceil(
-            total / limit
-          ),
+      StudentProfile.find({
 
-      },
+        userId: {
+          $in: userIds,
+        },
 
-    };
+      }).lean(),
 
+      Subscription.find({
+
+        userId: {
+          $in: userIds,
+        },
+
+        status: "active",
+
+      }).lean(),
+
+      Plan.find().lean(),
+
+      PredictionHistory.aggregate([
+
+        {
+          $match: {
+
+            userId: {
+              $in: userIds,
+            },
+
+          },
+
+        },
+
+        {
+          $group: {
+
+            _id: "$userId",
+
+            count: {
+              $sum: 1,
+            },
+
+          },
+
+        },
+
+      ]),
+
+    ]);
+
+   const studentUsers = users.map((user) => {
+
+  const profile =
+    profiles.find(
+      (item) =>
+        item.userId.toString() === user._id.toString()
+    );
+
+  const subscription =
+    subscriptions.find(
+      (item) =>
+        item.userId.toString() === user._id.toString()
+    );
+
+  const plan =
+    subscription
+      ? plans.find(
+          (item) =>
+            item._id.toString() ===
+            subscription.planId.toString()
+        )
+      : null;
+
+  const prediction =
+    predictions.find(
+      (item) =>
+        item._id.toString() === user._id.toString()
+    );
+
+  return {
+
+    ...user,
+
+    role: user.role || "student",
+
+    profile,
+
+    plan,
+
+    predictionCount:
+      prediction?.count || 0,
+
+  };
+
+});
+
+return studentUsers;
   };

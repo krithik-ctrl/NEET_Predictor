@@ -16,6 +16,9 @@ import {
   updatePaymentStatusController,
     verifyPaymentController,
 } from "./payment.controller.js";
+import { authenticateAdmin } from "../../auth/middleware/authenticateAdmin.js";
+
+import { authorizeAdmin } from "../../auth/middleware/authorizeAdmin.js";
 
 const router =
   Router();
@@ -44,8 +47,8 @@ router.get(
 
 router.get(
   "/:id",
-  authenticate,
-  authorize(
+  authenticateAdmin,
+  authorizeAdmin(
     "admin"
   ),
   getPaymentByIdController
@@ -53,8 +56,8 @@ router.get(
 
 router.patch(
   "/:id/status",
-  authenticate,
-  authorize(
+  authenticateAdmin,
+  authorizeAdmin(
     "admin"
   ),
   updatePaymentStatusController
@@ -63,9 +66,7 @@ router.patch(
 router.post(
   "/verify",
   authenticate,
-  authorize(
-    "student"
-  ),
+ 
   verifyPaymentController
 );
 

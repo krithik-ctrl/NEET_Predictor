@@ -6,6 +6,9 @@ import { Router } from "express";
 import adminUsersRoutes
   from "../admin-users/adminUsers.routes.js";
 
+import exportUsersRoutes
+  from "./pdf-export/exportUsers.routes.js";
+
 import {
   getAdminUsersController,
   createAdminController,
@@ -30,6 +33,20 @@ const router =
 //   "/dashboard",
 //   adminDashboardRoutes
 // );
+
+/*
+|--------------------------------------------------------------------------
+| Export Users
+|--------------------------------------------------------------------------
+*/
+
+
+router.use(
+  "/export",
+  exportUsersRoutes
+);
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -102,6 +119,9 @@ router.get(
   authorizeAdmin("admin"),
   getAdminDetailsController
 );
+
+
+
 
 
 export default router;

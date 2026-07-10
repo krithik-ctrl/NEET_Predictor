@@ -47,14 +47,107 @@ export const createCollege =
   };
 
 export const getColleges =
-  async () => {
-    return await College.find({
-  status: "active",
-})
-.populate("courses")
-.sort({
-  createdAt: -1,
-});
+  async (query) => {
+
+    const {
+
+      search,
+
+      state,
+
+      collegeType,
+
+      page = 1,
+
+      limit = 20,
+
+    } = query;
+
+    const filters = {
+      status: "active",
+    };
+
+    if (state) {
+      filters.state = state;
+    }
+
+    if (collegeType) {
+      filters.collegeType =
+        collegeType;
+    }
+
+    if (search) {
+
+      filters.$or = [
+
+        {
+          name: {
+            $regex: search,
+            $options: "i",
+          },
+        },
+
+        {
+          shortName: {
+            $regex: search,
+            $options: "i",
+          },
+        },
+
+      ];
+
+    }
+
+    const skip =
+      (Number(page) - 1) *
+      Number(limit);
+
+    const [
+
+      colleges,
+
+      total,
+
+    ] = await Promise.all([
+
+      College.find(filters)
+        .populate("courses")
+        .sort({
+          createdAt: -1,
+        })
+        .skip(skip)
+        .limit(Number(limit)),
+
+      College.countDocuments(
+        filters
+      ),
+
+    ]);
+
+    return {
+
+      colleges,
+
+      pagination: {
+
+        page:
+          Number(page),
+
+        limit:
+          Number(limit),
+
+        total,
+
+        totalPages:
+          Math.ceil(
+            total /
+              Number(limit)
+          ),
+
+      },
+
+    };
+
   };
 
 export const getCollegeById =

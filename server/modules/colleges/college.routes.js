@@ -13,16 +13,16 @@ import {
 } from "../../auth/middleware/authenticate.js";
 
 import {
-  authorize,
-} from "../../auth/middleware/authorize.js";
-
+  authorizeAdmin,
+} from "../../auth/middleware/authorizeAdmin.js";
+import { authenticateAdmin } from "../../auth/middleware/authenticateAdmin.js";
 const router =
   express.Router();
 
 router.post(
   "/",
-  authenticate,
-  authorize("admin"),
+  authenticateAdmin,
+  authorizeAdmin("admin"),
   createCollegeController
 );
 
@@ -38,15 +38,15 @@ router.get(
 
 router.patch(
   "/:id",
-  authenticate,
-  authorize("admin"),
+  authenticateAdmin,
+  authorizeAdmin("admin"),
   updateCollegeController
 );
 
 router.delete(
   "/:id",
-  authenticate,
-  authorize("admin"),
+  authenticateAdmin,
+  authorizeAdmin("admin"),
   deleteCollegeController
 );
 

@@ -4,9 +4,9 @@ import crypto from "crypto";
 
 const razorpay = new Razorpay({
 
-  key_id: process.env.RAZORPAYTEST_KEY_ID,
+  key_id: process.env.RAZORPAY_KEY_ID,
 
-  key_secret: process.env.RAZORPAYTEST_KEY_SECRET,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
 
 });
 
@@ -43,7 +43,7 @@ export const verifyRazorpaySignature = ({
     crypto
       .createHmac(
         "sha256",
-        process.env.RAZORPAYTEST_KEY_SECRET
+        process.env.RAZORPAY_KEY_SECRET
       )
       .update(body)
       .digest("hex");

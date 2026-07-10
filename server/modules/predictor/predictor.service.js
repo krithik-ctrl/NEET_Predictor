@@ -150,6 +150,7 @@ if (!user.isActive) {
 
   };
 
+
   if (rank <= safeLimit) {
 
     safe.push({
@@ -194,25 +195,19 @@ if (!user.isActive) {
       a.closingRank -
       b.closingRank
   );
-await createPredictionHistory(
-  userId,
-  {
+
+  
+const predictionHistory =
+  await createPredictionHistory(userId, {
     courseId,
 
     rank,
-
     category,
-
     counsellingType,
-
     predictorState,
-
     domicileState,
-
     seatType,
-
     round,
-
     year,
 
     totalResults:
@@ -220,17 +215,23 @@ await createPredictionHistory(
       moderate.length +
       risky.length,
 
-    safeCount:
-      safe.length,
+    safeCount: safe.length,
 
-    moderateCount:
-      moderate.length,
+    moderateCount: moderate.length,
 
-    riskyCount:
-      risky.length,
-  }
-);
- return {
+    riskyCount: risky.length,
+
+    safe,
+
+    moderate,
+
+    risky,
+  });
+
+return {
+  historyId:
+    predictionHistory._id,
+
   profile: {
     rank,
     category,

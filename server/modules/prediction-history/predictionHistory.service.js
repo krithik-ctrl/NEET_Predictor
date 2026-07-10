@@ -1,27 +1,161 @@
 import mongoose from "mongoose";
 
 import { PredictionHistory } from "./predictionHistory.model.js";
+import { College } from "../colleges/college.model.js";
 
-export const createPredictionHistory =
-  async (
-    userId,
-    payload
+
+
+export const createPredictionHistory = async (
+  userId,
+  payload
+) => {
+console.log(payload.safe[0]);
+  if (!userId) {
+    throw new Error("User ID is required");
+  }
+
+  const buildPrediction = async (
+    college,
+    predictionType
   ) => {
 
-    if (!userId) {
-      throw new Error(
-        "User ID is required"
-      );
-    }
+    const collegeDoc =
+      await College.findById(
+        college.college
+      ).select("name state");
 
-    return await PredictionHistory.create(
-      {
-        userId,
-        ...payload,
-          round: payload.round ?? null,
-      }
-    );
+   return {
+
+  collegeId:
+    college.college._id,
+
+  collegeName:
+    college.college.name,
+
+  state:
+    college.college.state,
+
+  courseId:
+    college.course ?? payload.courseId,
+
+  cutoffId:
+    college.cutoffId,
+
+  predictionType,
+
+  quota:
+    college.quota,
+
+  seatType:
+    college.seatType,
+
+  category:
+    college.category,
+
+  round:
+    college.round,
+
+  year:
+    college.year,
+
+  openingRank:
+    college.openingRank,
+
+  closingRank:
+    college.closingRank,
+
+  studentRank:
+    college.studentRank,
+
+  fees:
+    college.fees,
+
+};
+
   };
+
+  const predictedColleges = [
+
+    ...(await Promise.all(
+
+      (payload.safe || []).map(
+        college =>
+          buildPrediction(
+            college,
+            "SAFE"
+          )
+      )
+
+    )),
+
+    ...(await Promise.all(
+
+      (payload.moderate || []).map(
+        college =>
+          buildPrediction(
+            college,
+            "MODERATE"
+          )
+      )
+
+    )),
+
+    ...(await Promise.all(
+
+      (payload.risky || []).map(
+        college =>
+          buildPrediction(
+            college,
+            "RISKY"
+          )
+      )
+
+    )),
+
+  ];
+
+  return await PredictionHistory.create({
+
+    userId,
+
+    courseId:
+      payload.courseId,
+
+    round:
+      payload.round ?? null,
+
+    counsellingType:
+      payload.counsellingType,
+
+    predictorState:
+      payload.predictorState,
+
+    domicileState:
+      payload.domicileState,
+
+    seatType:
+      payload.seatType,
+
+    category:
+      payload.category,
+
+    totalResults:
+      payload.totalResults,
+
+    safeCount:
+      payload.safeCount,
+
+    moderateCount:
+      payload.moderateCount,
+
+    riskyCount:
+      payload.riskyCount,
+
+    predictedColleges,
+
+  });
+
+};
 
 export const getPredictionHistory =
   async (userId) => {

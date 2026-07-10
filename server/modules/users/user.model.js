@@ -44,6 +44,10 @@ role:{
       type: Boolean,
       default: true,
     },
+    isPremium: {
+  type: Boolean,
+  default: false,
+},
 
     lastLogin: {
       type: Date,

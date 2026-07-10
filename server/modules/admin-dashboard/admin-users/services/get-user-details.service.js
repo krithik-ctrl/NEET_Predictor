@@ -10,12 +10,17 @@ export const getUserDetails =
 
     const [
       user,
-      profile,
-      subscription,
-      predictionCount,
-      savedCollegeCount,
-      choiceListCount,
+  profile,
+  subscription,
+  predictionCount,
+  savedCollegeCount,
+  choiceListCount,
+  predictionHistory,
+  savedColleges,
+  choiceLists,
     ] = await Promise.all([
+
+
 
       User.findById(userId).lean(),
 
@@ -48,9 +53,23 @@ export const getUserDetails =
       ChoiceList.countDocuments({
         userId,
       }),
+      PredictionHistory.find({ userId })
+  .populate("courseId", "name")
+  .sort({ createdAt: -1 })
+  .lean(),
+
+  SavedCollege.find({ userId })
+  .populate(
+    "collegeId",
+    "name state city ownership"
+  )
+  .lean(),
+  ChoiceList.find({ userId })
+.sort({ createdAt:-1 })
+.lean(),
 
     ]);
-
+ 
     if (!user) {
       throw new Error(
         "User not found."
@@ -153,6 +172,33 @@ export const getUserDetails =
           choiceListCount,
 
       },
+      predictionHistory: predictionHistory.map(item => ({
+  course: item.courseId?.name,
+  counsellingType: item.counsellingType,
+  predictorState: item.predictorState,
+  domicileState: item.domicileState,
+  seatType: item.seatType,
+  category: item.category,
+  round: item.round,
+  totalResults: item.totalResults,
+  safeCount: item.safeCount,
+  moderateCount: item.moderateCount,
+  riskyCount: item.riskyCount,
+  generatedAt: item.generatedAt,
+})),
+savedColleges: savedColleges.map(item => ({
+  id: item.collegeId?._id,
+  name: item.collegeId?.name,
+  state: item.collegeId?.state,
+  city: item.collegeId?.city,
+  ownership: item.collegeId?.ownership,
+})),
+choiceLists: choiceLists.map(item => ({
+  id: item._id,
+  name: item.name,
+  status: item.status,
+  createdAt: item.createdAt,
+})),
 
     };
 

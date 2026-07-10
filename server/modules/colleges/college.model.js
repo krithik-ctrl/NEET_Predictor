@@ -44,7 +44,7 @@ const collegeSchema =
           "Dental",
           "Ayush",
         ],
-        required: true,
+       
       },
 
       courses: [

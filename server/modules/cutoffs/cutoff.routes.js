@@ -9,44 +9,51 @@ import {
 } from "./cutoff.controller.js";
 
 import {
-  authenticate,
-} from "../../auth/middleware/authenticate.js";
+
+  authenticateAdmin,
+} from "../../auth/middleware/authenticateAdmin.js";
 
 import {
-  authorize,
-} from "../../auth/middleware/authorize.js";
+  
+  authorizeAdmin,
+} from "../../auth/middleware/authorizeAdmin.js";
+
+
+import { authenticate } from "../../auth/middleware/authenticate.js";
 
 const router =
   express.Router();
 
 router.post(
   "/",
-  authenticate,
-  authorize("admin"),
+  authenticateAdmin,
+  authorizeAdmin("admin"),
   createCutoffController
 );
 
 router.get(
   "/",
+
   getCutoffsController
 );
 
 router.get(
   "/:id",
+  
   getCutoffByIdController
 );
 
 router.patch(
   "/:id",
-  authenticate,
-  authorize("admin"),
+  authenticateAdmin,
+  authorizeAdmin("admin"),
   updateCutoffController
 );
 
 router.delete(
   "/:id",
-  authenticate,
-  authorize("admin"),
+  authenticateAdmin,
+  authorizeAdmin("admin"),
   deleteCutoffController
 );
 

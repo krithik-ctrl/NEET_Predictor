@@ -25,7 +25,7 @@ const cutoffSchema = new mongoose.Schema(
       trim: true,
     },
 
-    seatType: {
+   CollegeType: {
       type: String,
       required: true,
       trim: true,

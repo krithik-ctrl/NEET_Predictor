@@ -240,7 +240,7 @@ if (
   subscription: {
 
     currentPlan:
-      subscription.plan,
+      subscription.subscription.planId.name,
 
     isPremium:
       subscription.isPremium,

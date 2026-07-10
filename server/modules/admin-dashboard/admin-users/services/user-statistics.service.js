@@ -5,6 +5,9 @@ import { StudentProfile } from "../../../student-profile/studentProfile.model.js
 import { Subscription } from "../../../subscription/subscription.model.js";
 
 import { Plan } from "../../../plans/plan.model.js";
+import { Admin } from "../../../admin/admin.model.js";
+
+
 
 export const getUserStatistics =
   async () => {
@@ -28,33 +31,54 @@ export const getUserStatistics =
     |--------------------------------------------------------------------------
     */
 
-    const [
+  const [
 
-      totalUsers,
+  totalUsers,
 
-      students,
+  students,
 
-      activeUsers,
+  superAdmins,
 
-      inactiveUsers,
+  subAdmins,
 
-      verifiedUsers,
+  counsellors,
 
-      profileCompletedUsers,
+  activeUsers,
 
-      premiumUsers,
+  inactiveUsers,
 
-      freeUsers,
+  verifiedUsers,
 
-    ] = await Promise.all([
+  profileCompletedUsers,
 
-      User.countDocuments(),
+  premiumUsers,
+
+  freeUsers,
+
+] = await Promise.all([
+
+    Promise.all([
+  User.countDocuments(),
+  Admin.countDocuments(),
+]).then(
+  ([users, admins]) =>
+    users + admins
+),
 
       User.countDocuments({
 
         role: "student",
 
       }),
+      Admin.countDocuments({
+  role: "admin",
+}),
+
+Admin.countDocuments({
+  role: "sub-admin",
+}),
+
+0,
 
       User.countDocuments({
 
@@ -69,6 +93,24 @@ export const getUserStatistics =
       }),
 
       User.countDocuments({
+
+        isVerified: true,
+
+      }),
+
+      Admin.countDocuments({
+
+        isActive: true,
+
+      }),
+
+      Admin.countDocuments({
+
+        isActive: false,
+
+      }),
+
+      Admin.countDocuments({
 
         isVerified: true,
 
@@ -114,22 +156,28 @@ export const getUserStatistics =
 
     return {
 
-      totalUsers,
+  totalUsers,
 
-      students,
+  students,
 
-      premiumUsers,
+  superAdmins,
 
-      freeUsers,
+  subAdmins,
 
-      activeUsers,
+  counsellors,
 
-      inactiveUsers,
+  premiumUsers,
 
-      verifiedUsers,
+  freeUsers,
 
-      profileCompletedUsers,
+  activeUsers,
 
-    };
+  inactiveUsers,
+
+  verifiedUsers,
+
+  profileCompletedUsers,
+
+};
 
   };

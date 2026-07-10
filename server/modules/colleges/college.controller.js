@@ -37,18 +37,21 @@ export const createCollegeController =
 export const getCollegesController =
   async (req, res, next) => {
     try {
+
       const colleges =
-        await getColleges();
+        await getColleges(
+          req.query
+        );
 
       res.status(200).json({
         success: true,
         data: colleges,
       });
+
     } catch (error) {
       next(error);
     }
   };
-
 export const getCollegeByIdController =
   async (req, res, next) => {
     try {

@@ -1,6 +1,4 @@
-import {
-  buildUserQuery,
-} from "./services/user-query.service.js";
+
 
 import {
   getUserStatistics,
@@ -10,7 +8,21 @@ import {
   getUserList,
 } from "./services/user-list.service.js";
 
-import {buildUserResponse} from "./services/user-response.service.js"
+import {
+  getAdminList,
+} from "./services/admin-list.service.js";
+
+import {
+  getCounsellorList,
+} from "./services/counsellor-list.service.js";
+
+import {
+  mergeUsers,
+} from "./services/merge-users.service.js";
+
+import {
+  filterUsers,
+} from "./services/filter-users.service.js";
 
 
 
@@ -41,55 +53,82 @@ export const getAdminUsers =
 
     } = queryParams;
 
-    const filters =
-      buildUserQuery({
 
-        search,
+const [
 
-        role,
+  statistics,
 
-        plan,
+  students,
 
-        status,
+  admins,
 
-        verified,
+  counsellors,
 
-        profileCompleted,
+] = await Promise.all([
 
-      });
+  getUserStatistics(),
 
-    const [
+  getUserList(),
 
-      statistics,
+  getAdminList(),
 
-      users,
+  getCounsellorList(),
 
-    ] = await Promise.all([
+]);
 
-      getUserStatistics(),
 
-      getUserList({
+const mergedUsers =
+  mergeUsers({
 
-        filters,
+    students,
 
-        page,
+    admins,
 
-        limit,
+    counsellors,
 
-        sortBy,
+  });
 
-        sortOrder,
 
-      }),
+const users =
+  filterUsers(
 
-    ]);
+    mergedUsers,
 
-    return buildUserResponse({
+    {
 
-      statistics,
+      page,
 
-      users,
+      limit,
 
-    });
+      search,
+
+      role,
+
+      plan,
+
+      status,
+
+      verified,
+
+      profileCompleted,
+
+      sortBy,
+
+      sortOrder,
+
+    }
+
+  );
+
+  return {
+
+  statistics,
+
+  users: users.users,
+
+  pagination:
+    users.pagination,
+
+};
 
   };

@@ -17,14 +17,16 @@ import {
   updatePlanController,
   deletePlanController,
 } from "./plan.controller.js";
+import { authenticateAdmin } from "../../auth/middleware/authenticateAdmin.js";
+import { authorizeAdmin } from "../../auth/middleware/authorizeAdmin.js";
 
 const router =
   Router();
 
 router.post(
   "/",
-  authenticate,
-  authorize("admin"),
+  authenticateAdmin,
+  authorizeAdmin("admin"),
   createPlanController
 );
 
@@ -40,15 +42,15 @@ router.get(
 
 router.patch(
   "/:id",
-  authenticate,
-  authorize("admin"),
+  authenticateAdmin,
+  authorizeAdmin("admin"),
   updatePlanController
 );
 
 router.delete(
   "/:id",
-  authenticate,
-  authorize("admin"),
+  authenticateAdmin,
+  authorizeAdmin("admin"),
   deletePlanController
 );
 
