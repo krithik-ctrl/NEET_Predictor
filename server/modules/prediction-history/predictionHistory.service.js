@@ -9,7 +9,7 @@ export const createPredictionHistory = async (
   userId,
   payload
 ) => {
-console.log(payload.safe[0]);
+
   if (!userId) {
     throw new Error("User ID is required");
   }
@@ -40,6 +40,9 @@ console.log(payload.safe[0]);
 
   cutoffId:
     college.cutoffId,
+  
+  ownership:
+    college.college.ownership,
 
   predictionType,
 
@@ -156,6 +159,8 @@ console.log(payload.safe[0]);
   });
 
 };
+
+
 
 export const getPredictionHistory =
   async (userId) => {
