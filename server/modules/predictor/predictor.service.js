@@ -24,10 +24,11 @@ const {
   rank,
   courseId,
   counsellingType,
-  predictorState,
+  state:predictorState,
   domicileState,
   seatType,
   category,
+  collegeType,
   round,
   year,
   budget,
@@ -50,7 +51,7 @@ if (
     );
 
   if (
-    todayPredictions >= 3
+    todayPredictions >= 15
   ) {
     throw new Error(
       "Daily prediction limit reached. Upgrade to Premium for unlimited predictions."
@@ -82,11 +83,14 @@ if (!user.isActive) {
  const query = buildPredictionFilter({
   courseId,
   counsellingType,
+  state:predictorState,
   seatType,
   category,
+  collegeType,
   round,
   year,
 });
+
 
   let cutoffs =
     await Cutoff.find(query)
@@ -97,6 +101,11 @@ if (!user.isActive) {
         "courseId"
       )
       .lean();
+
+
+
+
+
 
  if (budget) {
   cutoffs = cutoffs.filter(
