@@ -96,6 +96,10 @@ predictedColleges: [
       required: true,
       trim: true,
     },
+  ownership: {
+    type: String,
+    trim: true,
+},
 
  courseId: {
   type: mongoose.Schema.Types.ObjectId,
@@ -115,7 +119,6 @@ predictedColleges: [
       required: true,
     },
 
-    quota: String,
 
     seatType: String,
 
@@ -132,6 +135,7 @@ predictedColleges: [
     studentRank: Number,
 
     fees: Number,
+    
   }
 ]
     },
