@@ -18,14 +18,17 @@ const cutoffSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+counsellingType:{
+type:String,
+enum:["AIQ","STATE"]
+},
+state:{
+  type:String,
+  trim:true,
+  default:""
+},
 
-    quota: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-
-   CollegeType: {
+   collegeType: {
       type: String,
       required: true,
       trim: true,
@@ -96,7 +99,8 @@ cutoffSchema.index(
     collegeId: 1,
     courseId: 1,
     year: 1,
-    quota: 1,
+    counsellingType:1,
+    state:1,
     seatType: 1,
     category: 1,
     round: 1,
@@ -115,7 +119,8 @@ cutoffSchema.index(
 cutoffSchema.index({
   courseId: 1,
   year: -1,
-  quota: 1,
+   counsellingType:1,
+    state:1,
   seatType: 1,
   category: 1,
   closingRank: 1,
