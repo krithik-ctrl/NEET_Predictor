@@ -9,8 +9,8 @@ const AUTH_KEY =
 const TEMPLATE_ID =
   process.env.MSG91_TEMPLATE_ID;
 
-const SENDER_ID =
-  process.env.MSG91_SENDER_ID;
+const RETRY_TYPE =
+  process.env.MSG91_RETRY_TYPE || "text";
 
 /*
 |--------------------------------------------------------------------------
@@ -24,29 +24,28 @@ export const sendOtp = async (
 
   try {
 
-    const response =
+    const { data } =
       await axios.post(
 
         `${BASE_URL}/otp`,
 
-        {
-
-          mobile,
-
-          template_id:
-            TEMPLATE_ID,
-
-          sender:
-            SENDER_ID,
-
-        },
+        {},
 
         {
 
-          headers: {
+          params: {
+
+            mobile,
 
             authkey:
               AUTH_KEY,
+
+            template_id:
+              TEMPLATE_ID,
+
+          },
+
+          headers: {
 
             "Content-Type":
               "application/json",
@@ -57,9 +56,35 @@ export const sendOtp = async (
 
       );
 
-    return response.data;
+    if (
+      data.type !==
+      "success"
+    ) {
+
+      throw new Error(
+        data.message ||
+          "Failed to send OTP."
+      );
+
+    }
+
+    return data;
 
   } catch (error) {
+
+    console.log("STATUS:");
+  console.log(error.response?.status);
+
+  console.log("DATA:");
+  console.log(error.response?.data);
+
+  console.log("URL:");
+  console.log(error.config?.url);
+
+  console.log("PARAMS:");
+  console.log(error.config?.params);
+
+  throw error;
 
     if (
       error.response
@@ -69,14 +94,14 @@ export const sendOtp = async (
 
         error.response.data?.message ||
 
-        "Failed to send OTP"
+        "Failed to send OTP."
 
       );
 
     }
 
     throw new Error(
-      "Unable to connect to OTP service"
+      "Unable to connect to MSG91."
     );
 
   }
@@ -97,28 +122,25 @@ export const verifyOtp =
 
     try {
 
-      const response =
-        await axios.post(
+      const { data } =
+        await axios.get(
 
           `${BASE_URL}/otp/verify`,
 
           {
 
-            mobile,
+            params: {
 
-            otp,
+              mobile,
 
-          },
+              otp,
 
-          {
+            },
 
             headers: {
 
               authkey:
                 AUTH_KEY,
-
-              "Content-Type":
-                "application/json",
 
             },
 
@@ -126,7 +148,19 @@ export const verifyOtp =
 
         );
 
-      return response.data;
+      if (
+        data.type !==
+        "success"
+      ) {
+
+        throw new Error(
+          data.message ||
+            "Invalid OTP."
+        );
+
+      }
+
+      return data;
 
     } catch (error) {
 
@@ -138,14 +172,88 @@ export const verifyOtp =
 
           error.response.data?.message ||
 
-          "Invalid OTP"
+          "Invalid OTP."
 
         );
 
       }
 
       throw new Error(
-        "Unable to connect to OTP service"
+        "Unable to connect to MSG91."
+      );
+
+    }
+
+  };
+
+/*
+|--------------------------------------------------------------------------
+| Retry OTP
+|--------------------------------------------------------------------------
+*/
+
+export const retryOtp =
+  async (
+    mobile
+  ) => {
+
+    try {
+
+      const { data } =
+        await axios.get(
+
+          `${BASE_URL}/otp/retry`,
+
+          {
+
+            params: {
+
+              mobile,
+
+              authkey:
+                AUTH_KEY,
+
+              retrytype:
+                RETRY_TYPE,
+
+            },
+
+          }
+
+        );
+
+      if (
+        data.type !==
+        "success"
+      ) {
+
+        throw new Error(
+          data.message ||
+            "Failed to resend OTP."
+        );
+
+      }
+
+      return data;
+
+    } catch (error) {
+
+      if (
+        error.response
+      ) {
+
+        throw new Error(
+
+          error.response.data?.message ||
+
+          "Failed to resend OTP."
+
+        );
+
+      }
+
+      throw new Error(
+        "Unable to connect to MSG91."
       );
 
     }

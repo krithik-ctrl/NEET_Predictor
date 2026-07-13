@@ -1,6 +1,7 @@
 import {
   sendOtpService,
   verifyOtpService,
+  resendOtpService,
 } from "./otp.service.js";
 
 /*
@@ -69,6 +70,38 @@ export const verifyOtpController =
         },
 
       });
+
+    } catch (error) {
+
+      next(error);
+
+    }
+
+  };
+
+
+  /*
+|--------------------------------------------------------------------------
+| Resend OTP
+|--------------------------------------------------------------------------
+*/
+
+export const resendOtpController =
+  async (req, res, next) => {
+
+    try {
+
+      const { mobile } =
+        req.body;
+
+      const response =
+        await resendOtpService(
+          mobile
+        );
+
+      res.status(200).json(
+        response
+      );
 
     } catch (error) {
 
