@@ -6,7 +6,7 @@ const keralaConfig = {
   rules: {
     sameState: {
       seatTypes: [
-        "Non-Keralite Candidate",
+        "State Quota",
       ],
     },
 
@@ -21,6 +21,7 @@ const keralaConfig = {
     "Non-Keralite Candidate": [
       "Open (Private College)",
     ],
+    "State Quota":["State Merit (SM)"]
   },
 };
 

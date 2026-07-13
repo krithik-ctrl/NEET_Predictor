@@ -5,7 +5,8 @@ import kerala from "./kerala.js";
 import maharashtra from "./maharashtra.js";
 import tamilNadu from "./tamilNadu.js";
 // import telangana from "./telangana.js"; // Add later
-
+import AndamanNicobar from "./andaman&nicobar.js";
+import assamConfig from "./assam.js";
 const stateConfigs = {
   AIQ: aiq,
   Karnataka: karnataka,
@@ -14,6 +15,8 @@ const stateConfigs = {
   Kerala: kerala,
   Maharashtra: maharashtra,
   // Telangana: telangana,
+ AndamanNicobar:AndamanNicobar,
+ Assam:assamConfig
 };
 
 export default stateConfigs;
