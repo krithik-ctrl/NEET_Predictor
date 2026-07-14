@@ -23,7 +23,11 @@ export const sendOtp = async (
 ) => {
 
   try {
-
+console.log({
+    mobile,
+    authkey: AUTH_KEY,
+    template_id: TEMPLATE_ID
+});
     const { data } =
       await axios.post(
 
@@ -55,7 +59,7 @@ export const sendOtp = async (
         }
 
       );
-
+console.log("MSG91 Response:", data);
     if (
       data.type !==
       "success"

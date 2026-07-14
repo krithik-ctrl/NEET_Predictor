@@ -64,8 +64,8 @@ router.use(
 
 router.get(
   "/",
-  authenticateAdmin,
-  authorizeAdmin("admin"),
+  // authenticateAdmin,
+  // authorizeAdmin("admin"),
   getAdminUsersController
 );
 
@@ -77,8 +77,8 @@ router.get(
 
 router.post(
   "/",
-  authenticateAdmin,
-  authorizeAdmin("admin"),
+  // authenticateAdmin,
+  // authorizeAdmin("admin"),
   createAdminController
 );
 
@@ -90,8 +90,8 @@ router.post(
 
 router.patch(
   "/:adminId",
-  authenticateAdmin,
-  authorizeAdmin("admin"),
+  // authenticateAdmin,
+  // authorizeAdmin("admin"),
   updateAdminController
 );
 /*
@@ -102,8 +102,8 @@ router.patch(
 
 router.get(
   "/student/:userId",
-  authenticateAdmin,
-  authorizeAdmin("admin"),
+  // authenticateAdmin,
+  // authorizeAdmin("admin"),
   getUserDetailsController
 );
 
@@ -115,8 +115,8 @@ router.get(
 
 router.get(
   "/:adminId",
-  authenticateAdmin,
-  authorizeAdmin("admin"),
+  // authenticateAdmin,
+  // authorizeAdmin("admin"),
   getAdminDetailsController
 );
 

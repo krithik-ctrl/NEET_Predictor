@@ -11,8 +11,8 @@ const router =
 
 router.get(
   "/",
-  authenticateAdmin,
-  authorizeAdmin("admin","sub-admin"),
+  // authenticateAdmin,
+  // authorizeAdmin("admin","sub-admin"),
   exportUsersController
 );
 

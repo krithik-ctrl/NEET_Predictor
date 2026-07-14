@@ -154,55 +154,52 @@ console.log("Filtered:", users.length);
 
 
 const statistics = {
+  totalUsers: users.length,
 
-    totalUsers:
-        users.length,
+  students: users.filter(
+    user => user.role === "student"
+  ).length,
 
-    totalStudents:
-        users.filter(
-            user => user.role === "student"
-        ).length,
+  superAdmins: users.filter(
+    user => user.role === "admin"
+  ).length,
 
-    totalAdmins:
-        users.filter(
-            user =>
-                user.role === "admin" ||
-                user.role === "sub-admin"
-        ).length,
+  subAdmins: users.filter(
+    user => user.role === "sub-admin"
+  ).length,
 
-    activeUsers:
-        users.filter(
-            user => user.status === "active"
-        ).length,
+  totalAdmins: users.filter(
+    user =>
+      user.role === "admin" ||
+      user.role === "sub-admin"
+  ).length,
 
-    inactiveUsers:
-        users.filter(
-            user => user.status !== "active"
-        ).length,
+  activeUsers: users.filter(
+    user => user.status === "active"
+  ).length,
 
-    verifiedUsers:
-        users.filter(
-            user => user.isVerified
-        ).length,
+  inactiveUsers: users.filter(
+    user => user.status !== "active"
+  ).length,
 
-    unverifiedUsers:
-        users.filter(
-            user => !user.isVerified
-        ).length,
+  verifiedUsers: users.filter(
+    user => user.isVerified
+  ).length,
 
-    premiumUsers:
-        users.filter(
-            user => user.plan !== "-"
-                  && user.plan !== "Free"
-        ).length,
+  unverifiedUsers: users.filter(
+    user => !user.isVerified
+  ).length,
 
-    freeUsers:
-        users.filter(
-            user =>
-                user.plan === "-"
-             || user.plan === "Free"
-        ).length,
+  premiumUsers: users.filter(
+    user => user.plan !== "-" &&
+            user.plan !== "Free"
+  ).length,
 
+  freeUsers: users.filter(
+    user =>
+      user.plan === "-" ||
+      user.plan === "Free"
+  ).length,
 };
 
   /*
@@ -212,7 +209,7 @@ const statistics = {
 */
 
 const sortField =
-  sortBy || "createdAt";
+  sortBy || "joinedDate";
 
 users.sort((a, b) => {
 

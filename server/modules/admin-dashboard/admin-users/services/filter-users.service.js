@@ -1,5 +1,5 @@
 const SORT_FIELDS = {
-  joinedDate: "joinedDate",
+  createdAt: "createdAt",
   lastLogin: "lastLogin",
   predictionCount: "predictionCount",
   name: "firstName",
@@ -28,7 +28,7 @@ console.log(JSON.stringify(users, null, 2));
 
     profileCompleted,
 
-    sortBy = "joinedDate",
+    sortBy = "createdAt",
 
     sortOrder = "desc",
 
@@ -37,7 +37,7 @@ console.log(JSON.stringify(users, null, 2));
     limit = 10,
 
   } = query;
-
+console.log("Incoming Query:", query);
   /*
   |--------------------------------------------------------------------------
   | Search
@@ -76,7 +76,7 @@ console.log(JSON.stringify(users, null, 2));
       results.filter(
         user => user.role === role
       );
-
+ console.log("After Role:", results.length);
   }
 
   /*
@@ -106,7 +106,7 @@ console.log(JSON.stringify(users, null, 2));
       results.filter(
         user => user.status === status
       );
-
+  console.log("After Status:", results.length);
   }
 
   /*
@@ -144,7 +144,7 @@ console.log(JSON.stringify(users, null, 2));
     results =
       results.filter(
         user =>
-          user.profileCompleted === value
+          user.profile?.profileCompleted === value
       );
 
   }
@@ -157,7 +157,7 @@ console.log(JSON.stringify(users, null, 2));
 
   const field =
     SORT_FIELDS[sortBy] ||
-    "joinedDate";
+    "createdAt";
 
   results.sort((a, b) => {
 

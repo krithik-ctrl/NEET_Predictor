@@ -116,7 +116,9 @@ export const getUserList =
     ...user,
 
     role: user.role || "student",
-
+status: user.isActive
+    ? "active"
+    : "inactive",
     profile,
 
     plan,

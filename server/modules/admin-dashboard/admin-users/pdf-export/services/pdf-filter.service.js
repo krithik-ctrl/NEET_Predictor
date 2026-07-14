@@ -11,8 +11,8 @@ const SORT_FIELDS = {
 };
 
 export const pdfFilterUsers = (
-  { users = [] },
-  query = {}
+ users,
+ query
 ) => {
 
 
