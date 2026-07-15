@@ -8,6 +8,7 @@ import {
 } from "./user.controller.js";
 
 import {
+  resendOtpController,
   sendOtpController,
   verifyOtpController,
 } from "../otp/otp.controller.js";
@@ -27,6 +28,10 @@ router.post(
   "/verify-otp",
   verifyOtpController
 );
+router.post(
+  "/resend-otp",
+  resendOtpController
+)
 
  //Google Authentication
 

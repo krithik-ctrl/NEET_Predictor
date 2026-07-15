@@ -1,21 +1,12 @@
-import crypto from "crypto";
+import {
+  sendAdminOtp,
+  verifyAdminOtp,
+  retryAdminOtp,
+  normalizeMobile,
+  formatMobileForMSG91,
+} from "./adminOtp.helper.js";
 
-import { Admin } from "../admin/admin.model.js";
-import { AdminOtp } from "./adminOtp.model.js";
-
-/*
-|--------------------------------------------------------------------------
-| Generate OTP
-|--------------------------------------------------------------------------
-*/
-
-const generateAdminOtp = () => {
-
-  return crypto
-    .randomInt(100000, 999999)
-    .toString();
-
-};
+import { getAdminByMobile } from "../admin-auth/adminAuth.service.js";
 
 /*
 |--------------------------------------------------------------------------
@@ -23,9 +14,7 @@ const generateAdminOtp = () => {
 |--------------------------------------------------------------------------
 */
 
-export const sendAdminOtp = async ({
-  mobile,
-}) => {
+export const sendAdminOtpService = async (mobile) => {
 
   if (!mobile) {
     throw new Error(
@@ -33,11 +22,14 @@ export const sendAdminOtp = async ({
     );
   }
 
+  const dbMobile =
+    normalizeMobile(mobile);
+
+  const msg91Mobile =
+    formatMobileForMSG91(dbMobile);
+
   const admin =
-    await Admin.findOne({
-      mobile,
-      isActive: true,
-    });
+    await getAdminByMobile(dbMobile);
 
   if (!admin) {
     throw new Error(
@@ -45,45 +37,12 @@ export const sendAdminOtp = async ({
     );
   }
 
-  await AdminOtp.deleteMany({
-    mobile,
-  });
-
-  const otp =
-    generateAdminOtp();
-
-  const expiresAt =
-    new Date(
-      Date.now() +
-      5 * 60 * 1000
-    );
-
-  await AdminOtp.create({
-
-    mobile,
-
-    otp,
-
-    expiresAt,
-
-  });
-
-  /*
-  |--------------------------------------------------------------------------
-  | TODO
-  | Integrate SMS Provider
-  |--------------------------------------------------------------------------
-  */
-
-  console.log(
-    `Admin OTP for ${mobile}: ${otp}`
-  );
+  await sendAdminOtp(msg91Mobile);
 
   return {
-    message:
-      "OTP sent successfully.",
+    success: true,
+    message: "OTP sent successfully.",
   };
-
 };
 
 /*
@@ -92,57 +51,41 @@ export const sendAdminOtp = async ({
 |--------------------------------------------------------------------------
 */
 
-export const verifyAdminOtp = async ({
+export const verifyAdminOtpService = async (
   mobile,
-  otp,
-}) => {
+  enteredOtp
+) => {
 
-  if (!mobile || !otp) {
+  if (!mobile || !enteredOtp) {
     throw new Error(
-      "Mobile and OTP are required."
+      "Mobile number and OTP are required."
     );
   }
 
-  const otpRecord =
-    await AdminOtp.findOne({
+  const dbMobile =
+    normalizeMobile(mobile);
 
-      mobile,
+  const msg91Mobile =
+    formatMobileForMSG91(dbMobile);
 
-      otp,
+  const admin =
+    await getAdminByMobile(dbMobile);
 
-      verified: false,
-
-    });
-
-  if (!otpRecord) {
+  if (!admin) {
     throw new Error(
-      "Invalid OTP."
+      "Admin not found."
     );
   }
 
-  if (
-    otpRecord.expiresAt <
-    new Date()
-  ) {
-
-    await otpRecord.deleteOne();
-
-    throw new Error(
-      "OTP has expired."
-    );
-
-  }
-
-  otpRecord.verified =
-    true;
-
-  await otpRecord.save();
+  await verifyAdminOtp(
+    msg91Mobile,
+    enteredOtp
+  );
 
   return {
-    message:
-      "OTP verified successfully.",
+    success: true,
+    message: "OTP verified successfully.",
   };
-
 };
 
 /*
@@ -151,13 +94,35 @@ export const verifyAdminOtp = async ({
 |--------------------------------------------------------------------------
 */
 
-export const resendAdminOtp =
-  async ({
-    mobile,
-  }) => {
+export const resendAdminOtpService = async (
+  mobile
+) => {
 
-    return await sendAdminOtp({
-      mobile,
-    });
+  if (!mobile) {
+    throw new Error(
+      "Mobile number is required."
+    );
+  }
 
+  const dbMobile =
+    normalizeMobile(mobile);
+
+  const msg91Mobile =
+    formatMobileForMSG91(dbMobile);
+
+  const admin =
+    await getAdminByMobile(dbMobile);
+
+  if (!admin) {
+    throw new Error(
+      "Admin not found."
+    );
+  }
+
+  await retryAdminOtp(msg91Mobile);
+
+  return {
+    success: true,
+    message: "OTP resent successfully.",
   };
+};

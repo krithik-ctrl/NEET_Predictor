@@ -5,6 +5,7 @@ import {
   loginAdminController,
   logoutAdminController,
   getAdminProfileController,
+  resendLoginOtpController
 } from "./adminAuth.controller.js";
 
 import {
@@ -43,6 +44,11 @@ router.get(
   "/profile",
   authenticateAdmin,
   getAdminProfileController
+);
+
+router.post(
+  "/resend-otp",
+  resendLoginOtpController
 );
 
 export default router;

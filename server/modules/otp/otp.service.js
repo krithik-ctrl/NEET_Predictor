@@ -2,6 +2,8 @@ import {
   sendOtp,
   verifyOtp,
   retryOtp,
+  normalizeMobile,
+  formatMobileForMSG91
 } from "./otp.helper.js";
 
 import {
@@ -22,37 +24,33 @@ import {
 |--------------------------------------------------------------------------
 */
 
-export const sendOtpService =
-  async (mobile) => {
+export const sendOtpService = async (mobile) => {
 
-    if (!mobile) {
-      throw new Error(
-        "Mobile number is required."
-      );
-    }
+  if (!mobile) {
+    throw new Error("Mobile number is required.");
+  }
 
-    const user =
-      await getUserByMobile(
-        mobile
-      );
+  const dbMobile = normalizeMobile(mobile);
 
-    if (!user) {
-      throw new Error(
-        "Mobile number is not registered."
-      );
-    }
+  const msg91Mobile =
+    formatMobileForMSG91(dbMobile);
 
-    await sendOtp(
-      mobile
+  const user =
+    await getUserByMobile(dbMobile);
+
+  if (!user) {
+    throw new Error(
+      "Mobile number is not registered."
     );
+  }
 
-    return {
-      success: true,
-      message:
-        "OTP sent successfully.",
-    };
+  await sendOtp(msg91Mobile);
 
+  return {
+    success: true,
+    message: "OTP sent successfully.",
   };
+};
 
 /*
 |--------------------------------------------------------------------------
@@ -67,6 +65,16 @@ export const verifyOtpService =
     res
   ) => {
 
+    const dbMobile =
+      normalizeMobile(
+        mobile
+      );
+
+    const msg91Mobile =
+      formatMobileForMSG91(
+        dbMobile
+      );
+
     if (
       !mobile ||
       !enteredOtp
@@ -79,13 +87,13 @@ export const verifyOtpService =
     }
 
     await verifyOtp(
-      mobile,
+      msg91Mobile,
       enteredOtp
     );
 
     const user =
       await getUserByMobile(
-        mobile
+        dbMobile
       );
 
     if (!user) {
@@ -112,28 +120,33 @@ export const verifyOtpService =
     );
 
     return {
-  user: {
-    id: user._id,
 
-    firstName:
-      user.firstName,
+      user: {
 
-    lastName:
-      user.lastName,
+        id:
+          user._id,
 
-    mobile:
-      user.mobile,
+        firstName:
+          user.firstName,
 
-    email:
-      user.email,
+        lastName:
+          user.lastName,
 
-    avatar:
-      user.avatar,
+        mobile:
+          user.mobile,
 
-    provider:
-      user.provider,
-  },
-};      
+        email:
+          user.email,
+
+        avatar:
+          user.avatar,
+
+        provider:
+          user.provider,
+
+      },
+
+    };
 
   };
 
@@ -148,6 +161,16 @@ export const resendOtpService =
     mobile
   ) => {
 
+    const dbMobile =
+      normalizeMobile(
+        mobile
+      );
+
+    const msg91Mobile =
+      formatMobileForMSG91(
+        dbMobile
+      );
+
     if (!mobile) {
 
       throw new Error(
@@ -158,7 +181,7 @@ export const resendOtpService =
 
     const user =
       await getUserByMobile(
-        mobile
+        dbMobile
       );
 
     if (!user) {
@@ -170,7 +193,7 @@ export const resendOtpService =
     }
 
     await retryOtp(
-      mobile
+      msg91Mobile
     );
 
     return {

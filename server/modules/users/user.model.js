@@ -58,10 +58,7 @@ role:{
   default: "",
   required: true,
   unique: true,
-  match: [
-    /^[6-9]\d{9}$/,
-    "Please enter a valid 10-digit mobile number starting with 6, 7, 8, or 9.",
-  ],
+ 
 },
 
 isVerified: {

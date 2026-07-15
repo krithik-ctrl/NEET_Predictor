@@ -4,8 +4,9 @@ import jwt from "jsonwebtoken";
 import { Admin } from "../admin/admin.model.js";
 
 import {
-  sendAdminOtp,
-  verifyAdminOtp,
+  sendAdminOtpService,
+  verifyAdminOtpService,
+  resendAdminOtpService
 } from "../admin-otp/adminOtp.service.js";
 
 
@@ -52,9 +53,9 @@ export const sendLoginOtp = async ({
     );
   }
 
-  await sendAdminOtp({
-    mobile,
-  });
+ await sendAdminOtpService(
+  mobile
+);
 
   return {
     message:
@@ -80,10 +81,10 @@ export const loginAdmin = async ({
     );
   }
 
-  await verifyAdminOtp({
-    mobile,
-    otp,
-  });
+await verifyAdminOtpService(
+  mobile,
+  otp
+);
 
   const admin =
     await Admin.findOne({
@@ -189,3 +190,23 @@ export const getAdminProfile =
     return admin;
 
   };
+
+
+  /*
+|--------------------------------------------------------------------------
+| Get Admin By Mobile
+|--------------------------------------------------------------------------
+*/
+
+export const getAdminByMobile = async (mobile) => {
+  return await Admin.findOne({
+    mobile,
+    isActive: true,
+  });
+};
+
+
+
+export const resendLoginOtp = async ({ mobile }) => {
+  return await resendAdminOtpService(mobile);
+};

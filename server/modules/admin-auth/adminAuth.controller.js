@@ -3,6 +3,7 @@ import {
   loginAdmin,
   logoutAdmin,
   getAdminProfile,
+  resendLoginOtp
 } from "./adminAuth.service.js";
 import {setAuthCookie} from "../../auth/utils/setAuthCookie.js";
 /*
@@ -111,6 +112,22 @@ export const getAdminProfileController =
       res.status(200).json({
         success: true,
         data: profile,
+      });
+
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  export const resendLoginOtpController =
+  async (req, res, next) => {
+    try {
+      const response =
+        await resendLoginOtp(req.body);
+
+      res.status(200).json({
+        success: true,
+        ...response,
       });
 
     } catch (error) {

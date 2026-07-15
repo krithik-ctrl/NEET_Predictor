@@ -65,11 +65,7 @@ const handleMSG91Error = (error) => {
   }
 };
 
-/*
-|--------------------------------------------------------------------------
-| Send OTP
-|--------------------------------------------------------------------------
-*/
+
 
 /*
 |--------------------------------------------------------------------------
@@ -77,7 +73,7 @@ const handleMSG91Error = (error) => {
 |--------------------------------------------------------------------------
 */
 
-export const sendOtp = async (
+export const sendAdminOtp = async (
   mobile
 ) => {
 
@@ -143,7 +139,7 @@ export const sendOtp = async (
 |--------------------------------------------------------------------------
 */
 
-export const verifyOtp = async (
+export const verifyAdminOtp = async (
   mobile,
   otp
 ) => {
@@ -204,7 +200,7 @@ export const verifyOtp = async (
 |--------------------------------------------------------------------------
 */
 
-export const retryOtp = async (
+export const retryAdminOtp = async (
   mobile
 ) => {
 
