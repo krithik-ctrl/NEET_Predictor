@@ -37,15 +37,7 @@ const collegeSchema =
         required: true,
       },
 
-      collegeType: {
-        type: String,
-        enum: [
-          "Medical",
-          "Dental",
-          "Ayush",
-        ],
-       
-      },
+ 
 
       courses: [
         {

@@ -106,7 +106,7 @@ export const verifyOtpService =
 
     user.lastLogin =
       new Date();
-
+    user.isVerified=true;
     await user.save();
 
     const token =

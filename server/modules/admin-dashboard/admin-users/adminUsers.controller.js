@@ -162,7 +162,7 @@ export const getAdminUsersController =
   ) => {
 
     try {
-
+console.log(req.params.adminId)
       const data =
         await getAdminDetails(
           req.params.adminId

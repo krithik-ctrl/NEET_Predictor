@@ -20,11 +20,11 @@ export const createCollegeSchema =
       "Deemed",
     ]),
 
-    collegeType: z.enum([
-      "Medical",
-      "Dental",
-      "Ayush",
-    ]),
+    // collegeType: z.enum([
+    //   "Medical",
+    //   "Dental",
+    //   "Ayush",
+    // ]),
 
     courses: z
       .array(z.string())
