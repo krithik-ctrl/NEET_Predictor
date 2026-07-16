@@ -84,15 +84,32 @@ console.log("Incoming Query:", query);
   | Plan
   |--------------------------------------------------------------------------
   */
+console.log(
+  results.map(user => ({
+    name: user.firstName,
+    role: user.role,
+    plan: user.plan
+  }))
+);
+if (plan) {
 
-  if (plan) {
+  results = results.filter((user) => {
 
-    results =
-      results.filter(
-        user => user.plan === plan
-      );
+    if (!user.plan) return false;
 
-  }
+    if (plan === "Free") {
+      return user.plan.name === "Free";
+    }
+
+    if (plan === "Premium") {
+      return user.plan.name.toLowerCase().startsWith("premium");
+    }
+
+    return user.plan.name === plan;
+
+  });
+
+}
 
   /*
   |--------------------------------------------------------------------------
@@ -106,7 +123,7 @@ console.log("Incoming Query:", query);
       results.filter(
         user => user.status === status
       );
-  console.log("After Status:", results.length);
+
   }
 
   /*

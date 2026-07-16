@@ -1,21 +1,22 @@
 import bcrypt from "bcryptjs";
 
-import { User } from "../users/user.model.js";
+
+import { Admin } from "../admin/admin.model.js";
 
 export const getAdminProfile = async (
-  userId
+  adminId
 ) => {
 
-  if (!userId) {
+  if (!adminId) {
     throw new Error(
-      "User ID is required"
+      "Admin ID is required"
     );
   }
 
   const admin =
-    await User.findById(userId)
+    await Admin.findById(adminId)
       .select(
-        "name email phone role designation isActive lastLogin twoFactorEnabled createdAt"
+        "firstName lastName email mobile role isVerified isActive lastLogin createdAt"
       );
 
   if (!admin) {
@@ -24,31 +25,30 @@ export const getAdminProfile = async (
     );
   }
 
-  const designation =
-    admin.designation ||
-    (admin.role === "admin"
-      ? "Platform Administrator"
-      : admin.role === "counsellor"
-      ? "Counsellor"
-      : "Student");
-
   return {
 
     account: {
 
-      name:
-        admin.name,
+      firstName:
+        admin.firstName,
+
+      lastName:
+        admin.lastName,
+
+      fullName:
+        `${admin.firstName} ${admin.lastName}`,
 
       email:
         admin.email,
 
-      phone:
-        admin.phone || "",
+      mobile:
+        admin.mobile,
 
       role:
         admin.role,
 
-      designation,
+      isVerified:
+        admin.isVerified,
 
     },
 
@@ -62,9 +62,6 @@ export const getAdminProfile = async (
           ? "Active"
           : "Inactive",
 
-      twoFactorEnabled:
-        admin.twoFactorEnabled,
-
       memberSince:
         admin.createdAt,
 
@@ -76,19 +73,19 @@ export const getAdminProfile = async (
 
 export const updateAdminProfile =
   async (
-    userId,
+    adminId,
     payload
   ) => {
 
-    if (!userId) {
+    if (!adminId) {
       throw new Error(
-        "User ID is required"
+        "Admin ID is required"
       );
     }
 
     const admin =
-      await User.findById(
-        userId
+      await Admin.findById(
+        adminId
       );
 
     if (!admin) {
@@ -99,60 +96,89 @@ export const updateAdminProfile =
 
     const {
 
-      name,
+      firstName,
 
-      phone,
+      lastName,
 
-      designation,
+      email,
+
+      mobile,
 
     } = payload;
 
     if (
-      name === undefined &&
-      phone === undefined &&
-      designation === undefined
+
+      firstName === undefined &&
+
+      lastName === undefined &&
+
+      email === undefined &&
+
+      mobile === undefined
+
     ) {
+
       throw new Error(
         "No valid fields provided for update"
       );
+
     }
 
     if (
-      name !== undefined
+      firstName !== undefined
     ) {
-      admin.name = name;
+
+      admin.firstName =
+        firstName;
+
     }
 
     if (
-      phone !== undefined
+      lastName !== undefined
     ) {
-      admin.phone = phone;
+
+      admin.lastName =
+        lastName;
+
     }
 
     if (
-      designation !== undefined
+      email !== undefined
     ) {
-      admin.designation =
-        designation;
+
+      admin.email =
+        email;
+
+    }
+
+    if (
+      mobile !== undefined
+    ) {
+
+      admin.mobile =
+        mobile;
+
     }
 
     await admin.save();
 
     return await getAdminProfile(
-      userId
+      adminId
     );
 
   };
 
+
+
 export const changeAdminPassword =
   async (
-    userId,
+    adminId,
     payload
   ) => {
 
-    if (!userId) {
+    if (!adminId) {
       throw new Error(
-        "User ID is required"
+        "Admin ID is required"
       );
     }
 
@@ -174,8 +200,8 @@ export const changeAdminPassword =
     }
 
     const admin =
-      await User.findById(
-        userId
+      await Admin.findById(
+        adminId
       ).select(
         "+password"
       );
@@ -216,8 +242,10 @@ export const changeAdminPassword =
     await admin.save();
 
     return {
+
       message:
         "Password updated successfully",
+
     };
 
   };

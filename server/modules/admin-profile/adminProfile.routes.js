@@ -3,15 +3,17 @@ from "express";
 
 import {
 
-  authenticate,
+  
+  authenticateAdmin,
 
-} from "../../auth/middleware/authenticate.js";
+} from "../../auth/middleware/authenticateAdmin.js";
 
 import {
 
-  authorize,
+ 
+  authorizeAdmin
 
-} from "../../auth/middleware/authorize.js";
+} from "../../auth/middleware/authorizeAdmin.js";
 
 import {
 
@@ -30,9 +32,9 @@ router.get(
 
   "/",
 
-  authenticate,
+  authenticateAdmin,
 
-  authorize(
+  authorizeAdmin(
     "admin"
   ),
 
@@ -44,9 +46,9 @@ router.patch(
 
   "/",
 
-  authenticate,
+  authenticateAdmin,
 
-  authorize(
+  authorizeAdmin(
     "admin"
   ),
 
@@ -58,9 +60,9 @@ router.patch(
 
   "/change-password",
 
-  authenticate,
+  authenticateAdmin,
 
-  authorize(
+  authorizeAdmin(
     "admin"
   ),
 

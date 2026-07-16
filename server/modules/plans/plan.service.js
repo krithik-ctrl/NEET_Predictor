@@ -23,7 +23,7 @@ export const getPlans =
   async () => {
 
     return await Plan.find({
-      status: "active",
+      
     }).sort({
       price: 1,
     });

@@ -51,7 +51,7 @@ if (
     );
 
   if (
-    todayPredictions >= 15
+    todayPredictions >= 5
   ) {
     throw new Error(
       "Daily prediction limit reached. Upgrade to Premium for unlimited predictions."

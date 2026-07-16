@@ -15,7 +15,7 @@ export const getAdminProfileController =
 
       const profile =
         await getAdminProfile(
-          req.user.id
+          req.admin.adminId
         );
 
       res.status(200).json({
@@ -42,7 +42,7 @@ export const updateAdminProfileController =
       const profile =
         await updateAdminProfile(
 
-          req.user.id,
+          req.admin.adminId,
 
           req.body
 
@@ -75,7 +75,7 @@ export const changeAdminPasswordController =
       const result =
         await changeAdminPassword(
 
-          req.user.id,
+          req.admin.adminId,
 
           req.body
 
