@@ -57,6 +57,9 @@ export const sendOtpService = async (mobile) => {
 
     user = await getUserByMobile(dbMobile);
 
+
+
+    
     if (user) {
       break;
     }

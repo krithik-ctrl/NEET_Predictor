@@ -250,8 +250,28 @@ handleMSG91Error(error);
 };
 
 
-  export const normalizeMobile = (mobile) => {
-  return mobile.replace(/^91/, "");
+export const normalizeMobile = (mobile) => {
+
+  const number =
+    String(mobile)
+      .replace(/\D/g, "");
+
+  if (
+    number.length === 13 &&
+    number.startsWith("091")
+  ) {
+    return number.slice(3);
+  }
+
+  if (
+    number.length === 12 &&
+    number.startsWith("91")
+  ) {
+    return number.slice(2);
+  }
+
+  return number;
+
 };
 
 export const formatMobileForMSG91 = (mobile) => {
