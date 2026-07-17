@@ -24,6 +24,12 @@ import {
 |--------------------------------------------------------------------------
 */
 
+/*
+|--------------------------------------------------------------------------
+| Send OTP
+|--------------------------------------------------------------------------
+*/
+
 export const sendOtpService = async (mobile) => {
 
   if (!mobile) {
@@ -35,23 +41,61 @@ export const sendOtpService = async (mobile) => {
   const msg91Mobile =
     formatMobileForMSG91(dbMobile);
 
-  const user =
-    await getUserByMobile(dbMobile);
+  /*
+  |--------------------------------------------------------------------------
+  | Retry User Lookup
+  |--------------------------------------------------------------------------
+  */
+
+  let user = null;
+
+  const MAX_RETRIES = 5;
+
+  const RETRY_DELAY = 300; // milliseconds
+
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+
+    user = await getUserByMobile(dbMobile);
+
+    if (user) {
+      break;
+    }
+
+    console.log(
+      `User not found. Retry ${attempt}/${MAX_RETRIES}`
+    );
+
+    await new Promise(resolve =>
+      setTimeout(resolve, RETRY_DELAY)
+    );
+
+  }
 
   if (!user) {
+
     throw new Error(
       "Mobile number is not registered."
     );
+
   }
+
+  /*
+  |--------------------------------------------------------------------------
+  | Send OTP
+  |--------------------------------------------------------------------------
+  */
 
   await sendOtp(msg91Mobile);
 
   return {
-    success: true,
-    message: "OTP sent successfully.",
-  };
-};
 
+    success: true,
+
+    message: "OTP sent successfully.",
+
+  };
+
+};
 /*
 |--------------------------------------------------------------------------
 | Verify OTP
