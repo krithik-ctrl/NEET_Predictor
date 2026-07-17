@@ -126,7 +126,7 @@ export const getAllPayments =
 
       .populate(
         "userId",
-        "name email"
+        "firstName lastName email"
       )
 
       .populate(
