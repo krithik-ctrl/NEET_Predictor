@@ -13,6 +13,7 @@ const predictionHistorySchema =
         type: mongoose.Schema.Types.ObjectId,
         ref: "Course",
         required: true,
+        
       },
 
       round: {
@@ -81,8 +82,9 @@ predictedColleges: [
   {
     collegeId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "College",
-      required: true,
+      // ref: "College",
+      // required: true,
+      default:null
     },
 
     collegeName: {
@@ -109,8 +111,9 @@ predictedColleges: [
 
     cutoffId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Cutoff",
-      required: true,
+      // ref: "Cutoff",
+      // required: true,
+      default:null
     },
 
     predictionType: {

@@ -205,7 +205,7 @@ if (!user.isActive) {
       b.closingRank
   );
 
-  
+
 const predictionHistory =
   await createPredictionHistory(userId, {
     courseId,

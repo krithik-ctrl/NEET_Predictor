@@ -14,68 +14,131 @@ export const createPredictionHistory = async (
     throw new Error("User ID is required");
   }
 
-  const buildPrediction = async (
-    college,
-    predictionType
-  ) => {
+//   const buildPrediction = async (
+//     college,
+//     predictionType
+//   ) => {
 
-    const collegeDoc =
-      await College.findById(
-        college.college
-      ).select("name state");
+//     const collegeDoc =
+//       await College.findById(
+//         college.college
+//       ).select("name state");
 
-   return {
+//    return {
 
-  collegeId:
-    college.college._id,
+//   collegeId:
+//     college.college._id,
 
-  collegeName:
-    college.college.name,
+//   collegeName:
+//     college.college.name,
 
-  state:
-    college.college.state,
+//   state:
+//     college.college.state,
 
-  courseId:
-    college.course ?? payload.courseId,
+//   courseId:
+//     college.course ?? payload.courseId,
 
-  cutoffId:
-    college.cutoffId,
+//   cutoffId:
+//     college.cutoffId,
   
-  ownership:
-    college.college.ownership,
+//   ownership:
+//     college.college.ownership,
 
-  predictionType,
+//   predictionType,
 
-  quota:
-    college.quota,
+//   quota:
+//     college.quota,
 
-  seatType:
-    college.seatType,
+//   seatType:
+//     college.seatType,
 
-  category:
-    college.category,
+//   category:
+//     college.category,
 
-  round:
-    college.round,
+//   round:
+//     college.round,
 
-  year:
-    college.year,
+//   year:
+//     college.year,
 
-  openingRank:
-    college.openingRank,
+//   openingRank:
+//     college.openingRank,
 
-  closingRank:
-    college.closingRank,
+//   closingRank:
+//     college.closingRank,
 
-  studentRank:
-    college.studentRank,
+//   studentRank:
+//     college.studentRank,
 
-  fees:
-    college.fees,
+//   fees:
+//     college.fees,
+
+// };
+
+//   };
+
+
+
+
+const buildPrediction = async (
+  college,
+  predictionType
+) => {
+
+  const collegeData = college.college;
+
+  return {
+
+    collegeId:
+      collegeData._id ?? null,
+
+    collegeName:
+      collegeData.name,
+
+    state:
+      collegeData.state,
+
+    ownership:
+      collegeData.ownership ?? null,
+
+    courseId:
+      college.course ?? payload.courseId,
+
+    cutoffId:
+      college.cutoffId ?? null,
+
+    predictionType,
+
+    quota:
+      college.quota,
+
+    seatType:
+      college.seatType,
+
+    category:
+      college.category,
+
+    round:
+      college.round,
+
+    year:
+      college.year,
+
+    openingRank:
+      college.openingRank ?? null,
+
+    closingRank:
+      college.closingRank ?? null,
+
+    studentRank:
+      college.studentRank,
+
+    fees:
+      college.fees ?? null,
+  };
 
 };
 
-  };
 
   const predictedColleges = [
 
