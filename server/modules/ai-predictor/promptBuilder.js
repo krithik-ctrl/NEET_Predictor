@@ -1,12 +1,18 @@
 import { SYSTEM_PROMPT } from "./systemPrompt.js";
 
 const COURSE_MAPPING = `
-6a3a57c98831c74d27a415f1 = MBBS
-6a4b4c469099adfe25f97c59 = MD
-6a4b4c469099adfe25f97c60 = MS
-6a4b4c469099adfe25f97c61 = MDS
-
-// Add remaining courses
+6a4b4c469099adfe25f97c59 = MBBS
+6a4b4c469099adfe25f97c5b = BAMS
+6a4b4c469099adfe25f97c5a = BDS
+6a4b4c469099adfe25f97c5c = BHMS
+6a4b4c469099adfe25f97c5d = BUMS
+6a4b4c469099adfe25f97c5e = BSMS
+6a4b4c469099adfe25f97c5f = BNYS
+6a4b4c469099adfe25f97c60 = BPT
+6a4b4c469099adfe25f97c61 = B.Sc Nursing
+6a4b4c469099adfe25f97c62 = MD
+6a4b4c469099adfe25f97c63 = MS
+6a4b4c469099adfe25f97c64 = MDS
 `;
 
 export const buildPrompt = (payload) => {
