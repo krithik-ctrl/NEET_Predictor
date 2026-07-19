@@ -29,6 +29,12 @@ console.log("Start:", results.length);
     plan,
 
     status,
+    
+    state,              // NEW
+
+    city,                // NEW
+
+    preferredCourse,     // NEW
 
     verified,
 
@@ -120,6 +126,58 @@ console.log("After Plan:", results.length);
       );
 console.log("After Status:", results.length);
   }
+
+
+
+/*
+  |--------------------------------------------------------------------------
+  | State
+  |--------------------------------------------------------------------------
+  */
+
+  if (state) {
+
+    results =
+      results.filter(
+        user =>
+          user.state === state
+      );
+console.log("After State:", results.length);
+  }
+
+  /*
+  |--------------------------------------------------------------------------
+  | City
+  |--------------------------------------------------------------------------
+  */
+
+  if (city) {
+
+    results =
+      results.filter(
+        user =>
+          user.city === city
+      );
+console.log("After City:", results.length);
+  }
+
+  /*
+  |--------------------------------------------------------------------------
+  | Preferred Course
+  |--------------------------------------------------------------------------
+  */
+
+  if (preferredCourse) {
+
+    results =
+      results.filter(
+        user =>
+          user.preferredCourse === preferredCourse
+      );
+console.log("After PreferredCourse:", results.length);
+  }
+
+
 
   /*
   |--------------------------------------------------------------------------

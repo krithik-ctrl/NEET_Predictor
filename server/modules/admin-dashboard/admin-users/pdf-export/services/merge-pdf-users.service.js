@@ -68,6 +68,12 @@ export const mergePdfUsers = ({
       plan:
         student.plan?.name || "-",
 
+          preferredCourse:
+        student.preferredCourse || null,        // now an ID
+
+      preferredCourseName:                       // NEW
+        student.preferredCourseName || null,
+
       predictionCount:
         student.predictionCount || 0,
 
@@ -145,6 +151,11 @@ export const mergePdfUsers = ({
 
       plan:
         "-",
+
+      preferredCourse:            // NEW
+        null,
+           preferredCourseName:                        // NEW
+        null,
 
       predictionCount:
         0,

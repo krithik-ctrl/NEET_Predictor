@@ -8,6 +8,8 @@ import { Plan } from "../../../plans/plan.model.js";
 
 import { PredictionHistory } from "../../../prediction-history/predictionHistory.model.js";
 
+import { Course } from "../../../courses/course.model.js"; // NEW - adjust path to your actual Course model location
+
 export const getUserList =
   async () => {
 
@@ -29,6 +31,8 @@ export const getUserList =
       plans,
 
       predictions,
+
+      courses, // NEW
 
     ] = await Promise.all([
 
@@ -80,6 +84,8 @@ export const getUserList =
 
       ]),
 
+      Course.find().lean(), // NEW
+
     ]);
 
    const studentUsers = users.map((user) => {
@@ -111,6 +117,15 @@ export const getUserList =
         item._id.toString() === user._id.toString()
     );
 
+  const course =
+    profile?.preferredCourse
+      ? courses.find(
+          (item) =>
+            item._id.toString() ===
+            profile.preferredCourse.toString()
+        )
+      : null;
+
   return {
 
     ...user,
@@ -125,6 +140,14 @@ status: user.isActive
 
     predictionCount:
       prediction?.count || 0,
+
+     preferredCourse:
+      profile?.preferredCourse
+        ? profile.preferredCourse.toString()   // CHANGED — now the ID, used for filtering
+        : null,
+
+    preferredCourseName:
+      course?.name || null,  
 
   };
 
