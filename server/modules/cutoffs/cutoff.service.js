@@ -80,6 +80,8 @@ export const createCutoff =
 
 // Replace the existing getCutoffs export in cutoff.service.js with this version.
 
+
+
 export const getCutoffs = async (query = {}) => {
   const {
     page = 1,
@@ -96,7 +98,7 @@ export const getCutoffs = async (query = {}) => {
     sortBy = "year",
     sortOrder = "desc",
   } = query;
-
+console.log(query)
   const pageNum = Math.max(Number(page) || 1, 1);
   const limitNum = Math.min(Math.max(Number(limit) || 20, 1), 100); // hard cap to avoid abuse
   const skip = (pageNum - 1) * limitNum;

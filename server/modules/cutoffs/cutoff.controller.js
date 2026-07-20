@@ -39,7 +39,7 @@ export const getCutoffsController =
   async (req, res, next) => {
     try {
       const cutoffs =
-        await getCutoffs();
+        await getCutoffs(req.query);
 
       res.status(200).json({
         success: true,
