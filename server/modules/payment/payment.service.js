@@ -12,6 +12,7 @@ import { Plan }
 from "../plans/plan.model.js";
 
 import {activatePremiumSubscription} from "../subscription/subscription.helper.js"
+import { calculateGstAmount } from "./gst.service.js";
 
 
 
@@ -48,9 +49,15 @@ export const createPayment =
       );
     }
 
+    // plan.price is the base price (e.g. 499). GST is added on top before
+    // creating the Razorpay order and before saving the payment record —
+    // so the user always pays base + 18% GST, not just the base price.
+    const { baseAmount, gstAmount, totalAmount } =
+      calculateGstAmount(plan.price);
+
     const razorpayOrder =
       await createRazorpayOrder(
-        plan.price,
+        totalAmount,
         "INR"
       );
 
@@ -61,7 +68,11 @@ export const createPayment =
 
         planId,
 
-        amount: plan.price,
+        amount: totalAmount,
+
+        baseAmount,
+
+        gstAmount,
 
         currency: "INR",
 
@@ -83,13 +94,19 @@ export const createPayment =
         razorpayOrder.id,
 
       amount:
-        razorpayOrder.amount,
+        razorpayOrder.amount, // in paise, for Razorpay checkout
+
+      baseAmount,
+
+      gstAmount,
+
+      totalAmount,
 
       currency:
         razorpayOrder.currency,
 
       keyId:
-      
+
         process.env.RAZORPAY_KEY_ID,
 
     };

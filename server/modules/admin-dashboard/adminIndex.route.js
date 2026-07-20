@@ -6,6 +6,8 @@ import { Router } from "express";
 import adminUsersRoutes
   from "./admin-users/adminUsers.routes.js";
 
+
+  import overviewRoutes from './overview/dashboard.routes.js'
 const router =
   Router();
 
@@ -15,10 +17,12 @@ const router =
 |--------------------------------------------------------------------------
 */
 
-// router.use(
-//   "/dashboard",
-//   adminDashboardRoutes
-// );
+router.use(
+  "/overview",
+  overviewRoutes
+
+  
+);
 
 /*
 |--------------------------------------------------------------------------

@@ -17,7 +17,17 @@ const paymentSchema =
 
       amount: {
         type: Number,
-        required: true,
+        required: true, // this is the FINAL amount (base + GST) charged to the user
+      },
+
+      baseAmount: {
+        type: Number,
+        default: null, // plan price before GST
+      },
+
+      gstAmount: {
+        type: Number,
+        default: null, // 18% GST amount
       },
 
       currency: {

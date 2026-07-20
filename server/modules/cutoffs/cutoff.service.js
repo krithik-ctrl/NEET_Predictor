@@ -78,22 +78,77 @@ export const createCutoff =
     );
   };
 
-export const getCutoffs =
-  async () => {
-    return await Cutoff.find({
-      status: "active",
-    })
-      .populate(
-        "collegeId"
-      )
-      .populate(
-        "courseId"
-      )
-      .sort({
-        year: -1,
-        createdAt: -1,
-      });
+// Replace the existing getCutoffs export in cutoff.service.js with this version.
+
+export const getCutoffs = async (query = {}) => {
+  const {
+    page = 1,
+    limit = 20,
+    year,
+    collegeId,
+    courseId,
+    counsellingType,
+    state,
+    category,
+    seatType,
+    round,
+    status = "active",
+    sortBy = "year",
+    sortOrder = "desc",
+  } = query;
+
+  const pageNum = Math.max(Number(page) || 1, 1);
+  const limitNum = Math.min(Math.max(Number(limit) || 20, 1), 100); // hard cap to avoid abuse
+  const skip = (pageNum - 1) * limitNum;
+
+  const filter = {};
+  if (status) filter.status = status;
+  if (year) filter.year = Number(year);
+  if (counsellingType) filter.counsellingType = counsellingType;
+  if (state) filter.state = state;
+  if (category) filter.category = category;
+  if (seatType) filter.seatType = seatType;
+  if (round) filter.round = round;
+
+  if (collegeId) {
+    if (!mongoose.Types.ObjectId.isValid(collegeId)) {
+      throw new Error("Invalid college ID");
+    }
+    filter.collegeId = collegeId;
+  }
+
+  if (courseId) {
+    if (!mongoose.Types.ObjectId.isValid(courseId)) {
+      throw new Error("Invalid course ID");
+    }
+    filter.courseId = courseId;
+  }
+
+  const sort = { [sortBy]: sortOrder === "asc" ? 1 : -1, createdAt: -1 };
+
+  const [data, total] = await Promise.all([
+    Cutoff.find(filter)
+      .populate("collegeId", "name city state") // trim populated fields — don't pull full docs at 10k+ scale
+      .populate("courseId", "name")
+      .sort(sort)
+      .skip(skip)
+      .limit(limitNum)
+      .lean(), // read-only list view — skip Mongoose document overhead
+    Cutoff.countDocuments(filter),
+  ]);
+
+  return {
+    data,
+    pagination: {
+      total,
+      page: pageNum,
+      limit: limitNum,
+      totalPages: Math.ceil(total / limitNum),
+      hasNextPage: skip + data.length < total,
+      hasPrevPage: pageNum > 1,
+    },
   };
+};
 
 export const getCutoffById =
   async (id) => {

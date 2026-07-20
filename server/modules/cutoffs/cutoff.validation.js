@@ -10,27 +10,6 @@ export const createCutoffSchema =
       .number()
       .min(2000),
 
-    category: z.enum([
-      "General",
-      "OBC",
-      "SC",
-      "ST",
-      "EWS",
-    ]),
-
-    quota: z.enum([
-      "AIQ",
-      "State",
-      "Management",
-    ]),
-
-    round: z.enum([
-      "Round 1",
-      "Round 2",
-      "Round 3",
-      "Mop-Up",
-      "Stray Vacancy",
-    ]),
 
     openingRank: z
       .number()
@@ -50,13 +29,7 @@ export const createCutoffSchema =
       .min(0)
       .optional(),
 
-    seatType: z
-      .enum([
-        "Government",
-        "Management",
-        "NRI",
-      ])
-      .optional(),
+
 
     status: z
       .enum([

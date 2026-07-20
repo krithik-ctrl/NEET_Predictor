@@ -13,14 +13,15 @@ import {
 export const createCutoffController =
   async (req, res, next) => {
     try {
-      const validatedData =
-        createCutoffSchema.parse(
-          req.body
-        );
+      
+     // const validatedData =
+       // createCutoffSchema.parse(
+         // req.body
+        //);
 
       const cutoff =
         await createCutoff(
-          validatedData
+          req.body
         );
 
       res.status(201).json({
