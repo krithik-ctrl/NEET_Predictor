@@ -29,6 +29,7 @@ import nagalandConfig from "./nagaland.js";
 import sikkimConfig from "./skkim.js";
 import dadraAndNagarHaveliAndDamanAndDiuConfig from "./dadra";
 import arunachalPradeshConfig from "./ar.js";
+import mizoramConfig from "./mizoram.js";
 const stateConfigs = {
   AIQ: aiq,
   Karnataka: karnataka,
@@ -60,7 +61,8 @@ const stateConfigs = {
  "Nagaland":nagalandConfig,
  "Sikkim":sikkimConfig,
  "Dadra and Nagar Haveli and Daman and Diu":dadraAndNagarHaveliAndDamanAndDiuConfig,
- "Arunachal Pradesh":arunachalPradeshConfig
+ "Arunachal Pradesh":arunachalPradeshConfig,
+ "Mizoram":mizoramConfig,
 
 
 
