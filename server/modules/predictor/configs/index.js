@@ -25,6 +25,9 @@ import chhattisgarhConfig from "./ch.js";
 import puducherryConfig from "./py.js";
 import chandigarhConfig from "./cg.js";
 import himachalPradeshConfig from "./hp.js";
+import nagalandConfig from "./nagaland.js";
+import sikkimConfig from "./skkim.js";
+import dadraAndNagarHaveliAndDamanAndDiuConfig from "./dadra";
 const stateConfigs = {
   AIQ: aiq,
   Karnataka: karnataka,
@@ -52,7 +55,10 @@ const stateConfigs = {
  Chhattisgarh:chhattisgarhConfig,
  Puducherry:puducherryConfig,
  Chandigarh:chandigarhConfig,
- "Himachal Pradesh":himachalPradeshConfig
+ "Himachal Pradesh":himachalPradeshConfig,
+ "Nagaland":nagalandConfig,
+ "Sikkim":sikkimConfig,
+ "Dadra and Nagar Haveli and Daman and Diu":dadraAndNagarHaveliAndDamanAndDiuConfig,
 
 
 
