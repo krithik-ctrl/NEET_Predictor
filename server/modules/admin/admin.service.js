@@ -71,6 +71,9 @@ export const createAdmin = async ({
       isActive: true,
 
     });
+     await createFreeSubscription(
+          admin._id
+        );
 
   return admin;
 
