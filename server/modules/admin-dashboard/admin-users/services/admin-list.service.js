@@ -1,5 +1,9 @@
 import { Admin } from "../../../admin/admin.model.js";
 
+import { Subscription } from "../../../subscription/subscription.model.js";
+
+import { Plan } from "../../../plans/plan.model.js";
+
 export const getAdminList =
   async () => {
 
@@ -7,8 +11,51 @@ export const getAdminList =
       await Admin.find()
         .lean();
 
-    return admins.map(
-      (admin) => ({
+    const adminIds =
+      admins.map(
+        (admin) => admin._id
+      );
+
+    const [
+
+      subscriptions,
+
+      plans,
+
+    ] = await Promise.all([
+
+      Subscription.find({
+
+        userId: {
+          $in: adminIds,
+        },
+
+        status: "active",
+
+      }).lean(),
+
+      Plan.find().lean(),
+
+    ]);
+
+    const adminList = admins.map((admin) => {
+
+      const subscription =
+        subscriptions.find(
+          (item) =>
+            item.userId.toString() === admin._id.toString()
+        );
+
+      const plan =
+        subscription
+          ? plans.find(
+              (item) =>
+                item._id.toString() ===
+                subscription.planId.toString()
+            )
+          : null;
+
+      return {
 
         id: admin._id,
 
@@ -27,7 +74,8 @@ export const getAdminList =
         role:
           admin.role,
 
-        plan: null,
+        
+          plan: plan || null,
 
         status:
           admin.isActive
@@ -41,7 +89,7 @@ export const getAdminList =
 
         predictionCount: 0,
 
-        joinedDate:
+        createdAt:
           admin.createdAt,
 
         lastLogin:
@@ -50,7 +98,10 @@ export const getAdminList =
         accountType:
           "admin",
 
-      })
-    );
+      };
+
+    });
+
+    return adminList;
 
   };

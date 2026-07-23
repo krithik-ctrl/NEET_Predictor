@@ -2,7 +2,7 @@ import bcrypt from "bcryptjs";
 
 import { Admin } from "./admin.model.js";
 
-
+import { createFreeSubscription } from "../subscription/subscription.helper.js";
 /*
 |--------------------------------------------------------------------------
 | Create Admin

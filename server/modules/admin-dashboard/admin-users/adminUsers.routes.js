@@ -15,6 +15,7 @@ import {
   updateAdminController,
     getUserDetailsController,
   getAdminDetailsController,
+  deleteAdminController
 } from "./adminUsers.controller.js";
 
 import {authenticateAdmin} from "../../../auth/middleware/authenticateAdmin.js";
@@ -94,6 +95,24 @@ router.patch(
   authorizeAdmin("admin"),
   updateAdminController
 );
+
+
+
+/*
+|--------------------------------------------------------------------------
+| Delete Admin
+|--------------------------------------------------------------------------
+*/
+
+router.delete(
+  "/:adminId",
+  authenticateAdmin,
+  authorizeAdmin("admin"),
+  deleteAdminController
+);
+
+
+
 /*
 |--------------------------------------------------------------------------
 | Student Details

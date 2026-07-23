@@ -1,4 +1,5 @@
 import { Admin } from "../../../admin/admin.model.js";
+import { Subscription } from "../../../subscription/subscription.model.js";
 
 export const getAdminDetails =
   async (adminId) => {
@@ -18,6 +19,15 @@ export const getAdminDetails =
         "Admin not found."
       );
     }
+
+    // small change: fetch active subscription for this admin
+    const subscription =
+      await Subscription.findOne({
+        userId: adminId,
+        status: "active",
+      })
+      .populate("planId")
+      .lean();
 
     return {
 
@@ -58,11 +68,32 @@ export const getAdminDetails =
             }
           : null,
 
-      joinedDate:
+      createdAt:
         admin.createdAt,
 
       lastLogin:
         admin.lastLogin,
+
+      // small change: attach subscription details
+     subscription: {
+
+        plan:
+          subscription?.planId?.name ||
+          null,
+
+        status:
+          subscription?.status ||
+          null,
+
+        startDate:
+          subscription?.startDate ||
+          null,
+
+        endDate:
+          subscription?.endDate ||
+          null,
+
+      },
 
     };
 

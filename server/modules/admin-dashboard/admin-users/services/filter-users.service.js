@@ -9,7 +9,7 @@ export const filterUsers = (
   users = [],
   query = {}
 ) => {
-console.log(JSON.stringify(users, null, 2));
+// console.log(JSON.stringify(users, null, 2));
 
  
   let results = [...users];
@@ -37,7 +37,7 @@ console.log(JSON.stringify(users, null, 2));
     limit = 10,
 
   } = query;
-console.log("Incoming Query:", query);
+// console.log("Incoming Query:", query);
   /*
   |--------------------------------------------------------------------------
   | Search
@@ -76,7 +76,7 @@ console.log("Incoming Query:", query);
       results.filter(
         user => user.role === role
       );
- console.log("After Role:", results.length);
+ //console.log("After Role:", results.length);
   }
 
   /*
@@ -84,13 +84,13 @@ console.log("Incoming Query:", query);
   | Plan
   |--------------------------------------------------------------------------
   */
-console.log(
-  results.map(user => ({
-    name: user.firstName,
-    role: user.role,
-    plan: user.plan
-  }))
-);
+// console.log(
+//   results.map(user => ({
+//     name: user.firstName,
+//     role: user.role,
+//     plan: user.plan
+//   }))
+// );
 if (plan) {
 
   results = results.filter((user) => {

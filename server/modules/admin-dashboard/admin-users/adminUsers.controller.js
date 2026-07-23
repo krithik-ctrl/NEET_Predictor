@@ -6,6 +6,7 @@ import {
 import {
   createAdmin,
   updateAdmin,
+  deleteAdmin
 } from "./services/adminUserOperation.service.js";
 
 
@@ -14,6 +15,7 @@ import {
   getUserDetails as getUserDetailsOperation,
 } from "./services/get-user-details.service.js";
 import {getAdminDetails} from "./services/get-admin-details.service.js";
+
 
 
 
@@ -124,6 +126,37 @@ export const getAdminUsersController =
   };
 
 
+
+  export const deleteAdminController =
+  async (
+    req,
+    res,
+    next
+  ) => {
+
+    try {
+
+      await deleteAdmin(
+        req.params.adminId
+      );
+
+      res.status(200).json({
+
+        success: true,
+
+        message:
+          "Admin deleted successfully.",
+
+      });
+
+    } catch (error) {
+
+      next(error);
+
+    }
+
+  };
+
   export const getUserDetailsController =
   async (
     req,
@@ -162,7 +195,7 @@ export const getAdminUsersController =
   ) => {
 
     try {
-console.log(req.params.adminId)
+// console.log(req.params.adminId)
       const data =
         await getAdminDetails(
           req.params.adminId

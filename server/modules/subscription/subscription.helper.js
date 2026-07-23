@@ -4,12 +4,23 @@ from "../plans/plan.model.js";
 import { Subscription }
 from "./subscription.model.js";
 
-
-
 import { User } from "../users/user.model.js";
+import { Admin } from "../admin/admin.model.js";
 
 export const createFreeSubscription =
   async (userId) => {
+
+    // small change: confirm owner exists as either User or Admin
+    const owner =
+      (await User.findById(userId)) ||
+      (await Admin.findById(userId));
+
+      console.log("id:",owner)
+    if (!owner) {
+      throw new Error(
+        "No user or admin found with this id"
+      );
+    }
 
     const freePlan =
       await Plan.findOne({
@@ -44,6 +55,8 @@ export const createFreeSubscription =
   export const getUserSubscription =
   async (userId) => {
 
+    // no change needed here — query is by plain userId field,
+    // works the same whether it belongs to a User or Admin
     const subscription =
       await Subscription
         .findOne({
@@ -66,6 +79,7 @@ export const createFreeSubscription =
   export const checkSubscription =
   async (userId) => {
 
+    // no change needed — depends only on getUserSubscription above
     const subscription =
       await getUserSubscription(
         userId
@@ -140,13 +154,23 @@ export const activatePremiumSubscription =
 
     }
 
-    // Update user as Premium
-    await User.findByIdAndUpdate(
-      userId,
-      {
-        isPremium: true,
-      }
-    );
+    const user = await User.findById(userId);
+
+    if (user) {
+      await User.findByIdAndUpdate(
+        userId,
+        {
+          isPremium: true,
+        }
+      );
+    } else {
+      await Admin.findByIdAndUpdate(
+        userId,
+        {
+          isPremium: true,
+        }
+      );
+    }
 
     return await Subscription.create({
 

@@ -5,6 +5,9 @@ import {
 import {
   updateAdminUser,
 } from "../services/update-admin-user.service.js";
+import { deleteAdminUser } from "./delete-admin-user.service.js";
+
+import { createFreeSubscription } from "../../../subscription/subscription.helper.js";
 
 /*
 |--------------------------------------------------------------------------
@@ -18,13 +21,19 @@ export const createAdmin =
     createdBy
   ) => {
 
-    return await createAdminUser({
+    const admin =
+      await createAdminUser({
 
-      ...payload,
+        ...payload,
 
-      createdBy,
+        createdBy,
 
-    });
+      });
+
+    // small change: create free subscription for the new admin
+    await createFreeSubscription(admin._id);
+
+    return admin;
 
   };
 
@@ -46,6 +55,17 @@ export const updateAdmin =
 
       payload
 
+    );
+
+  };
+
+
+
+  export const deleteAdmin =
+  async (adminId) => {
+
+    return await deleteAdminUser(
+      adminId
     );
 
   };
