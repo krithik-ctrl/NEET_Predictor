@@ -33,6 +33,11 @@ const collegeSchema =
           "Government",
           "Private",
           "Deemed",
+          "Government Aided",
+          "Deemed University",
+          "Aided",
+           "Government-aided"
+
         ],
         required: true,
       },
@@ -57,6 +62,9 @@ const collegeSchema =
         enum: [
           "active",
           "inactive",
+           "verify",
+           "provisional",
+           "proposed"
         ],
         default: "active",
       },
