@@ -30,6 +30,9 @@ import sikkimConfig from "./skkim.js";
 import dadraAndNagarHaveliAndDamanAndDiuConfig from "./dadra";
 import arunachalPradeshConfig from "./ar.js";
 import mizoramConfig from "./mizoram.js";
+import manipurConfig from "./manipur.js";
+import tripuraConfig from "./trp.js";
+import telanganaConfig from "./ts.js";
 const stateConfigs = {
   AIQ: aiq,
   Karnataka: karnataka,
@@ -37,7 +40,6 @@ const stateConfigs = {
   "Andhra Pradesh": andhraPradesh,
   Kerala: kerala,
   Maharashtra: maharashtra,
-  // Telangana: telangana,
 "Andaman & Nicobar Islands": AndamanNicobar,
  Assam:assamConfig,
  Gujarat: gujaratConfig,
@@ -63,6 +65,9 @@ const stateConfigs = {
  "Dadra and Nagar Haveli and Daman and Diu":dadraAndNagarHaveliAndDamanAndDiuConfig,
  "Arunachal Pradesh":arunachalPradeshConfig,
  "Mizoram":mizoramConfig,
+ Manipur:manipurConfig,
+ Tripura:tripuraConfig,
+ Telangana:telanganaConfig
 
 
 
