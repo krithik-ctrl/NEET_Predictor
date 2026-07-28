@@ -15,13 +15,14 @@ import {
 } from "./services/category.service.js";
 
 import {User} from "../users/user.model.js";
+import { resolveLockedRank } from "../student-profile/studentProfile.service.js";
 export const predictColleges = async (
   userId,
    payload
 ) => {
 
 const {
-  rank,
+  rank:requestedRank,
   courseId,
   counsellingType,
   state:predictorState,
@@ -36,28 +37,17 @@ const {
 } = payload;
 
 
-  const subscription =
-  await checkSubscription(
-    userId
-  );
 
-if (
-  subscription.isFree
-) {
+const subscription = await checkSubscription(userId);
 
-  const todayPredictions =
-    await countTodayPredictions(
-      userId
-    );
+if (!subscription.isPremium) {
+  const todayPredictions = await countTodayPredictions(userId);
 
-  if (
-    todayPredictions >= 15
-  ) {
+  if (todayPredictions >= 3) {
     throw new Error(
       "Daily prediction limit reached. Upgrade to Premium for unlimited predictions."
     );
   }
-
 }
 
   const user = await User.findById(userId);
@@ -79,6 +69,8 @@ if (!user.isActive) {
     "Your account is inactive"
   );
 }
+const rank = await resolveLockedRank(userId, requestedRank);
+
 
  const query = buildPredictionFilter({
   courseId,

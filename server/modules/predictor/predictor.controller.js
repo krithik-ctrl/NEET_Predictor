@@ -7,6 +7,7 @@ export const predictCollegesController =
       const predictions =
         await predictColleges(
           req.user.userId,
+          
           req.body
         );
 

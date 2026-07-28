@@ -47,6 +47,11 @@ const studentProfileSchema =
         type: Boolean,
         default: false,
       },
+      rank: {
+  type: Number,
+  default: null,
+},
+
     },
     {
       timestamps: true,

@@ -127,7 +127,7 @@ export const getStudentProfile =
       budget: profile?.budget ?? null,
       preferredCourse: profile?.preferredCourse ?? null,
       profileCompleted: profile?.profileCompleted ?? false,
-
+rank: profile?.rank ?? null, 
     };
 
   };
@@ -149,4 +149,26 @@ export const createStudentProfile =
       profileCompleted: false,
     });
 
+};
+
+
+export const resolveLockedRank = async (userId, incomingRank) => {
+  let profile = await StudentProfile.findOne({ userId });
+
+  if (!profile) {
+    profile = await StudentProfile.create({
+      userId,
+      rank: incomingRank,
+      profileCompleted: false,
+    });
+    return profile.rank;
+  }
+
+  if (profile.rank == null) {
+    profile.rank = incomingRank;
+    await profile.save();
+    return profile.rank;
+  }
+
+  return profile.rank;
 };
