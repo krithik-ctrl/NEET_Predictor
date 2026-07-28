@@ -38,6 +38,11 @@ type:String,
 required:true,
 trim:true
 },
+dataSource: {
+  type: String,
+  enum: ["sourced", "estimated"],
+  default: "sourced",
+},
     category: {
       type: String,
       required: true,
