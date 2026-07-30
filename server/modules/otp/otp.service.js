@@ -30,92 +30,6 @@ import {
 |--------------------------------------------------------------------------
 */
 
-// export const sendOtpService = async (mobile) => {
-
-//   if (!mobile) {
-//     throw new Error("Mobile number is required.");
-//   }
-
-//   const dbMobile = normalizeMobile(mobile);
-
-//   const msg91Mobile =
-//     formatMobileForMSG91(dbMobile);
-
-
-
-
-
-//   /*
-//   |--------------------------------------------------------------------------
-//   | Retry User Lookup
-//   |--------------------------------------------------------------------------
-//   */
-
-//   let user = null;
-
-//   const MAX_RETRIES = 5;
-
-//   const RETRY_DELAY = 300; // milliseconds
-
-//   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
-
-
-//     user = await getUserByMobile(dbMobile);
-
-
-
-    
-//     if (user) {
-//       break;
-//     }
-
-//     console.log(
-//       `User not found. Retry ${attempt}/${MAX_RETRIES}`
-//     );
-
-//     await new Promise(resolve =>
-//       setTimeout(resolve, RETRY_DELAY)
-//     );
-
-//   }
-
-//   if (!user) {
-
-//     throw new Error(
-//       "Mobile number is not registered."
-//     );
-
-//   }
-
-//   /*
-//   |--------------------------------------------------------------------------
-//   | Send OTP
-//   |--------------------------------------------------------------------------
-//   */
-
-
-  
-
-//   await sendOtp(msg91Mobile);
-
-//   return {
-
-//     success: true,
-
-//     message: "OTP sent successfully.",
-
-//   };
-
-// };
-
-
-
-/*
-|--------------------------------------------------------------------------
-| Send OTP
-|--------------------------------------------------------------------------
-*/
-
 export const sendOtpService = async (mobile) => {
 
   if (!mobile) {
@@ -127,46 +41,9 @@ export const sendOtpService = async (mobile) => {
   const msg91Mobile =
     formatMobileForMSG91(dbMobile);
 
-  console.log("DB Mobile:", dbMobile);
-  console.log("MSG91 Mobile:", msg91Mobile);
 
-  /*
-  |--------------------------------------------------------------------------
-  | OTP Bypass (Development Only)
-  |--------------------------------------------------------------------------
-  */
 
-  if (process.env.OTP_BYPASS === "true") {
 
-    const user =
-      await getUserByMobile(dbMobile);
-
-    if (!user) {
-
-      throw new Error(
-        "Mobile number is not registered."
-      );
-
-    }
-
-    console.log(
-      "⚠️ OTP BYPASS ENABLED"
-    );
-
-    console.log(
-      `Use OTP: ${process.env.OTP_BYPASS_CODE || "0000"}`
-    );
-
-    return {
-
-      success: true,
-
-      message:
-        "OTP sent successfully.",
-
-    };
-
-  }
 
   /*
   |--------------------------------------------------------------------------
@@ -178,19 +55,16 @@ export const sendOtpService = async (mobile) => {
 
   const MAX_RETRIES = 5;
 
-  const RETRY_DELAY = 300;
+  const RETRY_DELAY = 300; // milliseconds
 
-  for (
-    let attempt = 1;
-    attempt <= MAX_RETRIES;
-    attempt++
-  ) {
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
 
-    user =
-      await getUserByMobile(
-        dbMobile
-      );
 
+    user = await getUserByMobile(dbMobile);
+
+
+
+    
     if (user) {
       break;
     }
@@ -200,10 +74,7 @@ export const sendOtpService = async (mobile) => {
     );
 
     await new Promise(resolve =>
-      setTimeout(
-        resolve,
-        RETRY_DELAY
-      )
+      setTimeout(resolve, RETRY_DELAY)
     );
 
   }
@@ -222,14 +93,16 @@ export const sendOtpService = async (mobile) => {
   |--------------------------------------------------------------------------
   */
 
+
+  
+
   await sendOtp(msg91Mobile);
 
   return {
 
     success: true,
 
-    message:
-      "OTP sent successfully.",
+    message: "OTP sent successfully.",
 
   };
 
@@ -237,103 +110,8 @@ export const sendOtpService = async (mobile) => {
 
 
 
-/*
-|--------------------------------------------------------------------------
-| Verify OTP
-|--------------------------------------------------------------------------
-*/
 
-// export const verifyOtpService =
-//   async (
-//     mobile,
-//     enteredOtp,
-//     res
-//   ) => {
 
-//     const dbMobile =
-//       normalizeMobile(
-//         mobile
-//       );
-
-//     const msg91Mobile =
-//       formatMobileForMSG91(
-//         dbMobile
-//       );
-
-//     if (
-//       !mobile ||
-//       !enteredOtp
-//     ) {
-
-//       throw new Error(
-//         "Mobile number and OTP are required."
-//       );
-
-//     }
-
-//     await verifyOtp(
-//       msg91Mobile,
-//       enteredOtp
-//     );
-
-//     const user =
-//       await getUserByMobile(
-//         dbMobile
-//       );
-
-//     if (!user) {
-
-//       throw new Error(
-//         "User not found."
-//       );
-
-//     }
-
-//     user.lastLogin =
-//       new Date();
-//     user.isVerified=true;
-//     await user.save();
-
-//     const token =
-//       generateToken(
-//         user
-//       );
-
-//     setAuthCookie(
-//       res,
-//       token
-//     );
-
-//     return {
-
-//       user: {
-
-//         id:
-//           user._id,
-
-//         firstName:
-//           user.firstName,
-
-//         lastName:
-//           user.lastName,
-
-//         mobile:
-//           user.mobile,
-
-//         email:
-//           user.email,
-
-//         avatar:
-//           user.avatar,
-
-//         provider:
-//           user.provider,
-
-//       },
-
-//     };
-
-//   };
 
 /*
 |--------------------------------------------------------------------------
@@ -369,51 +147,10 @@ export const verifyOtpService =
 
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | OTP Bypass (Development Only)
-    |--------------------------------------------------------------------------
-    */
-
-    if (
-      process.env.OTP_BYPASS === "true"
-    ) {
-
-      if (
-        enteredOtp !==
-        (process.env.OTP_BYPASS_CODE || "0000")
-      ) {
-
-        throw new Error(
-          "Invalid OTP."
-        );
-
-      }
-
-      console.log(
-        "⚠️ OTP BYPASS VERIFIED"
-      );
-
-    } else {
-
-      /*
-      |--------------------------------------------------------------------------
-      | Verify with MSG91
-      |--------------------------------------------------------------------------
-      */
-
-      await verifyOtp(
-        msg91Mobile,
-        enteredOtp
-      );
-
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Get User
-    |--------------------------------------------------------------------------
-    */
+    await verifyOtp(
+      msg91Mobile,
+      enteredOtp
+    );
 
     const user =
       await getUserByMobile(
@@ -428,25 +165,10 @@ export const verifyOtpService =
 
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Update Login
-    |--------------------------------------------------------------------------
-    */
-
     user.lastLogin =
       new Date();
-
-    user.isVerified =
-      true;
-
+    user.isVerified=true;
     await user.save();
-
-    /*
-    |--------------------------------------------------------------------------
-    | Generate Token
-    |--------------------------------------------------------------------------
-    */
 
     const token =
       generateToken(
@@ -457,12 +179,6 @@ export const verifyOtpService =
       res,
       token
     );
-
-    /*
-    |--------------------------------------------------------------------------
-    | Response
-    |--------------------------------------------------------------------------
-    */
 
     return {
 
@@ -494,6 +210,8 @@ export const verifyOtpService =
     };
 
   };
+
+
 
 
 

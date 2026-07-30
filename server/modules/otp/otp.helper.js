@@ -71,110 +71,69 @@ const handleMSG91Error = (error) => {
 |--------------------------------------------------------------------------
 */
 
-/*
-|--------------------------------------------------------------------------
-| Send OTP
-|--------------------------------------------------------------------------
-*/
 
-// export const sendOtp = async (
-//   mobile
-// ) => {
-// console.log(mobile)
-//   try {
 
-//     const { data } =
-//       await axios.post(
-
-//         `${BASE_URL}/otp`,
-
-//         {},
-
-//         {
-
-//           params: {
-
-//             mobile,
-
-//             authkey:
-//               AUTH_KEY,
-
-//             template_id:
-//               TEMPLATE_ID,
-
-//           },
-
-//           headers: {
-
-//             "Content-Type":
-//               "application/json",
-
-//           },
-
-//         }
-
-//       );
-
-//     if (
-//       data.type !==
-//       "success"
-//     ) {
-
-//       throw new Error(
-//         data.message ||
-//         "Failed to send OTP."
-//       );
-
-//     }
-
-//     return data;
-
-//   } catch (error) {
-
-//     handleMSG91Error(error);
-
-//   }
-
-// };
-
-export const sendOtp = async (mobile) => {
-
-  console.log("Sending OTP to:", mobile);
-
+export const sendOtp = async (
+  mobile
+) => {
+console.log(mobile)
   try {
 
-    const response = await axios.post(
+    const { data } =
+      await axios.post(
 
-      `${BASE_URL}/otp`,
+        `${BASE_URL}/otp`,
 
-      {},
+        {},
 
-      {
-        params: {
-          mobile,
-          authkey: AUTH_KEY,
-          template_id: TEMPLATE_ID,
-        },
-      }
+        {
 
-    );
+          params: {
 
-    console.log("MSG91 Status:", response.status);
-    console.log("MSG91 Response:", response.data);
+            mobile,
 
-    return response.data;
+            authkey:
+              AUTH_KEY,
+
+            template_id:
+              TEMPLATE_ID,
+
+          },
+
+          headers: {
+
+            "Content-Type":
+              "application/json",
+
+          },
+
+        }
+
+      );
+
+    if (
+      data.type !==
+      "success"
+    ) {
+
+      throw new Error(
+        data.message ||
+        "Failed to send OTP."
+      );
+
+    }
+
+    return data;
 
   } catch (error) {
 
-    console.log("MSG91 Error Response:");
-    console.log(error.response?.status);
-    console.log(error.response?.data);
-
-    throw error;
+    handleMSG91Error(error);
 
   }
 
 };
+
+
 
 /*
 |--------------------------------------------------------------------------

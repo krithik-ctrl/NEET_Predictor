@@ -78,7 +78,7 @@ export const createFreeSubscription =
   
   export const checkSubscription =
   async (userId) => {
-
+console.log(userId)
     // no change needed — depends only on getUserSubscription above
     const subscription =
       await getUserSubscription(

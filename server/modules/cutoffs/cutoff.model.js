@@ -54,9 +54,10 @@ dataSource: {
       enum: [
         "Round 1",
         "Round 2",
-        "Round 3",
-        "Mop-Up",
-        "Stray Vacancy",
+        "Round 3 (Mop-up)",
+        "Round 4 (Stray Round)",
+        "NRI Quota",
+        "Minority Quota"
       ],
       default: null,
     },
@@ -91,6 +92,11 @@ dataSource: {
       ],
       default: "active",
     },
+    dataSource: {
+  type: String,
+  enum: ["sourced", "estimated"],
+  default: "sourced",
+},
   },
   {
     timestamps: true,

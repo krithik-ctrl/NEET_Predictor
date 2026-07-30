@@ -14,45 +14,6 @@ import { getAdminByMobile } from "../admin-auth/adminAuth.service.js";
 |--------------------------------------------------------------------------
 */
 
-// export const sendAdminOtpService = async (mobile) => {
-
-//   if (!mobile) {
-//     throw new Error(
-//       "Mobile number is required."
-//     );
-//   }
-
-//   const dbMobile =
-//     normalizeMobile(mobile);
-
-//   const msg91Mobile =
-//     formatMobileForMSG91(dbMobile);
-
-//   const admin =
-//     await getAdminByMobile(dbMobile);
-
-//   if (!admin) {
-//     throw new Error(
-//       "Admin not found."
-//     );
-//   }
-
-//   await sendAdminOtp(msg91Mobile);
-
-//   return {
-//     success: true,
-//     message: "OTP sent successfully.",
-//   };
-// };
-
-
-
-/*
-|--------------------------------------------------------------------------
-| Send OTP
-|--------------------------------------------------------------------------
-*/
-
 export const sendAdminOtpService = async (mobile) => {
 
   if (!mobile) {
@@ -67,77 +28,26 @@ export const sendAdminOtpService = async (mobile) => {
   const msg91Mobile =
     formatMobileForMSG91(dbMobile);
 
-  console.log("DB Mobile:", dbMobile);
-  console.log("MSG91 Mobile:", msg91Mobile);
-
-  /*
-  |--------------------------------------------------------------------------
-  | Retry Admin Lookup
-  |--------------------------------------------------------------------------
-  */
-
-  let admin = null;
-
-  const MAX_RETRIES = 5;
-
-  const RETRY_DELAY = 300;
-
-  for (
-    let attempt = 1;
-    attempt <= MAX_RETRIES;
-    attempt++
-  ) {
-
-    admin =
-      await getAdminByMobile(
-        dbMobile
-      );
-
-    if (admin) {
-      break;
-    }
-
-    console.log(
-      `Admin not found. Retry ${attempt}/${MAX_RETRIES}`
-    );
-
-    await new Promise(resolve =>
-      setTimeout(
-        resolve,
-        RETRY_DELAY
-      )
-    );
-
-  }
+  const admin =
+    await getAdminByMobile(dbMobile);
 
   if (!admin) {
-
     throw new Error(
       "Admin not found."
     );
-
   }
 
-  /*
-  |--------------------------------------------------------------------------
-  | Send OTP
-  |--------------------------------------------------------------------------
-  */
-
-  await sendAdminOtp(
-    msg91Mobile
-  );
+  await sendAdminOtp(msg91Mobile);
 
   return {
-
     success: true,
-
-    message:
-      "OTP sent successfully.",
-
+    message: "OTP sent successfully.",
   };
-
 };
+
+
+
+
 /*
 |--------------------------------------------------------------------------
 | Verify OTP

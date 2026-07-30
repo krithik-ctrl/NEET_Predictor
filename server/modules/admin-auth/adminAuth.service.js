@@ -70,140 +70,33 @@ export const sendLoginOtp = async ({
 |--------------------------------------------------------------------------
 */
 
-// export const loginAdmin = async ({
-//   mobile,
-//   otp,
-// }) => {
-
-//   if (!mobile || !otp) {
-//     throw new Error(
-//       "Mobile number and OTP are required."
-//     );
-//   }
-
-// await verifyAdminOtpService(
-//   mobile,
-//   otp
-// );
-
-//   const admin =
-//     await Admin.findOne({
-//       mobile,
-//       isActive: true,
-     
-//     });
-
-//   if (!admin) {
-//     throw new Error(
-//       "Admin not found."
-//     );
-//   }
-
-//   admin.lastLogin =
-//     new Date();
-
-//   admin.isVerified =
-//     true;
-
-//   await admin.save();
-
-//   const token =
-//     jwt.sign(
-//       {
-//         adminId: admin._id,
-//         role: admin.role,
-//       },
-//       process.env.JWT_SECRET,
-//       {
-//         expiresIn: "7d",
-//       }
-//     );
-
-//   return {
-
-//     token,
-
-//     admin: {
-
-//       _id: admin._id,
-
-//       firstName:
-//         admin.firstName,
-
-//       lastName:
-//         admin.lastName,
-
-//       mobile:
-//         admin.mobile,
-
-//       email:
-//         admin.email,
-
-//       role:
-//         admin.role,
-
-//     },
-
-//   };
-
-// };
-
-
-/*
-|--------------------------------------------------------------------------
-| Login Admin
-|--------------------------------------------------------------------------
-*/
-
 export const loginAdmin = async ({
   mobile,
   otp,
 }) => {
 
   if (!mobile || !otp) {
-
     throw new Error(
       "Mobile number and OTP are required."
     );
-
   }
 
-  /*
-  |--------------------------------------------------------------------------
-  | Development OTP Bypass
-  |--------------------------------------------------------------------------
-  */
-
-  if (otp !== "0000") {
-
-    await verifyAdminOtpService(
-      mobile,
-      otp
-    );
-
-  } else {
-
-    console.log(
-      "Development OTP (0000) used. Skipping MSG91 verification."
-    );
-
-  }
+await verifyAdminOtpService(
+  mobile,
+  otp
+);
 
   const admin =
     await Admin.findOne({
-
       mobile,
-
       isActive: true,
-
+     
     });
 
   if (!admin) {
-
     throw new Error(
       "Admin not found."
     );
-
   }
 
   admin.lastLogin =
@@ -216,26 +109,14 @@ export const loginAdmin = async ({
 
   const token =
     jwt.sign(
-
       {
-
-        adminId:
-          admin._id,
-
-        role:
-          admin.role,
-
+        adminId: admin._id,
+        role: admin.role,
       },
-
       process.env.JWT_SECRET,
-
       {
-
-        expiresIn:
-          "7d",
-
+        expiresIn: "7d",
       }
-
     );
 
   return {
@@ -244,8 +125,7 @@ export const loginAdmin = async ({
 
     admin: {
 
-      _id:
-        admin._id,
+      _id: admin._id,
 
       firstName:
         admin.firstName,
@@ -267,6 +147,9 @@ export const loginAdmin = async ({
   };
 
 };
+
+
+
 /*
 |--------------------------------------------------------------------------
 | Logout

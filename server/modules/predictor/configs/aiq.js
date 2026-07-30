@@ -6,21 +6,15 @@ const aiqConfig = {
   rules: {
     sameState: {
       seatTypes: [
-        "Aligarh Muslim University (AMU) Quota",
         "All India Quota",
-        "Deemed/Paid Seats Quota",
-        "Delhi NCR Children/Widows of Personnel of the Armed Forces (CW) DU Quota",
-        "Delhi NCR Children/Widows of Personnel of the Armed Forces (CW) IP Quota",
-        "Delhi University Quota",
-        "Employees State Insurance Scheme(ESI) Quota",
-        "Foreign Country Quota",
-        "Internal -Puducherry UT Domicile Quota",
-        "IP University Quota",
-        "Jain Minority Quota",
-        "Muslim Minority Quota",
-        "Non-Resident Indian Quota",
-        "Non-Resident Indian(AMU)Quota",
         "Open Seat Quota",
+        "Deemed/Paid Seats Quota",
+        "Non-Resident Indian Quota",
+        "Muslim Minority Quota",
+        "Jain Minority Quota",
+        "Employees State Insurance Scheme(ESI) Quota",
+        "Aligarh Muslim University (AMU) Quota",
+        "Delhi University Quota",
       ],
     },
 
@@ -28,30 +22,20 @@ const aiqConfig = {
     // Both sections remain identical to keep a common schema.
     otherState: {
       seatTypes: [
-        "Aligarh Muslim University (AMU) Quota",
         "All India Quota",
-        "Deemed/Paid Seats Quota",
-        "Delhi NCR Children/Widows of Personnel of the Armed Forces (CW) DU Quota",
-        "Delhi NCR Children/Widows of Personnel of the Armed Forces (CW) IP Quota",
-        "Delhi University Quota",
-        "Employees State Insurance Scheme(ESI) Quota",
-        "Foreign Country Quota",
-        "Internal -Puducherry UT Domicile Quota",
-        "IP University Quota",
-        "Jain Minority Quota",
-        "Muslim Minority Quota",
-        "Non-Resident Indian Quota",
-        "Non-Resident Indian(AMU)Quota",
         "Open Seat Quota",
+        "Deemed/Paid Seats Quota",
+        "Non-Resident Indian Quota",
+        "Muslim Minority Quota",
+        "Jain Minority Quota",
+        "Employees State Insurance Scheme(ESI) Quota",
+        "Aligarh Muslim University (AMU) Quota",
+        "Delhi University Quota",
       ],
     },
   },
 
   categories: {
-    "Aligarh Muslim University (AMU) Quota": [
-      "Open",
-    ],
-
     "All India Quota": [
       "Open",
       "EWS",
@@ -65,29 +49,24 @@ const aiqConfig = {
       "ST PWD",
     ],
 
+    "Open Seat Quota": [
+      "Open",
+    ],
+
     "Deemed/Paid Seats Quota": [
       "Open",
     ],
 
-    "Delhi NCR Children/Widows of Personnel of the Armed Forces (CW) DU Quota": [
+    "Non-Resident Indian Quota": [
       "Open",
     ],
 
-    "Delhi NCR Children/Widows of Personnel of the Armed Forces (CW) IP Quota": [
+    "Muslim Minority Quota": [
       "Open",
     ],
 
-    "Delhi University Quota": [
+    "Jain Minority Quota": [
       "Open",
-      "EWS",
-      "OBC",
-      "SC",
-      "ST",
-      "Open PWD",
-      "EWS PWD",
-      "OBC PWD",
-      "SC PWD",
-      "ST PWD",
     ],
 
     "Employees State Insurance Scheme(ESI) Quota": [
@@ -103,11 +82,11 @@ const aiqConfig = {
       "ST PWD",
     ],
 
-    "Foreign Country Quota": [
+    "Aligarh Muslim University (AMU) Quota": [
       "Open",
     ],
 
-    "Internal -Puducherry UT Domicile Quota": [
+    "Delhi University Quota": [
       "Open",
       "EWS",
       "OBC",
@@ -118,39 +97,6 @@ const aiqConfig = {
       "OBC PWD",
       "SC PWD",
       "ST PWD",
-    ],
-
-    "IP University Quota": [
-      "Open",
-      "EWS",
-      "OBC",
-      "SC",
-      "ST",
-      "Open PWD",
-      "EWS PWD",
-      "OBC PWD",
-      "SC PWD",
-      "ST PWD",
-    ],
-
-    "Jain Minority Quota": [
-      "Open",
-    ],
-
-    "Muslim Minority Quota": [
-      "Open",
-    ],
-
-    "Non-Resident Indian Quota": [
-      "Open",
-    ],
-
-    "Non-Resident Indian(AMU)Quota": [
-      "Open",
-    ],
-
-    "Open Seat Quota": [
-      "Open",
     ],
   },
 };

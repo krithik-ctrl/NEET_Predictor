@@ -94,7 +94,7 @@ export const getCutoffs = async (query = {}) => {
     category,
     seatType,
     round,
-    status = "active",
+   status,
     sortBy = "year",
     sortOrder = "desc",
   } = query;
