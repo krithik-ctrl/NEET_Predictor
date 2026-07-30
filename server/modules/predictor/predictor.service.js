@@ -14,18 +14,21 @@ import {
   getCategories,
 } from "./services/category.service.js";
 
-import {User} from "../users/user.model.js";
+import { User } from "../users/user.model.js";
+import { Admin } from "../admin/admin.model.js";
 import { resolveLockedRank } from "../student-profile/studentProfile.service.js";
+
 export const predictColleges = async (
   userId,
-   payload
+  payload,
+  role = "student"
 ) => {
 
 const {
-  rank:requestedRank,
+  rank: requestedRank,
   courseId,
   counsellingType,
-  state:predictorState,
+  state: predictorState,
   domicileState,
   seatType,
   category,
@@ -33,56 +36,88 @@ const {
   round,
   year,
   budget,
-  
+
 } = payload;
 
+const isAdminCaller =
+  role === "admin" || role === "sub-admin";
 
+let rank;
 
-const subscription = await checkSubscription(userId);
+if (isAdminCaller) {
 
-if (!subscription.isPremium) {
-  const todayPredictions = await countTodayPredictions(userId);
+  const admin = await Admin.findById(userId);
 
-  if (todayPredictions >= 3) {
+  if (!admin) {
     throw new Error(
-      "Daily prediction limit reached. Upgrade to Premium for unlimited predictions."
+      "Admin not found"
     );
   }
-}
+
+  if (!admin.isVerified) {
+    throw new Error(
+      "Verify your mobile number first"
+    );
+  }
+
+  if (!admin.isActive) {
+    throw new Error(
+      "Your account is inactive"
+    );
+  }
+
+  // Admins are never subscription-limited and never rank-locked —
+  // the requested rank is used as-is, every time.
+  rank = requestedRank;
+
+} else {
+
+  const subscription = await checkSubscription(userId);
+
+  if (!subscription.isPremium) {
+    const todayPredictions = await countTodayPredictions(userId);
+
+    if (todayPredictions >= 3) {
+      throw new Error(
+        "Daily prediction limit reached. Upgrade to Premium for unlimited predictions."
+      );
+    }
+  }
 
   const user = await User.findById(userId);
 
-if (!user) {
-  throw new Error(
-    "User not found"
-  );
-}
+  if (!user) {
+    throw new Error(
+      "User not found"
+    );
+  }
 
-if (!user.isVerified) {
-  throw new Error(
-    "Verify your mobile number first"
-  );
-}
+  if (!user.isVerified) {
+    throw new Error(
+      "Verify your mobile number first"
+    );
+  }
 
-if (!user.isActive) {
-  throw new Error(
-    "Your account is inactive"
-  );
-}
-const rank = await resolveLockedRank(userId, requestedRank);
+  if (!user.isActive) {
+    throw new Error(
+      "Your account is inactive"
+    );
+  }
 
+  rank = await resolveLockedRank(userId, requestedRank);
+
+}
 
  const query = buildPredictionFilter({
   courseId,
   counsellingType,
-  state:predictorState,
+  state: predictorState,
   seatType,
   category,
   collegeType,
   round,
   year,
 });
-
 
   let cutoffs =
     await Cutoff.find(query)
@@ -94,11 +129,6 @@ const rank = await resolveLockedRank(userId, requestedRank);
       )
       .lean();
 
-
-
-
-
-
  if (budget) {
   cutoffs = cutoffs.filter(
     (cutoff) =>
@@ -108,8 +138,6 @@ const rank = await resolveLockedRank(userId, requestedRank);
   const safe = [];
   const moderate = [];
   const risky = [];
-
-
 
   for (const cutoff of cutoffs) {
 
@@ -150,7 +178,6 @@ const rank = await resolveLockedRank(userId, requestedRank);
     studentRank: rank,
 
   };
-
 
   if (rank <= safeLimit) {
 
@@ -196,7 +223,6 @@ const rank = await resolveLockedRank(userId, requestedRank);
       a.closingRank -
       b.closingRank
   );
-
 
 const predictionHistory =
   await createPredictionHistory(userId, {
@@ -253,7 +279,6 @@ return {
   risky,
 };
 };
-
 export const getSeatTypes = async ({
   counsellingType,
   predictorState,

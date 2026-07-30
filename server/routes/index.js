@@ -29,6 +29,10 @@ import adminAuthRoutes
   from "../modules/admin-auth/adminAuth.routes.js";
 import adminOperationRoutes from "../modules/admin-dashboard/adminIndex.route.js";
 
+import predictAdmin from "../modules/predictor/predictor.admin.routes.js"
+
+import predictionHistoryAdmin from "../modules/prediction-history/predictionHistory.admin.routes.js"
+
 const router = Router();
 
 router.get("/health", (req, res) => {
@@ -111,6 +115,16 @@ router.use(
   "/admin-auth",
   adminAuthRoutes
 );
+
+router.use(
+  "/admin-predictor",
+  predictAdmin
+)
+
+router.use(
+"/admin-predictionHistory",
+predictionHistoryAdmin
+)
 
 
 

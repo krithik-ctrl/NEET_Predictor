@@ -13,7 +13,7 @@ const router =
 router.get(
   "/preview",                              // NEW
   authenticateAdmin,
-  authorizeAdmin("admin","sub-admin"),
+  authorizeAdmin("admin",),
   previewUsersController
 );
 
@@ -21,7 +21,7 @@ router.get(
 router.get(
   "/",
   authenticateAdmin,
-  authorizeAdmin("admin","sub-admin"),
+  authorizeAdmin("admin",),
   exportUsersController
 );
 
