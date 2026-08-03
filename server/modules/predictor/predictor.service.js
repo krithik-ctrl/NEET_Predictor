@@ -28,7 +28,6 @@ const {
   rank: requestedRank,
   courseId,
   counsellingType,
-  state: predictorState,
   domicileState,
   seatType,
   category,
@@ -36,8 +35,13 @@ const {
   round,
   year,
   budget,
-
 } = payload;
+
+// Feeds the query exactly as before (reads payload.state) — colleges returned stay identical.
+const filterState = payload.predictorState;
+// The predictor state the frontend actually sends. Captured for storage + display ONLY,
+// intentionally NOT passed into the query, so prediction results don't change.
+const predictorState = payload.predictorState ?? null;
 
 const isAdminCaller =
   role === "admin" || role === "sub-admin";
@@ -111,13 +115,14 @@ if (isAdminCaller) {
  const query = buildPredictionFilter({
   courseId,
   counsellingType,
-  state: predictorState,
+  state: filterState,
   seatType,
   category,
   collegeType,
   round,
   year,
 });
+
 
   let cutoffs =
     await Cutoff.find(query)
