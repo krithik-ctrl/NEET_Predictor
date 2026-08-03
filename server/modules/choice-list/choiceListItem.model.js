@@ -20,6 +20,8 @@ required: true,
     required: true,
     min: 1,
   },
+   fees:  { type: Number, default: null },
+  seats: { type: Number, default: null },
 },
 {
   timestamps: true,

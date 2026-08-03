@@ -9,6 +9,7 @@ import {
   addCollegeToChoiceListController,
   updatePriorityController,
   removeCollegeFromChoiceListController,
+  deleteChoiceListController,
 } from "./choiceList.controller.js";
 
 const router = Router();
@@ -49,4 +50,10 @@ router.delete(
   removeCollegeFromChoiceListController
 );
 
+
+router.delete(
+  "/:listId",
+  authenticate,
+  deleteChoiceListController
+);
 export default router;

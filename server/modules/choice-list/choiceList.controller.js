@@ -5,6 +5,7 @@ import {
   addCollegeToChoiceList,
   updatePriority,
   removeCollegeFromChoiceList,
+  deleteChoiceList,
 } from "./choiceList.service.js";
 
 export const createChoiceListController =
@@ -69,7 +70,9 @@ export const addCollegeToChoiceListController =
         await addCollegeToChoiceList(
           req.user.userId,
           req.params.listId,
-          req.body.collegeId
+          req.body.collegeId,
+          req.body.fees,
+          req.body.seats
         );
 
       res.status(201).json({
@@ -123,3 +126,39 @@ export const removeCollegeFromChoiceListController =
       next(error);
     }
   };
+
+
+
+  export const deleteChoiceListController =
+async (
+  req,
+  res,
+  next
+) => {
+
+  try {
+
+    const userId =
+      req.user.userId;
+
+    const {
+      listId,
+    } = req.params;
+
+    const result =
+      await deleteChoiceList(
+        userId,
+        listId
+      );
+
+    return res.status(200).json(
+      result
+    );
+
+  } catch (error) {
+
+    next(error);
+
+  }
+
+};

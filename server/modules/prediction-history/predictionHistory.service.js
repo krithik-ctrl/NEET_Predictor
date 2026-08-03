@@ -135,6 +135,8 @@ const buildPrediction = async (
 
     fees:
       college.fees ?? null,
+       seats:
+      college.seats ?? null, 
   };
 
 };

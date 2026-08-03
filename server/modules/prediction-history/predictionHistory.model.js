@@ -139,6 +139,8 @@ predictedColleges: [
 
     fees: Number,
     
+    seats: Number,
+    
   }
 ]
     },

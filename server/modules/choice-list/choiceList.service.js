@@ -124,7 +124,9 @@ export const addCollegeToChoiceList =
 async (
 userId,
 listId,
-collegeId
+collegeId,
+fees,
+seats
 ) => {
 
 
@@ -222,6 +224,8 @@ return await ChoiceListItem.create(
     collegeId,
     priority:
       count + 1,
+      fees: fees ?? null,
+  seats: seats ?? null,
   }
 );
 
@@ -304,4 +308,60 @@ if (!item) {
 return item;
 
 
+};
+
+
+export const deleteChoiceList =
+async (
+  userId,
+  listId
+) => {
+
+  if (
+    !mongoose.Types.ObjectId.isValid(
+      listId
+    )
+  ) {
+    throw new Error(
+      "Invalid choice list ID"
+    );
+  }
+
+  const choiceList =
+    await ChoiceList.findOne({
+      _id: listId,
+      userId,
+    });
+
+  if (!choiceList) {
+    throw new Error(
+      "Choice list not found"
+    );
+  }
+
+  /*
+  |--------------------------------------------------------------------------
+  | Delete all colleges/items belonging to this choice list
+  |--------------------------------------------------------------------------
+  */
+
+  await ChoiceListItem.deleteMany({
+    choiceListId: listId,
+  });
+
+  /*
+  |--------------------------------------------------------------------------
+  | Delete the choice list itself
+  |--------------------------------------------------------------------------
+  */
+
+  await ChoiceList.findByIdAndDelete(
+    listId
+  );
+
+  return {
+    success: true,
+    message:
+      "Choice list deleted successfully.",
+  };
 };

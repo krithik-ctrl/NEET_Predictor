@@ -173,6 +173,7 @@ if (isAdminCaller) {
     year: cutoff.year,
 
     fees: cutoff.fees,
+    seats: cutoff.seats,
 
     openingRank:
       cutoff.openingRank,
@@ -183,7 +184,6 @@ if (isAdminCaller) {
     studentRank: rank,
 
   };
-
   if (rank <= safeLimit) {
 
     safe.push({
