@@ -27,7 +27,7 @@ import chandigarhConfig from "./cg.js";
 import himachalPradeshConfig from "./hp.js";
 import nagalandConfig from "./nagaland.js";
 import sikkimConfig from "./skkim.js";
-import dadraAndNagarHaveliAndDamanAndDiuConfig from "./dadra";
+import dadraAndNagarHaveliAndDamanAndDiuConfig from "./dadra.js";
 import arunachalPradeshConfig from "./ar.js";
 import mizoramConfig from "./mizoram.js";
 import manipurConfig from "./manipur.js";
