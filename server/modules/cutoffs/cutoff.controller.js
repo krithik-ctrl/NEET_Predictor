@@ -4,6 +4,7 @@ import {
   getCutoffById,
   updateCutoff,
   deleteCutoff,
+  getCutoffTrends,
 } from "./cutoff.service.js";
 
 import {
@@ -105,3 +106,13 @@ export const deleteCutoffController =
       next(error);
     }
   };
+
+
+  export const getCutoffTrendsController = async (req, res) => {
+  try {
+    const result = await getCutoffTrends(req.query);
+    return res.status(200).json({ success: true, ...result });
+  } catch (err) {
+    return res.status(400).json({ success: false, message: err.message });
+  }
+};

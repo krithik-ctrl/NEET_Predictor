@@ -259,3 +259,75 @@ export const deleteCutoff =
       }
     );
   };
+
+
+
+export const getCutoffTrends = async (query) => {
+  const { collegeId, courseId, counsellingType, year } = query;
+  if (!collegeId) throw new Error("collegeId is required");
+
+  const match = { collegeId: new mongoose.Types.ObjectId(collegeId) };
+  if (courseId) match.courseId = new mongoose.Types.ObjectId(courseId);
+  if (counsellingType) match.counsellingType = counsellingType;
+  if (year) match.year = Number(year);
+
+  // Collapse thousands of rows -> one per (round × category × seatType × counselling × year)
+  const rows = await Cutoff.aggregate([
+    { $match: match },
+    {
+      $group: {
+        _id: {
+          round: "$round",
+          category: "$category",
+          seatType: "$seatType",
+          counsellingType: "$counsellingType",
+          year: "$year",
+        },
+        openingRank: { $min: "$openingRank" },
+        closingRank: { $max: "$closingRank" },
+        seats: { $max: "$seats" }, // $max avoids over-counting re-offered seats across rounds
+        records: { $sum: 1 },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        round: "$_id.round",
+        category: "$_id.category",
+        seatType: "$_id.seatType",
+        counsellingType: "$_id.counsellingType",
+        year: "$_id.year",
+        openingRank: 1,
+        closingRank: 1,
+        seats: 1,
+        records: 1,
+      },
+    },
+    { $sort: { closingRank: 1 } },
+  ]);
+
+  // Courses that actually have cutoff data for this college (for the course pills)
+  const courses = await Cutoff.aggregate([
+    { $match: { collegeId: new mongoose.Types.ObjectId(collegeId) } },
+    { $group: { _id: "$courseId" } },
+    { $lookup: { from: "courses", localField: "_id", foreignField: "_id", as: "course" } },
+    { $unwind: "$course" },
+    { $project: { _id: 0, id: "$course._id", name: "$course.name", level: "$course.level" } },
+    { $sort: { name: 1 } },
+  ]);
+
+  const distinct = (key) =>
+    [...new Set(rows.map((r) => r[key]).filter((v) => v !== null && v !== undefined))];
+
+  return {
+    filters: {
+      courses,
+      counsellingTypes: distinct("counsellingType"),
+      years: distinct("year").sort((a, b) => b - a),
+      seatTypes: distinct("seatType"),
+      rounds: distinct("round").sort(), // "Round 1", "Round 2", ...
+      categories: distinct("category"),
+    },
+    data: rows,
+  };
+};

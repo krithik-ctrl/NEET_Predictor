@@ -2,6 +2,7 @@ import {
   getUserById,
   createGoogleUser,
   createPendingUser,
+  checkEmailExists
 } from "./user.service.js";
 import { setAuthCookie } from "../../auth/utils/setAuthCookie.js";
 import {
@@ -142,3 +143,6 @@ export const createPendingUserController =
     }
 
   };
+
+
+  export const checkEmailController = async (req, res, next) => { try { const email = req.query.email; if (!email) { throw new Error("Email is required"); } const exists = await checkEmailExists(email); res.status(200).json({ success: true, data: { exists }, }); } catch (error) { next(error); } };

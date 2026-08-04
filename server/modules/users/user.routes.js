@@ -4,7 +4,8 @@ import {
   getMeController,
   logoutController,
   googleLoginController,
-    createPendingUserController
+    createPendingUserController,
+    checkEmailController
 } from "./user.controller.js";
 
 import {
@@ -59,5 +60,9 @@ router.post(
   "/create-user",
   createPendingUserController
 );
+
+
+
+router.get("/check-email", checkEmailController);
 
 export default router;

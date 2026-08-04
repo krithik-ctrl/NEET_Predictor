@@ -218,3 +218,6 @@ export const createPendingUser =
     };
 
   };
+
+
+  export const checkEmailExists = async (email) => { if (!email) return false; const existing = await User.findOne({ email: String(email).toLowerCase().trim(), }); return !!existing; };
