@@ -4,6 +4,7 @@ import { createPredictionHistory, countTodayPredictions,} from "../prediction-hi
 import {
   checkSubscription,
 } from "../subscription/subscription.helper.js";
+import { pickLastRound } from "./services/dataSourceRouting.js";
 
 
 import {
@@ -133,7 +134,7 @@ if (isAdminCaller) {
         "courseId"
       )
       .lean();
-
+ cutoffs = pickLastRound(cutoffs); 
  if (budget) {
   cutoffs = cutoffs.filter(
     (cutoff) =>
