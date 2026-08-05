@@ -252,16 +252,36 @@ handleMSG91Error(error);
 
 export const normalizeMobile = (mobile) => {
 
+  if (
+    mobile === null ||
+    mobile === undefined
+  ) {
+    throw new Error(
+      "Mobile number is required."
+    );
+  }
+
   const number =
     String(mobile)
       .replace(/\D/g, "");
 
+  /*
+  |--------------------------------------------------------------------------
+  | Normal 10-digit Indian mobile number
+  |--------------------------------------------------------------------------
+  */
+
   if (
-    number.length === 13 &&
-    number.startsWith("091")
+    number.length === 10
   ) {
-    return number.slice(3);
+    return number;
   }
+
+  /*
+  |--------------------------------------------------------------------------
+  | 91 + 10-digit Indian mobile number
+  |--------------------------------------------------------------------------
+  */
 
   if (
     number.length === 12 &&
@@ -270,12 +290,31 @@ export const normalizeMobile = (mobile) => {
     return number.slice(2);
   }
 
-  return number;
+  /*
+  |--------------------------------------------------------------------------
+  | 091 + 10-digit Indian mobile number
+  |--------------------------------------------------------------------------
+  */
 
+  if (
+    number.length === 13 &&
+    number.startsWith("091")
+  ) {
+    return number.slice(3);
+  }
+
+  throw new Error(
+    "Invalid Indian mobile number."
+  );
 };
 
-export const formatMobileForMSG91 = (mobile) => {
-  return mobile.startsWith("91")
-    ? mobile
-    : `91${mobile}`;
+
+export const formatMobileForMSG91 = (
+  mobile
+) => {
+
+  const normalizedMobile =
+    normalizeMobile(mobile);
+
+  return `91${normalizedMobile}`;
 };
