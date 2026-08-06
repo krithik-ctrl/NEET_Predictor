@@ -35,7 +35,7 @@ router.get(
   authenticateAdmin,
 
   authorizeAdmin(
-    "admin"
+    "admin", "sub-admin"
   ),
 
   getAdminProfileController
@@ -49,7 +49,7 @@ router.patch(
   authenticateAdmin,
 
   authorizeAdmin(
-    "admin"
+    "admin", "sub-admin"
   ),
 
   updateAdminProfileController
@@ -63,7 +63,7 @@ router.patch(
   authenticateAdmin,
 
   authorizeAdmin(
-    "admin"
+    "admin", "sub-admin"
   ),
 
   changeAdminPasswordController

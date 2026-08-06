@@ -7,6 +7,7 @@ import {
   updateCutoffController,
   deleteCutoffController,
   getCutoffTrendsController,
+  getCutoffExplorerController
 } from "./cutoff.controller.js";
 
 import {
@@ -25,6 +26,7 @@ import { authenticate } from "../../auth/middleware/authenticate.js";
 const router =
   express.Router();
 router.get("/trends", getCutoffTrendsController);
+router.get("/explorer", getCutoffExplorerController);
 router.post(
   "/",
   authenticateAdmin,

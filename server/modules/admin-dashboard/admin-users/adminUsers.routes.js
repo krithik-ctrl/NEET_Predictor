@@ -44,6 +44,8 @@ const router =
 
 router.use(
   "/export",
+    authenticateAdmin,
+  authorizeAdmin("admin"),
   exportUsersRoutes
 );
 

@@ -1,4 +1,4 @@
-import { resolveProvider } from "./dataSourceRouting";
+import { resolveProvider } from "./dataSourceRouting.js";
 
 export const buildPredictionFilter = ({
   courseId, counsellingType, state, seatType, category, collegeType, year,

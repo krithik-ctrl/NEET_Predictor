@@ -2,6 +2,9 @@ import { Router } from "express";
 
 // import adminDashboardRoutes
 //   from "../admin-dashboard/adminDashboard.routes.js";
+import {authenticateAdmin} from "../../auth/middleware/authenticateAdmin.js";
+
+import {authorizeAdmin} from "../../auth/middleware/authorizeAdmin.js";
 
 import adminUsersRoutes
   from "./admin-users/adminUsers.routes.js";
@@ -19,6 +22,7 @@ const router =
 
 router.use(
   "/overview",
+   
   overviewRoutes
 
   

@@ -271,12 +271,21 @@ export const getCutoffTrends = async (query) => {
   if (counsellingType) match.counsellingType = counsellingType;
   if (year) match.year = Number(year);
 
-  // Collapse thousands of rows -> one per (round × category × seatType × counselling × year)
+  // Tolerate inconsistent docs so nothing shows blank / gets dropped.
+  const normalize = {
+    $addFields: {
+      counsellingType: { $ifNull: ["$counsellingType", "STATE"] },
+      round: { $ifNull: ["$round", "Overall"] },
+    },
+  };
+
   const rows = await Cutoff.aggregate([
     { $match: match },
+    normalize,
     {
       $group: {
         _id: {
+          courseId: "$courseId", // keep courses separate — never merge
           round: "$round",
           category: "$category",
           seatType: "$seatType",
@@ -285,13 +294,14 @@ export const getCutoffTrends = async (query) => {
         },
         openingRank: { $min: "$openingRank" },
         closingRank: { $max: "$closingRank" },
-        seats: { $max: "$seats" }, // $max avoids over-counting re-offered seats across rounds
+        seats: { $max: "$seats" },
         records: { $sum: 1 },
       },
     },
     {
       $project: {
         _id: 0,
+        courseId: "$_id.courseId",
         round: "$_id.round",
         category: "$_id.category",
         seatType: "$_id.seatType",
@@ -306,7 +316,6 @@ export const getCutoffTrends = async (query) => {
     { $sort: { closingRank: 1 } },
   ]);
 
-  // Courses that actually have cutoff data for this college (for the course pills)
   const courses = await Cutoff.aggregate([
     { $match: { collegeId: new mongoose.Types.ObjectId(collegeId) } },
     { $group: { _id: "$courseId" } },
@@ -325,9 +334,120 @@ export const getCutoffTrends = async (query) => {
       counsellingTypes: distinct("counsellingType"),
       years: distinct("year").sort((a, b) => b - a),
       seatTypes: distinct("seatType"),
-      rounds: distinct("round").sort(), // "Round 1", "Round 2", ...
+      rounds: distinct("round").sort(),
       categories: distinct("category"),
     },
     data: rows,
+  };
+};
+
+
+export const getCutoffExplorer = async (query) => {
+  const {
+    courseId,
+    counsellingType = "AIQ",
+    category = "Open",
+    round,
+    year,
+    state,
+    ownership,
+    search,
+    page = 1,
+    limit = 20,
+    sort = "closingRank",
+    order = "asc",
+  } = query;
+
+  const skip = (Number(page) - 1) * Number(limit);
+  const sortDir = order === "desc" ? -1 : 1;
+
+  // Treat "All" / "Any" / blank as "no filter" so they can't accidentally
+  // match a literal value (e.g. ownership="All" → 0 results).
+  const norm = (v) => (v && !["All", "Any", ""].includes(String(v).trim()) ? String(v).trim() : null);
+  const stateF = norm(state);
+  const ownershipF = norm(ownership);
+  const searchF = norm(search);
+
+  // Normalize BEFORE matching so blank-counselling/round rows still qualify.
+  const normalize = {
+    $addFields: {
+      counsellingType: { $ifNull: ["$counsellingType", "STATE"] },
+      round: { $ifNull: ["$round", "Overall"] },
+    },
+  };
+
+  const match = {};
+  if (courseId) match.courseId = new mongoose.Types.ObjectId(courseId);
+  if (counsellingType) match.counsellingType = counsellingType;
+  if (category) match.category = category;
+  if (round) match.round = round;
+  if (year) match.year = Number(year);
+
+  const pipeline = [
+    normalize,
+    { $match: match },
+    {
+      $group: {
+        _id: "$collegeId",
+        openingRank: { $min: "$openingRank" },
+        closingRank: { $max: "$closingRank" },
+        seats: { $max: "$seats" },
+      },
+    },
+    { $lookup: { from: "colleges", localField: "_id", foreignField: "_id", as: "college" } },
+    { $unwind: "$college" },
+    ...(stateF ? [{ $match: { "college.state": stateF } }] : []),
+    ...(ownershipF ? [{ $match: { "college.ownership": ownershipF } }] : []),
+    ...(searchF ? [{ $match: { "college.name": { $regex: searchF, $options: "i" } } }] : []),
+    {
+      $project: {
+        _id: 0,
+        collegeId: "$_id",
+        name: "$college.name",
+        city: "$college.city",
+        state: "$college.state",
+        ownership: "$college.ownership",
+        openingRank: 1,
+        closingRank: 1,
+        seats: 1,
+      },
+    },
+    { $sort: { [sort]: sortDir, name: 1 } },
+    {
+      $facet: {
+        data: [{ $skip: skip }, { $limit: Number(limit) }],
+        total: [{ $count: "count" }],
+      },
+    },
+  ];
+
+  const [result] = await Cutoff.aggregate(pipeline);
+  const data = result?.data ?? [];
+  const total = result?.total?.[0]?.count ?? 0;
+
+  // Filter options: include the coalesced "STATE" / "Overall" so the dropdowns
+  // reflect what the normalized data actually contains.
+  const optMatch = counsellingType ? { counsellingType } : {};
+  const [rawRounds, years, categories] = await Promise.all([
+    Cutoff.distinct("round", optMatch),
+    Cutoff.distinct("year", optMatch),
+    Cutoff.distinct("category", optMatch),
+  ]);
+  const counsellingTypes = await Cutoff.distinct("counsellingType");
+
+  return {
+    data,
+    pagination: {
+      page: Number(page),
+      limit: Number(limit),
+      total,
+      pages: Math.ceil(total / Number(limit)),
+    },
+    filters: {
+      rounds: [...new Set([...rawRounds.filter((r) => r && r.trim()), "Overall"])].sort(),
+      years: years.sort((a, b) => b - a),
+      categories: categories.filter(Boolean).sort(),
+      counsellingTypes: [...new Set([...counsellingTypes, "STATE"])],
+    },
   };
 };

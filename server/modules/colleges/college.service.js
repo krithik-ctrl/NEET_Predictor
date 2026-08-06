@@ -46,109 +46,50 @@ export const createCollege =
     );
   };
 
-export const getColleges =
-  async (query) => {
+export const getColleges = async (query) => {
+  const { search, state, ownership, courseIds, page = 1, limit = 20 } = query;
 
-    const {
+  const filters = { status: "active" };
 
-      search,
+  if (state) filters.state = state;
+  if (ownership) filters.ownership = ownership;
 
-      state,
+  // Stream filter: match colleges offering ANY of the given courses.
+  // courseIds arrives as a comma-separated string (e.g. one stream = "id1,id2").
+  if (courseIds) {
+    const ids = String(courseIds)
+      .split(",")
+      .map((s) => s.trim())
+      .filter((s) => mongoose.Types.ObjectId.isValid(s))
+      .map((s) => new mongoose.Types.ObjectId(s));
+    if (ids.length) filters.courses = { $in: ids };
+  }
 
-      collegeType,
+  if (search) {
+    filters.$or = [
+      { name: { $regex: search, $options: "i" } },
+      { shortName: { $regex: search, $options: "i" } },
+      { city: { $regex: search, $options: "i" } },
+    ];
+  }
 
-      page = 1,
+  const skip = (Number(page) - 1) * Number(limit);
 
-      limit = 20,
+  const [colleges, total] = await Promise.all([
+    College.find(filters).populate("courses").sort({ createdAt: -1 }).skip(skip).limit(Number(limit)),
+    College.countDocuments(filters),
+  ]);
 
-    } = query;
-
-    const filters = {
-      status: "active",
-    };
-
-    if (state) {
-      filters.state = state;
-    }
-
-    if (collegeType) {
-      filters.collegeType =
-        collegeType;
-    }
-
-    if (search) {
-
-      filters.$or = [
-
-        {
-          name: {
-            $regex: search,
-            $options: "i",
-          },
-        },
-
-        {
-          shortName: {
-            $regex: search,
-            $options: "i",
-          },
-        },
-
-      ];
-
-    }
-
-    const skip =
-      (Number(page) - 1) *
-      Number(limit);
-
-    const [
-
-      colleges,
-
+  return {
+    colleges,
+    pagination: {
+      page: Number(page),
+      limit: Number(limit),
       total,
-
-    ] = await Promise.all([
-
-      College.find(filters)
-        .populate("courses")
-        .sort({
-          createdAt: -1,
-        })
-        .skip(skip)
-        .limit(Number(limit)),
-
-      College.countDocuments(
-        filters
-      ),
-
-    ]);
-
-    return {
-
-      colleges,
-
-      pagination: {
-
-        page:
-          Number(page),
-
-        limit:
-          Number(limit),
-
-        total,
-
-        totalPages:
-          Math.ceil(
-            total /
-              Number(limit)
-          ),
-
-      },
-
-    };
-
+      totalPages: Math.ceil(total / Number(limit)),
+    },
   };
+};
 
 export const getCollegeById =
   async (id) => {
@@ -269,3 +210,23 @@ export const getCollegeById =
       }
     );
   };
+
+
+ export const getCollegeFilterOptions = async () => {
+  const [states, ownerships] = await Promise.all([
+    College.distinct("state", { status: "active" }),
+    College.distinct("ownership", { status: "active" }),
+  ]);
+
+  // Drop placeholder / invalid values from the dropdowns; keep every real one.
+  const isReal = (v) => {
+    if (!v) return false;
+    const s = String(v).trim().toLowerCase();
+    return s !== "" && s !== "data required" && s !== "-";
+  };
+
+  return {
+    states: states.filter(isReal).sort(),
+    ownerships: ownerships.filter(isReal).sort(),
+  };
+};

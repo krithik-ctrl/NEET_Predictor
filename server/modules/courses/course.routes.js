@@ -6,9 +6,15 @@ import {
   getCourseByIdController,
 } from "./course.controller.js";
 
+import { authenticateAdmin } from "../../auth/middleware/authenticateAdmin.js";
+
+import { authorizeAdmin } from "../../auth/middleware/authorizeAdmin.js";
 const router = Router();
 
-router.post("/", createCourseController);
+router.post("/", 
+  authenticateAdmin,
+  authorizeAdmin("admin")
+  ,createCourseController);
 
 router.get("/", getCoursesController);
 

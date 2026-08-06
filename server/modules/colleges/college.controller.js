@@ -4,6 +4,7 @@ import {
   getCollegeById,
   updateCollege,
   deleteCollege,
+  getCollegeFilterOptions,
 } from "./college.service.js";
 
 import {
@@ -111,3 +112,12 @@ export const getCollegeByIdController =
       next(error);
     }
   };
+
+  export const getCollegeFilterOptionsController = async (req, res, next) => {
+  try {
+    const data = await getCollegeFilterOptions();
+    res.status(200).json({ success: true, data });
+  } catch (error) {
+    next(error);
+  }
+};

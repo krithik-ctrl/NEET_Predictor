@@ -5,7 +5,8 @@ import {
   getCollegesController,
   getCollegeByIdController,
   updateCollegeController,
-deleteCollegeController
+deleteCollegeController,
+getCollegeFilterOptionsController,
 } from "./college.controller.js";
 
 import {
@@ -30,7 +31,7 @@ router.get(
   "/",
   getCollegesController
 );
-
+router.get("/filter-options", getCollegeFilterOptionsController);
 router.get(
   "/:id",
   getCollegeByIdController
