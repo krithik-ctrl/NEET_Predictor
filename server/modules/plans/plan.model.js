@@ -34,6 +34,7 @@ const planSchema =
           trim: true,
         },
       ],
+category: { type: String, enum: ["predictor", "counselling"], default: "predictor" }  ,
 
       status: {
         type: String,
@@ -43,6 +44,7 @@ const planSchema =
         ],
         default: "active",
       },
+
     },
     {
       timestamps: true,

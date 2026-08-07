@@ -21,7 +21,7 @@ export const createPlanSchema =
       features: z.array(
         z.string()
       ),
-
+      category: z.enum(["predictor", "counselling"]).optional(),
       status: z
         .enum([
           "active",
@@ -55,7 +55,7 @@ export const updatePlanSchema =
         z.array(
           z.string()
         ).optional(),
-
+      category: z.enum(["predictor", "counselling"]).optional(),
       status: z
         .enum([
           "active",
