@@ -21,7 +21,7 @@ import biharConfig from "./bihar.js";
 import jharkhandConfig from "./jh.js";
 import haryanaConfig from "./haryana.js";
 import uttarakhandConfig from "./uk.js";
-import chhattisgarhConfig from "./ch.js";
+import chattisgarhConfig from "./ch.js";
 import puducherryConfig from "./py.js";
 import chandigarhConfig from "./cg.js";
 import himachalPradeshConfig from "./hp.js";
@@ -56,7 +56,7 @@ const stateConfigs = {
  Jharkhand:jharkhandConfig,
  Haryana:haryanaConfig,
  Uttarakhand:uttarakhandConfig,
- Chhattisgarh:chhattisgarhConfig,
+ Chattisgarh:chattisgarhConfig,
  Puducherry:puducherryConfig,
  Chandigarh:chandigarhConfig,
  "Himachal Pradesh":himachalPradeshConfig,

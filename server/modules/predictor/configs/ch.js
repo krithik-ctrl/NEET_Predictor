@@ -1,8 +1,8 @@
 
 
 
-const chhattisgarhConfig = {
-  state: "Chhattisgarh",
+const chattisgarhConfig = {
+  state: "Chattisgarh",
 
   counsellingType: "STATE",
 
@@ -42,4 +42,4 @@ const chhattisgarhConfig = {
   },
 };
 
-export default chhattisgarhConfig;
+export default chattisgarhConfig;
