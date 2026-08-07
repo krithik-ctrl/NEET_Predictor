@@ -90,7 +90,7 @@ await verifyAdminOtpService(
     await Admin.findOne({
       mobile,
       isActive: true,
-     
+     isVerified : true,
     });
 
   if (!admin) {
