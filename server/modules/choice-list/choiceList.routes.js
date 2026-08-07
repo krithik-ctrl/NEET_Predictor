@@ -10,6 +10,9 @@ import {
   updatePriorityController,
   removeCollegeFromChoiceListController,
   deleteChoiceListController,
+   exportChoiceListExcelController,
+  exportChoiceListPdfController,
+
 } from "./choiceList.controller.js";
 
 const router = Router();
@@ -31,6 +34,8 @@ router.get(
   authenticate,
   getChoiceListByIdController
 );
+router.get("/:listId/export/excel", authenticate, exportChoiceListExcelController);
+router.get("/:listId/export/pdf", authenticate, exportChoiceListPdfController);
 
 router.post(
   "/:listId/items",
@@ -56,4 +61,6 @@ router.delete(
   authenticate,
   deleteChoiceListController
 );
+
+
 export default router;

@@ -111,10 +111,11 @@ const items =
     .sort({
       priority: 1,
     });
+ const enrichedItems = await attachChance(userId, items);
 
 return {
   choiceList,
-  items,
+  items: enrichedItems,
 };
 
 
@@ -364,4 +365,58 @@ async (
     message:
       "Choice list deleted successfully.",
   };
+};
+
+
+
+export const getChoiceListForExport = async (userId, listId) => {
+  const { choiceList, items } = await getChoiceListById(userId, listId);
+
+  // Student AIR from the profile (optional — falls back to null/NA).
+  let studentAIR = null;
+  try {
+    const StudentProfile = mongoose.model("StudentProfile"); // already registered at startup
+    const profile = await StudentProfile.findOne({ userId }).select("rank");
+    studentAIR = profile?.rank ?? null;
+  } catch {
+    studentAIR = null;
+  }
+
+  return { choiceList, items, studentAIR };
+};
+
+
+// Populate SAFE/MODERATE/RISKY onto each item from the user's most recent
+// prediction that contains that college. No prediction → chance stays null.
+export const attachChance = async (userId, items = []) => {
+  if (!items.length) return items;
+
+  const toPlain = (it) => (typeof it?.toObject === "function" ? it.toObject() : it);
+  const idOf = (it) => (it?.collegeId?._id ?? it?.collegeId)?.toString();
+
+  try {
+    const PredictionHistory = mongoose.model("PredictionHistory");
+    const collegeIds = items.map(idOf).filter(Boolean);
+
+    const histories = await PredictionHistory.find({
+      userId,
+      "predictedColleges.collegeId": { $in: collegeIds },
+    })
+      .sort({ generatedAt: -1 })
+      .select("predictedColleges generatedAt")
+      .lean();
+
+    // First occurrence wins = most recent (histories sorted desc).
+    const map = new Map();
+    for (const h of histories) {
+      for (const pc of h.predictedColleges ?? []) {
+        const cid = pc?.collegeId?.toString();
+        if (cid && !map.has(cid) && pc.predictionType) map.set(cid, pc.predictionType);
+      }
+    }
+
+    return items.map((it) => ({ ...toPlain(it), chance: map.get(idOf(it)) ?? null }));
+  } catch {
+    return items.map((it) => ({ ...toPlain(it), chance: null }));
+  }
 };
