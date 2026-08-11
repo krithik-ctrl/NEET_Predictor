@@ -71,15 +71,45 @@ const cutoffSchema = new mongoose.Schema(
       required: true,
     },
 
+    // ── Excel display fields (stamped per row from the sheet / college) ──
+    // Fee → seatType-scoped fee (AIQ fee now; management/NRI fee later)
     fees: {
       type: Number,
-      default: 0,
+      default: null,
       min: 0,
     },
 
     seats: {
       type: Number,
       default: 0,
+      min: 0,
+    },
+
+    // Beds
+    beds: {
+      type: Number,
+      default: null,
+      min: 0,
+    },
+
+    // Bond Years
+    bondYears: {
+      type: Number,
+      default: null,
+      min: 0,
+    },
+
+    // Bond Penalty
+    bondPenalty: {
+      type: Number,
+      default: null,
+      min: 0,
+    },
+
+    // Stipend (Internship)
+    stipend: {
+      type: Number,
+      default: null,
       min: 0,
     },
 
@@ -110,7 +140,7 @@ const cutoffSchema = new mongoose.Schema(
 
 /*
 |--------------------------------------------------------------------------
-| Compound Index (now includes provider so client + internal can coexist)
+| Compound Index (includes provider so client + internal can coexist)
 |--------------------------------------------------------------------------
 */
 

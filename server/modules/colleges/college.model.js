@@ -1,102 +1,92 @@
 import mongoose from "mongoose";
 
-const collegeSchema =
-  new mongoose.Schema(
-    {
-      name: {
-        type: String,
-        required: true,
-        trim: true,
-        unique: true,
-      },
-      shortName: {
-  type: String,
-  trim: true,
-  default: "",
-},
-
-      state: {
-        type: String,
-        required: true,
-        trim: true,
-      },
-
-      city: {
-        type: String,
-        required: true,
-        trim: true,
-      },
-
-      ownership: {
-        type: String,
-        enum: [
-          "Government",
-          "Private",
-          "Deemed",
-          "Government Aided",
-          "Deemed University",
-          "Aided",
-           "Government-aided"
-
-        ],
-        required: true,
-      },
-
- 
-
-      courses: [
-        {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Course",
-        },
-      ],
-
-      website: {
-        type: String,
-        default: "",
-      },
-      //level
-
-      status: {
-        type: String,
-        enum: [
-          "active",
-          "inactive",
-           "verify",
-           "provisional",
-           "proposed"
-        ],
-        default: "active",
-      },
+const collegeSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+      // NOT unique — same institution can exist as Medical and Dental rows
     },
-    {
-      timestamps: true,
-    }
-  );
+    shortName: {
+      type: String,
+      required: true,   // scrapper's match key
+      trim: true,
+    },
 
+    collegeType: {
+      type: String,
+      enum: ["Medical", "Dental", "Ayurveda", "Homeopathy", "Unani", "Other"],
+      required: true,
+    },
 
-collegeSchema.index({
-  state: 1,
-});
+    // location
+    state: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    city: {
+      type: String,
+      trim: true,
+      default: "",   // "" → UI shows NA
+    },
 
-collegeSchema.index({
-  collegeType: 1,
-});
+    ownership: {
+      type: String,
+      enum: [
+        "Government",
+        "AIIMS",
+        "Central",
+        "ESIC",
+        "Municipal",
+        "Private",
+        "Deemed",
+        "Government Aided",
+        "Other",
+      ],
+      required: true,
+    },
 
-collegeSchema.index({
-  ownership: 1,
-});
+    estbYear:    { type: Number, default: null },   // null → NA
+    recognition: { type: String, trim: true, default: "" },
+    affiliation: { type: String, trim: true, default: "" },
+    website:     { type: String, trim: true, default: "" },
 
-collegeSchema.index({
-  courses: 1,
-});
+    // 2025 display attributes (from Sheet2). null = unknown → UI shows NA.
+    fees:        { type: Number, default: null, min: 0 },
+    beds:        { type: Number, default: null, min: 0 },
+    bondYears:   { type: Number, default: null, min: 0 },
+    bondPenalty: { type: Number, default: null, min: 0 },
+    stipend:     { type: Number, default: null, min: 0 },
 
-collegeSchema.index({
-  level: 1,
-});
+    courses: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Course",
+      },
+    ],
 
-export const College =
-  mongoose.model(
-    "College",
-    collegeSchema
-  );
+    status: {
+      type: String,
+      enum: ["active", "inactive", "verify", "provisional", "proposed"],
+      default: "active",
+    },
+  },
+  { timestamps: true }
+);
+
+/*
+|--------------------------------------------------------------------------
+| Unique identity: shortName + collegeType (the scrapper's linkage key)
+|--------------------------------------------------------------------------
+*/
+collegeSchema.index({ shortName: 1, collegeType: 1 }, { unique: true });
+
+/* Filter indexes */
+collegeSchema.index({ state: 1 });
+collegeSchema.index({ collegeType: 1 });
+collegeSchema.index({ ownership: 1 });
+collegeSchema.index({ courses: 1 });
+
+export const College = mongoose.model("College", collegeSchema);
