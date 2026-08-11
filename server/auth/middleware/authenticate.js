@@ -6,7 +6,6 @@ export const authenticate = (
   res,
   next
 ) => {
-    console.log("AUTH COOKIE:", req.cookies.accessToken);
 
   try {
     const token =
@@ -25,7 +24,6 @@ export const authenticate = (
         token,
         env.JWT_SECRET
       );
- console.log("JWT DECODED:", decoded);
     req.user = decoded;
 
     next();

@@ -86,7 +86,6 @@ const buildPrediction = async (
 ) => {
 
   const collegeData = college.college;
-
   return {
 
     collegeId:
@@ -135,8 +134,22 @@ const buildPrediction = async (
 
     fees:
       college.fees ?? null,
-       seats:
-      college.seats ?? null, 
+
+    seats:
+      college.seats ?? null,
+
+    beds:
+      college.beds ?? null,
+
+    bondYears:
+      college.bondYears ?? null,
+
+    bondPenalty:
+      college.bondPenalty ?? null,
+
+    stipend:
+      college.stipend ?? null,
+
   };
 
 };

@@ -155,7 +155,7 @@ if (isAdminCaller) {
       closingRank * 0.8
     );
 
-  const result = {
+ const result = {
 
     cutoffId: cutoff._id,
 
@@ -175,6 +175,10 @@ if (isAdminCaller) {
 
     fees: cutoff.fees,
     seats: cutoff.seats,
+    beds: cutoff.beds,
+    bondYears: cutoff.bondYears,
+    bondPenalty: cutoff.bondPenalty,
+    stipend: cutoff.stipend,
 
     openingRank:
       cutoff.openingRank,

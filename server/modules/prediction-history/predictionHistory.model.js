@@ -140,6 +140,10 @@ predictedColleges: [
     fees: Number,
     
     seats: Number,
+     beds:        { type: Number, default: null },
+    bondYears:   { type: Number, default: null },
+    bondPenalty: { type: Number, default: null },
+    stipend:     { type: Number, default: null },
     
   }
 ]
