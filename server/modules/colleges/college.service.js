@@ -8,7 +8,8 @@ export const createCollege =
 
     const existingCollege =
       await College.findOne({
-        name: payload.name,
+          shortName: payload.shortName,
+  collegeType: payload.collegeType,
       });
 
     if (existingCollege) {
@@ -117,7 +118,7 @@ export const getCollegeById =
     return college;
   };
 
-  export const updateCollege =
+export const updateCollege =
   async (
     collegeId,
     payload
@@ -134,20 +135,14 @@ export const getCollegeById =
       );
     }
 
-    if (payload.name) {
-      const existingCollege =
-        await College.findOne({
-          name: payload.name,
-          _id: {
-            $ne: collegeId,
-          },
-        });
-
-      if (existingCollege) {
-        throw new Error(
-          "College already exists"
-        );
-      }
+    // Duplicate guard on identity (shortName + collegeType) if either changes
+    if (payload.shortName || payload.collegeType) {
+      const shortName = payload.shortName ?? college.shortName;
+      const collegeType = payload.collegeType ?? college.collegeType;
+      const dup = await College.findOne({
+        shortName, collegeType, _id: { $ne: collegeId },
+      });
+      if (dup) throw new Error("College already exists");
     }
 
     if (payload.courses) {
