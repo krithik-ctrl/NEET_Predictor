@@ -49,22 +49,17 @@ export const createCutoff =
       );
     }
 
-    const existingCutoff =
+const existingCutoff =
       await Cutoff.findOne({
-        collegeId:
-          payload.collegeId,
-        courseId:
-          payload.courseId,
+        collegeId: payload.collegeId,
+        courseId: payload.courseId,
         year: payload.year,
-        category:
-          payload.category,
-        quota:
-          payload.quota,
-        round:
-          payload.round,
-        seatType:
-          payload.seatType ||
-          "Government",
+        counsellingType: payload.counsellingType,
+        state: payload.state ?? "",
+        seatType: payload.seatType,
+        category: payload.category,
+        round: payload.round,
+        provider: payload.provider ?? "internal",
       });
 
     if (existingCutoff) {

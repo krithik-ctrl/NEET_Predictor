@@ -1,5 +1,3 @@
-import { resolveProvider } from "./dataSourceRouting.js";
-
 export const buildPredictionFilter = ({
   courseId, counsellingType, state, seatType, category, collegeType, year,
 }) => {
@@ -12,10 +10,6 @@ export const buildPredictionFilter = ({
   if (collegeType && collegeType !== "Both") filter.collegeType = collegeType;
   if (year) filter.year = year;
   if (counsellingType === "STATE" && state) filter.state = state;
-
-  // Funnel layer: route matched segments to a specific provider.
-  const provider = resolveProvider({ courseId, counsellingType, seatType });
-  if (provider) filter.provider = provider;
 
   return filter;
 };
