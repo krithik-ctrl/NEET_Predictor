@@ -113,7 +113,7 @@ if (isAdminCaller) {
 
 }
 
- const query = buildPredictionFilter({
+ const query = await buildPredictionFilter({
   courseId,
   counsellingType,
   state: filterState,

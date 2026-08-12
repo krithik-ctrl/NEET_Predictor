@@ -56,7 +56,7 @@ const stateConfigs = {
  Jharkhand:jharkhandConfig,
  Haryana:haryanaConfig,
  Uttarakhand:uttarakhandConfig,
- Chattisgarh:chattisgarhConfig,
+ Chhattisgarh:chattisgarhConfig,
  Puducherry:puducherryConfig,
  Chandigarh:chandigarhConfig,
  "Himachal Pradesh":himachalPradeshConfig,
