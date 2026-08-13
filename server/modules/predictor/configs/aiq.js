@@ -15,6 +15,9 @@ const aiqConfig = {
         "Employees State Insurance Scheme(ESI) Quota",
         "Aligarh Muslim University (AMU) Quota",
         "Delhi University Quota",
+        "AIIMS Quota",
+        "JIPMER Quota",
+        "JIPMER Quota (SO)",
       ],
     },
 
@@ -31,6 +34,9 @@ const aiqConfig = {
         "Employees State Insurance Scheme(ESI) Quota",
         "Aligarh Muslim University (AMU) Quota",
         "Delhi University Quota",
+        "AIIMS Quota",
+        "JIPMER Quota",
+        "JIPMER Quota (SO)",
       ],
     },
   },
@@ -98,6 +104,7 @@ const aiqConfig = {
       "SC PWD",
       "ST PWD",
     ],
+     "AIIMS Quota": ["Open", "EWS", "OBC", "SC", "ST", "Open PWD", "EWS PWD", "OBC PWD", "SC PWD", "ST PWD"], "JIPMER Quota": ["Open", "EWS", "OBC", "SC", "ST", "Open PWD"], "JIPMER Quota (SO)": ["Open", "EWS", "OBC", "SC", "ST", "Open PWD", "EWS PWD", "OBC PWD", "SC PWD", "ST PWD"],
   },
 };
 
