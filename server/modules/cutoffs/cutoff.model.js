@@ -57,7 +57,12 @@ const cutoffSchema = new mongoose.Schema(
         "Round 4 (Stray Round)",
         "NRI Quota",
         "Minority Quota",
-        "Round 5"
+        "Round 5",
+        "Round 6",
+        "Round 7",
+        "Round 8",
+        "Round 9",
+        "Round 10",
       ],
       default: null,
     },

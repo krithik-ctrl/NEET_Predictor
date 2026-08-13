@@ -11,6 +11,7 @@ import notFound from "./common/middlewares/notFound.js";
 import errorHandler from "./common/middlewares/errorHandler.js";
 import "dotenv/config"
 const app = express();
+app.set("trust proxy", 1);
 console.log("CLIENT_URL:", process.env.CLIENT_URL);
 app.use(helmet());
 app.use(
