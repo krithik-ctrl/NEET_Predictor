@@ -1,42 +1,21 @@
 const westBengalConfig = {
   state: "West Bengal",
-
   counsellingType: "STATE",
 
   rules: {
     sameState: {
-      seatTypes: [
-        "State Quota",
-      ],
+      seatTypes: ["State Quota"],
     },
-
     otherState: {
-      seatTypes: [
-        "Management Quota",
-        "NRI Quota",
-        "All India Quota",
-      ],
+      seatTypes: ["Management Quota", "NRI Quota", "All India Quota"],
     },
   },
 
   categories: {
-    "State Quota": [
-      "UR",
-      "EWS",
-      "OBC-A",
-      "OBC-B",
-      "SC",
-      "ST",
-    ],
-    "Management Quota": [
-      "UR",
-    ],
-    "NRI Quota": [
-      "NRI",
-    ],
-    "All India Quota": [
-      "UR",
-    ],
+    "State Quota": ["EWS", "EWS-PwD", "OBC", "OBC A", "OBC A-PwD", "OBC B", "OBC B-PwD", "SC", "SC-PwD", "ST", "UR", "UR-PwD"],
+    "Management Quota": ["Management", "UR"],
+    "NRI Quota": ["NRI"],
+    "All India Quota": ["UR"],
   },
 };
 

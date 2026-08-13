@@ -1,9 +1,5 @@
-// Which provider to use per prediction segment. First match wins.
-// Add rules here for future courses/years — no other code changes needed.
 export const SOURCE_ROUTING = [
   { match: { counsellingType: "AIQ", seatType: "All India Quota" }, provider: "client" },
-  // e.g. 2026 or new course later:
-  // { match: { counsellingType: "AIQ", seatType: "All India Quota", year: 2026 }, provider: "client" },
 ];
 
 const matches = (rule, ctx) =>
@@ -11,23 +7,49 @@ const matches = (rule, ctx) =>
 
 export const resolveProvider = (ctx) => {
   const rule = SOURCE_ROUTING.find((r) => matches(r, ctx));
-  return rule ? rule.provider : null; // null → no provider filter (use your default data)
+  return rule ? rule.provider : null;
 };
 
-export const ROUND_ORDER = {
-  "Round 1": 1, "Round 2": 2, "Round 3 (Mop-up)": 3,
-  "Round 4 (Stray Round)": 4, "NRI Quota": 5, "Minority Quota": 6,
+// Non-numeric round buckets, ordered after the numbered rounds.
+const ROUND_NAME_ORDER = { "NRI Quota": 90, "Minority Quota": 91 };
+
+// Ranks any round label by the number inside it:
+// "Round 1" -> 1, "Round 3 (Mop-up)" -> 3, "Round 4 (Stray Round)" -> 4,
+// "Round 5" -> 5, "NRI Quota" -> 90, "Minority Quota" -> 91, null -> -1
+export const roundRank = (round) => {
+  if (round == null) return -1;
+  const m = String(round).match(/\d+/);
+  if (m) return Number(m[0]);
+  return ROUND_NAME_ORDER[round] ?? 0;
 };
 
-// Keep only the last available round per college + seatType + category.
+const PREFERRED_YEAR = 2025;
+
+// Per college + seatType + category: keep only the LAST available round.
+// Prefer 2025; if a college has no 2025 row, fall back to its latest year,
+// then take the highest round within that year.
 export const pickLastRound = (rows) => {
-  const best = new Map();
+  const groups = new Map();
   for (const c of rows) {
     const college = c.collegeId?._id?.toString() ?? String(c.collegeId);
     const key = `${college}|${c.seatType}|${c.category}`;
-    const ord = ROUND_ORDER[c.round] ?? 0;
-    const cur = best.get(key);
-    if (!cur || ord > (ROUND_ORDER[cur.round] ?? 0)) best.set(key, c);
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(c);
   }
-  return [...best.values()];
+
+  const out = [];
+  for (const group of groups.values()) {
+    const hasPreferred = group.some((r) => r.year === PREFERRED_YEAR);
+    const targetYear = hasPreferred
+      ? PREFERRED_YEAR
+      : Math.max(...group.map((r) => r.year));
+
+    let best = null;
+    for (const r of group) {
+      if (r.year !== targetYear) continue;
+      if (!best || roundRank(r.round) > roundRank(best.round)) best = r;
+    }
+    if (best) out.push(best);
+  }
+  return out;
 };

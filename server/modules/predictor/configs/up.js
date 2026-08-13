@@ -20,15 +20,19 @@ const uttarPradeshConfig = {
       ],
     },
   },
-
-  categories: {
-    "State Quota": ["General", "OBC", "SC", "ST", "EWS"],
-    "Management Quota": ["General"],
-    "NRI Quota": ["NRI"],
-    "Muslim Minority Quota": ["General"],
-    "Jain Minority Quota": ["General"],
-    "All India Quota": ["General"],
-  },
+categories: {
+  "State Quota": [
+    "General-OP","General-EX","General-FF","General-GL","General-NC","General-PH",
+    "OBC-OP","OBC-EX","OBC-FF","OBC-GL","OBC-NC","OBC-PH",
+    "EWS-OP","EWS-EX","EWS-FF","EWS-GL","EWS-NC","EWS-PH",
+    "SC-OP","SC-EX","SC-FF","SC-GL","SC-NC","SC-PH",
+    "ST-OP","ST-GL",
+  ],
+  "Management Quota": ["General-OP"],   // Excel uses UR-OP → General-OP, not plain "General"
+  "Minority Quota": ["General-OP"],     // combined Muslim+Jain; Excel doesn't split them
+  "NRI Quota": ["NRI"],                 // unused — no NRI rows in this Excel
+  "All India Quota": ["General"],       // unused
+},
 };
 
 export default uttarPradeshConfig;

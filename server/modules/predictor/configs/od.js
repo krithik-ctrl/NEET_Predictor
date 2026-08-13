@@ -8,6 +8,8 @@ const odishaConfig = {
       seatTypes: [
         "State Quota",
         "Management Quota",
+        "Govt School Quota",           // NEW — raw: OdishaGov-GovtSchool
+        "Govt School Quota - Private", // NEW — raw: OdishaPvt-GovtSchool
       ],
     },
 
@@ -21,13 +23,15 @@ const odishaConfig = {
 
   categories: {
     "State Quota": [
-      "UR (Open)",
-      "EWS",
-      "SC",
-      "ST",
+      "UR (Open)", "UR (Open) - GC", "UR (Open) - Ex-Serviceman", "UR (Open) - PwD",
+      "EWS", "EWS - GC", "EWS - Ex-Serviceman", "EWS - PwD",
+      "SC", "SC - GC", "SC - Ex-Serviceman", "SC - PwD",
+      "ST", "ST - GC", "ST - Ex-Serviceman", "ST - PwD",
     ],
     "Management Quota": [
-      "UR (Open)",
+      "UR (Open)", "UR (Open) - GC", "UR (Open) - Ex-Serviceman",
+      "SC", "SC - GC",
+      "ST", "ST - GC",
     ],
     "NRI Quota": [
       "NRI",
@@ -35,7 +39,47 @@ const odishaConfig = {
     "All India Quota": [
       "UR (Open)",
     ],
+    "Govt School Quota": [
+      "UR (Open)", "EWS", "SC", "ST",
+    ],
+    "Govt School Quota - Private": [
+      "UR (Open)", "SC", "ST",
+    ],
   },
 };
 
 export default odishaConfig;
+
+/*
+NOTES ON WHAT CHANGED vs your original config, and why:
+
+1. Sub-quota suffixes (-GC, -EX, -PwD) on UR/EWS/SC/ST:
+   Verified these are real, simultaneously-reported rank series, distinct from the
+   base category — e.g. SCB Cuttack 2023 round 1: OP=4771, OP-GC=7375, OP-EX=11013,
+   OP-PwD=559892, all present in the same round. Your original config declared only
+   one category per group ("UR (Open)", "SC", etc.), which would silently drop 3 of
+   every 4 rows for the same college/round via unique-index collision. Added
+   suffixed variants: "- GC" (kept as-is, exact meaning not certain from the sheet
+   alone — magnitude sits just above the base OP rank, plausibly a "Govt College
+   background" reservation; rename later if you have the official code list),
+   "- Ex-Serviceman" (Defence/Ex-servicemen quota, ranks moderately elevated,
+   standard across Indian state counselling), "- PwD" (Persons with Disability —
+   ranks in the 100K-1M+ range confirm a small reserved pool).
+
+2. Govt School Quota (raw Quota: OdishaGov-GovtSchool / OdishaPvt-GovtSchool):
+   These are NOT duplicates of "Odisha Govt"/"Odisha Private" — verified a real,
+   simultaneous, and consistently much-higher rank series for the same
+   college/category/round (e.g. Sri Jagannath Med Coll, OP, 2023 round 1: Odisha
+   Govt=15214 vs OdishaGov-GovtSchool=43105). This is a separate reservation
+   (for candidates educated in Odisha govt schools) layered on top of the base
+   State/Management quota split, so it needs its own seatType — added two, mirroring
+   the existing Govt/Private college split ("Govt School Quota" for govt colleges,
+   "Govt School Quota - Private" for private colleges) rather than merging into
+   State Quota / Management Quota.
+
+3. Management Quota category list:
+   Your original config only declared "UR (Open)" for Management Quota, but the raw
+   "Odisha Private" quota also carries SC/SC-GC/ST/ST-GC/OP-EX rows with real data
+   (no EWS or PwD reported for private colleges in this sheet). Expanded to match
+   what's actually present.
+*/

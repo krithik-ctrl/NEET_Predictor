@@ -9,6 +9,7 @@ const gujaratConfig = {
       seatTypes: [
         "Government Quota",
         "Management Quota",
+        "Local Quota"
       ],
     },
 
@@ -20,24 +21,13 @@ const gujaratConfig = {
     },
   },
 
-  categories: {
-    "Government Quota": [
-      "OPEN",
-      "EWS",
-      "SEBC (OBC)",
-      "SC",
-      "ST",
-    ],
-    "Management Quota": [
-      "OPEN",
-    ],
-    "NRI Quota": [
-      "NRI",
-    ],
-    "All India Quota": [
-      "OPEN",
-    ],
-  },
+categories: {
+  "Government Quota": ["OPEN", "EWS", "SEBC (OBC)", "SC", "ST"],
+  "Local Quota": ["OPEN", "EWS", "SEBC (OBC)", "SC", "ST"],   // NEW — municipal colleges
+  "Management Quota": ["OPEN"],
+  "NRI Quota": ["NRI"],
+  "All India Quota": ["OPEN"],   // unused in this Excel
+},
 };
 
 export default gujaratConfig;

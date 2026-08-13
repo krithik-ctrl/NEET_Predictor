@@ -1,183 +1,23 @@
 const maharashtraConfig = {
   state: "Maharashtra",
-
   counsellingType: "STATE",
 
   rules: {
     sameState: {
-      seatTypes: [
-        "DEF1 (Defence 1)",
-        "DEF2 (Defence 2)",
-        "DEF3 (Defence 3)",
-        "EWS",
-        "Hilly Area",
-        "I.Q. - Institutional Quota",
-        "MK - Motak",
-        "MKB - Maharashtra Karnataka Border",
-        "NTB - Nomadic Tribes B",
-        "NTC - Nomadic Tribes C",
-        "NTD - Nomadic Tribes D",
-        "OBC",
-        "OPEN",
-        "ORPHAN",
-        "PWD/PH",
-        "SC",
-        "SEBC - Socially and Educationally Backward Classes",
-        "VJA - Vimukta Jati",
-        "ST",
-      ],
+      seatTypes: ["Government", "Government Women", "Management", "Minority"],
     },
-
+    // Government pools are domicile-only; other-state candidates access the
+    // private Management / Minority pools only.
     otherState: {
-      seatTypes: [
-        "I.Q. - Institutional Quota",
-      ],
+      seatTypes: ["Management", "Minority"],
     },
   },
 
   categories: {
-    "DEF1 (Defence 1)": [
-      "EWS",
-      "EWS Women",
-      "NTC",
-      "NTC Women",
-      "NTD",
-      "NTD Women",
-      "OBC",
-      "OBC Women",
-      "OPEN",
-      "Open Women",
-      "SEBC",
-      "SEBC Women",
-      "VJA",
-    ],
-
-    "DEF2 (Defence 2)": [
-      "NTC",
-      "NTC Women",
-      "NTD",
-      "NTD Women",
-      "OBC",
-      "OBC Women",
-      "OPEN",
-      "Open Women",
-      "SEBC",
-      "SEBC Women",
-    ],
-
-    "DEF3 (Defence 3)": [
-      "OPEN",
-      "Open Women",
-    ],
-
-    "EWS": [
-      "EWS",
-      "EWS Women",
-    ],
-
-    "Hilly Area": [
-      "EWS",
-      "EWS Women",
-      "NTB",
-      "NTB Women",
-      "NTC",
-      "NTC Women",
-      "NTD",
-      "NTD Women",
-      "OBC",
-      "OBC Women",
-      "OPEN",
-      "Open Women",
-      "SC",
-      "SC Women",
-      "SEBC",
-      "SEBC Women",
-      "ST",
-      "ST Women",
-      "VJA",
-      "VJA Women",
-    ],
-
-    "I.Q. - Institutional Quota": [
-      "Minority",
-      "OPEN",
-    ],
-
-    "MK - Motak": [
-     "Minority",
-    ],
-
-    "MKB - Maharashtra Karnataka Border": [
-      "MKB",
-      "MKB Women",
-    ],
-
-    "NTB - Nomadic Tribes B": [
-      "NTB",
-      "NTB Women",
-    ],
-
-    "NTC - Nomadic Tribes C": [
-      "NTC",
-      "NTC Women",
-    ],
-
-    "NTD - Nomadic Tribes D": [
-      "NTD",
-      "NTD Women",
-    ],
-
-    "OBC": [
-      "OBC",
-      "OBC Women",
-    ],
-
-    "OPEN": [
-    "OPEN",
-      "Open Women",
-    ],
-
-    "ORPHAN": [
-    "OPEN"
-    ],
-
-    "PWD/PH": [
-
-          "EWS",
-      "NTB",
-      "NTC",
-      "NTD",
-      "OBC",
-      "OPEN",
-      "SC",
-      "SEBC",
-      "ST",
-      "VJA",
-     
-    ],
-
-    "SC": [
-         "SC",
-      "SC Women",
-  
-    ],
-
-    "SEBC - Socially and Educationally Backward Classes": [
-        "SEBC",
-      "SEBC Women",
-      
-    ],
-
-    "VJA - Vimukta Jati": [
-        "VJA",
-      "VJA Women",
-
-    ],
-
-    "ST": [
-              "ST",
-      "ST Women",
-    ],
+    "Government": ["EWS", "EWS-Orphan", "EWS-PH", "NT1", "NT1-Orphan", "NT1-PH", "NT2", "NT2-Orphan", "NT2-PH", "NT3", "NT3-Orphan", "NT3-PH", "OBC", "OBC-Orphan", "OBC-PH", "OPEN", "OPEN-Orphan", "OPEN-PH", "SC", "SC-Orphan", "SC-PH", "SEBC", "SEBC-Orphan", "SEBC-PH", "ST", "ST-Orphan", "ST-PH", "VJA", "VJA-Orphan", "VJA-PH"],
+    "Government Women": ["EWS", "NT1", "NT2", "NT3", "OBC", "OPEN", "SC", "SEBC", "ST", "VJA"],
+    "Management": ["IQ"],
+    "Minority": ["IQ-Minority", "OPEN-Minority"],
   },
 };
 

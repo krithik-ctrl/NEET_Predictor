@@ -1,7 +1,7 @@
 // predictor/config/andamanNicobar.js
 
 const AndamanNicobar= {
-  state: "Andaman & Nicobar Islands",
+  state: "Andaman and Nicobar Islands",
 
   counsellingType: "STATE",
 

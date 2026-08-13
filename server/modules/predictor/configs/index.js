@@ -22,7 +22,7 @@ import jharkhandConfig from "./jh.js";
 import haryanaConfig from "./haryana.js";
 import uttarakhandConfig from "./uk.js";
 import chattisgarhConfig from "./ch.js";
-import puducherryConfig from "./py.js";
+import pondicherryConfig from "./py.js";
 import chandigarhConfig from "./cg.js";
 import himachalPradeshConfig from "./hp.js";
 import nagalandConfig from "./nagaland.js";
@@ -40,7 +40,7 @@ const stateConfigs = {
   "Andhra Pradesh": andhraPradesh,
   Kerala: kerala,
   Maharashtra: maharashtra,
-"Andaman & Nicobar Islands": AndamanNicobar,
+"Andaman and Nicobar Islands": AndamanNicobar,
  Assam:assamConfig,
  Gujarat: gujaratConfig,
  Odisha:odishaConfig,
@@ -57,7 +57,7 @@ const stateConfigs = {
  Haryana:haryanaConfig,
  Uttarakhand:uttarakhandConfig,
  Chhattisgarh:chattisgarhConfig,
- Puducherry:puducherryConfig,
+ Pondicherry:pondicherryConfig,
  Chandigarh:chandigarhConfig,
  "Himachal Pradesh":himachalPradeshConfig,
  "Nagaland":nagalandConfig,
