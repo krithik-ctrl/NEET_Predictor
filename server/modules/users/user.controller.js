@@ -14,6 +14,10 @@ import { verifyGoogleToken } from "../../auth/strategies/google.strategy.js";
 
 import { generateToken } from "../../auth/utils/generateToken.js";
 
+import { generateRefreshToken, verifyRefreshToken } from "../../auth/utils/generateRefreshToken.js";
+import { setRefreshCookie, clearRefreshCookie, REFRESH_COOKIE } from "../../auth/utils/refreshCookie.js";
+
+
 export const getMeController =
   async (req, res, next) => {
     try {
@@ -37,7 +41,7 @@ export const logoutController = (
   res
 ) => {
   clearAuthCookie(res);
-
+clearRefreshCookie(res);
   res.status(200).json({
     success: true,
     message:
@@ -143,6 +147,29 @@ export const createPendingUserController =
     }
 
   };
+export const refreshUserController = async (req, res) => {
+  try {
+    const token = req.cookies?.[REFRESH_COOKIE];
+    if (!token) return res.status(401).json({ success: false, message: "Session expired" });
 
+    const decoded = verifyRefreshToken(token);           // throws on invalid/expired
+    if (!decoded.userId) return res.status(401).json({ success: false, message: "Invalid session" });
+
+    const user = await getUserById(decoded.userId);
+    if (!user || user.isActive === false) {
+      clearRefreshCookie(res);
+      return res.status(401).json({ success: false, message: "Session expired" });
+    }
+
+    // Re-issue access + rotate refresh.
+    setAuthCookie(res, generateToken(user));
+    setRefreshCookie(res, generateRefreshToken({ userId: user._id, role: user.role }));
+
+    return res.status(200).json({ success: true });
+  } catch {
+    clearRefreshCookie(res);
+    return res.status(401).json({ success: false, message: "Session expired" });
+  }
+};
 
   export const checkEmailController = async (req, res, next) => { try { const email = req.query.email; if (!email) { throw new Error("Email is required"); } const exists = await checkEmailExists(email); res.status(200).json({ success: true, data: { exists }, }); } catch (error) { next(error); } };

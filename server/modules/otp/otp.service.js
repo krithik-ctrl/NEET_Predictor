@@ -18,7 +18,8 @@ import {
   setAuthCookie,
 } from "../../auth/utils/setAuthCookie.js";
 
-
+import { generateRefreshToken } from "../../auth/utils/generateRefreshToken.js";
+import { setRefreshCookie } from "../../auth/utils/refreshCookie.js";
 
 /*
 |--------------------------------------------------------------------------
@@ -175,6 +176,7 @@ export const verifyOtpService =
       res,
       token
     );
+    setRefreshCookie(res, generateRefreshToken({ userId: user._id, role: user.role }));
 
     return {
 

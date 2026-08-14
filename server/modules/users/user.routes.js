@@ -5,7 +5,8 @@ import {
   logoutController,
   googleLoginController,
     createPendingUserController,
-    checkEmailController
+    checkEmailController,
+   refreshUserController
 } from "./user.controller.js";
 
 import {
@@ -34,6 +35,8 @@ router.post(
   resendOtpController
 )
 
+
+router.post("/refresh", refreshUserController);
  //Google Authentication
 
  router.post(

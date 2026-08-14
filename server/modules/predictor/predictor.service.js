@@ -5,12 +5,12 @@ import {
   checkSubscription,
 } from "../subscription/subscription.helper.js";
 import { pickLastRound } from "./services/dataSourceRouting.js";
-
+import { OWNERSHIP_BUCKETS, ownershipVariants } from "./services/ownership.js";
 
 import {
   getEligibility
 } from "./services/eligibility.service.js";
-
+import { College } from "../colleges/college.model.js";
 import {
   getCategories,
 } from "./services/category.service.js";
@@ -337,4 +337,45 @@ export const getCategoriesType = async ({
 
   });
 
+};
+
+/**
+ * Which college-type buckets actually have colleges for the current selection.
+ * Powers the predictor's smart guard: AIQ + "All India Quota" seat type
+ * returns { Government: 500+, Private: 0 } because that seat type is govt-only.
+ * Reuses buildPredictionFilter (minus collegeType) so filter logic never forks.
+ */
+export const getCollegeTypeAvailability = async ({
+  courseId,
+  counsellingType,
+  seatType,
+  category,
+  state,
+}) => {
+  // Same filter the prediction uses, WITHOUT the collegeType constraint.
+  const base = await buildPredictionFilter({ courseId, counsellingType, seatType, category, state });
+
+  // Colleges that have at least one matching cutoff for this selection.
+  const collegeIds = await Cutoff.distinct("collegeId", base);
+
+  if (collegeIds.length === 0) {
+    return {
+      counts: { Government: 0, Private: 0 },
+      available: { Government: false, Private: false, Both: false },
+    };
+  }
+
+  const [government, privateCount] = await Promise.all([
+    College.countDocuments({ _id: { $in: collegeIds }, ownership: { $in: OWNERSHIP_BUCKETS.Government } }),
+    College.countDocuments({ _id: { $in: collegeIds }, ownership: { $in: OWNERSHIP_BUCKETS.Private } }),
+  ]);
+
+  return {
+    counts: { Government: government, Private: privateCount },
+    available: {
+      Government: government > 0,
+      Private: privateCount > 0,
+      Both: government + privateCount > 0,
+    },
+  };
 };

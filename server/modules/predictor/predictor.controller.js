@@ -1,4 +1,4 @@
-import { predictColleges,getCategoriesType,getSeatTypes } from "./predictor.service.js";
+import { predictColleges,getCategoriesType,getSeatTypes,getCollegeTypeAvailability } from "./predictor.service.js";
 
 export const predictCollegesController =
   async (req, res, next) => {
@@ -79,4 +79,15 @@ export const getCategoriesController = async (
     next(error);
   }
 
+};
+
+// Thin adapter — align the response envelope to your existing helper if you use one.
+export const collegeTypeAvailabilityController = async (req, res, next) => {
+  try {
+    const { courseId, counsellingType, seatType, category, state } = req.query;
+    const data = await getCollegeTypeAvailability({ courseId, counsellingType, seatType, category, state });
+    return res.status(200).json({ success: true, data });
+  } catch (err) {
+    next(err);
+  }
 };

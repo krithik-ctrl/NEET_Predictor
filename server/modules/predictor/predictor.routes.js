@@ -1,7 +1,7 @@
 import express from "express";
 
 import {
-  predictCollegesController,getCategoriesController,getSeatTypesController
+  predictCollegesController,getCategoriesController,getSeatTypesController,collegeTypeAvailabilityController
 
 } from "./predictor.controller.js";
 
@@ -22,7 +22,7 @@ router.post(
   "/categories",
   getCategoriesController
 );
-
+router.post("/college-type-availability", collegeTypeAvailabilityController);
 
 
 router.post(
