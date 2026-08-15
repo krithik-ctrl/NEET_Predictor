@@ -157,7 +157,7 @@ export const getAdminProfileController =
     }
 
     // Same access-token shape as loginAdmin.
-    const accessToken = jwt.sign({ adminId: admin._id, role: admin.role }, process.env.JWT_SECRET, { expiresIn: "7d" });
+    const accessToken = jwt.sign({ adminId: admin._id, role: admin.role }, process.env.JWT_SECRET, { expiresIn: "1h" });
     setAuthCookie(res, accessToken);
     setRefreshCookie(res, generateRefreshToken({ adminId: admin._id, role: admin.role }));
 

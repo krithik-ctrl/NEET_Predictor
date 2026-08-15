@@ -1,6 +1,6 @@
 const isProd = process.env.NODE_ENV === "production";
 export const REFRESH_COOKIE = "refreshToken";
-const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
+const THIRTY_DAYS =  60 * 60 * 1000;
 
 const baseOptions = {
   httpOnly: true,
