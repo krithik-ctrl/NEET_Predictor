@@ -32,7 +32,7 @@ const tamilNaduConfig = {
     "Government 7.5%":         ["OC", "BC", "BCM", "MBC", "SC", "SCA", "ST"],
     "Government PwD":          ["OC", "BC", "BCM", "MBC", "SC", "SCA", "ST"],
     "Government Ex-Servicemen":["OC", "BC", "MBC", "SC"],
-    "Government Sports":       ["OC", "BC", "BCM", "MBC"],
+    "Government Sports":       ["OC", "BC", "BCM", "MBC", "SC"],
     "Government IRT Ward":     ["BC", "BCM", "MBC", "SC", "SCA"],
     "CMC Minority 20%":        ["OC", "BC"],
 

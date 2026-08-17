@@ -6,19 +6,8 @@ import {
   generateUsersPdf,
 } from "./services/pdf-generator.service.js";
 
-export const exportUsers =
-  async (queryParams) => {
-
-    const exportData =
-      await preparePdfData(
-        queryParams
-      );
-
-    const pdfBuffer =
-      await generateUsersPdf(
-        exportData
-      );
-
-    return pdfBuffer;
-
-  };
+export const exportUsers = async (queryParams, downloaderId) => {
+  const exportData = await preparePdfData(queryParams, downloaderId);
+  const pdfBuffer = await generateUsersPdf(exportData);
+  return pdfBuffer;
+};

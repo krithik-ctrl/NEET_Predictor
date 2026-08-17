@@ -32,8 +32,9 @@ const uttarakhandConfig = {
     "State Quota - Private": [    // NEW seatType
       "UR (General)", "UR (General) - Women", "UR (General) - DPW", "UR (General) - FF", "UR (General) - Orphan",
       "OBC", "OBC - Women", "OBC - DPW",
-      "SC", "SC - Women",
-      "ST", "ST - Women",
+      "SC", "SC - Women", 
+      "ST", "ST - Women", "ST - DPW",
+      "EWS", "EWS - Women", 
     ],
     "Management Quota": [
       "General",

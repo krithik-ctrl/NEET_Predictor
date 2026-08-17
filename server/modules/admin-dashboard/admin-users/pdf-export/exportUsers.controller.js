@@ -14,7 +14,7 @@ export const exportUsersController =
 
       const pdf =
         await exportUsers(
-          req.query
+          req.query,req.admin?.adminId
         );
 
       res.setHeader(

@@ -14,7 +14,7 @@ import { pdfFilterUsers } from "./pdf-filter.service.js";
 
 
 export const preparePdfData =
-  async (query) => {
+  async (query, downloaderId) => {
 
     const {
 
@@ -62,6 +62,29 @@ const [
   getAdminList(),
 
 ]);
+
+
+/*
+|--------------------------------------------------------------------------
+| Who downloaded this report — resolved from the already-loaded admin list
+| (no extra DB query). Falls back to "Admin" if not found.
+|--------------------------------------------------------------------------
+*/
+
+const downloader =
+  (adminData || []).find(
+    (a) =>
+      String(a.id ?? a._id) ===
+      String(downloaderId)
+  );
+
+const downloadedBy =
+  downloader
+    ? [downloader.firstName, downloader.lastName]
+        .filter(Boolean)
+        .join(" ")
+        .trim() || "Admin"
+    : "Admin";
 
 
 
@@ -246,6 +269,8 @@ const metadata = {
 
   generatedAt:
     new Date(),
+
+  downloadedBy,
 
  totalRecords:
   filteredData.totalRecords,

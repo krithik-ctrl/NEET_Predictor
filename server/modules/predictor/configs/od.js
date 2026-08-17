@@ -8,8 +8,8 @@ const odishaConfig = {
       seatTypes: [
         "State Quota",
         "Management Quota",
-        "Govt School Quota",           // NEW — raw: OdishaGov-GovtSchool
-        "Govt School Quota - Private", // NEW — raw: OdishaPvt-GovtSchool
+        "Govt School Quota",           // raw: OdishaGov-GovtSchool
+        "Govt School Quota - Private", // raw: OdishaPvt-GovtSchool
       ],
     },
 
@@ -30,7 +30,7 @@ const odishaConfig = {
     ],
     "Management Quota": [
       "UR (Open)", "UR (Open) - GC", "UR (Open) - Ex-Serviceman",
-      "SC", "SC - GC",
+      "SC", "SC - GC", "SC - Ex-Serviceman", // NEW — raw: SC-EX under "Odisha Private"
       "ST", "ST - GC",
     ],
     "NRI Quota": [
@@ -82,4 +82,17 @@ NOTES ON WHAT CHANGED vs your original config, and why:
    "Odisha Private" quota also carries SC/SC-GC/ST/ST-GC/OP-EX rows with real data
    (no EWS or PwD reported for private colleges in this sheet). Expanded to match
    what's actually present.
+
+4. [BDS run, Aug 2026] "SC - Ex-Serviceman" ADDED to "Management Quota".
+   The BDS workbook's ODISHA sheet carries a raw "SC-EX" row under the "Odisha
+   Private" quota (Hi-Tech DentalColl, Bhubaneswar — one data point, CR 2025
+   round 2 = 464784). Management Quota previously declared "SC" and "SC - GC" but
+   not the Ex-Serviceman variant, so this row had no legal target: mapping it to
+   plain "SC" would have collided with the existing Management/SC series for the
+   same college/year/round. The string already existed under "State Quota", so
+   this is a list addition, not a new category value. Nothing else was changed —
+   all pre-existing seatTypes and categories are retained.
+   Note: the BDS ODISHA sheet exercises only a subset of this config (5 quotas,
+   9 categories, 2 dental colleges). The unused EWS-/ST- suffixed variants remain
+   declared for the MBBS run.
 */

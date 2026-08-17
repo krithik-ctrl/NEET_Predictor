@@ -49,6 +49,7 @@ const biharConfig = {
     "Minority Quota": [         // NEW seatType
       "Muslim Minority",
       "Sikh Minority",
+      "MM"
     ],
   },
 };
