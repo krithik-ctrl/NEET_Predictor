@@ -37,6 +37,8 @@ const aiqConfig = {
         "AIIMS Quota",
         "JIPMER Quota",
         "JIPMER Quota (SO)",
+        "IP University Quota",
+"BHU Quota",
       ],
     },
   },
@@ -105,6 +107,8 @@ const aiqConfig = {
       "ST PWD",
     ],
      "AIIMS Quota": ["Open", "EWS", "OBC", "SC", "ST", "Open PWD", "EWS PWD", "OBC PWD", "SC PWD", "ST PWD"], "JIPMER Quota": ["Open", "EWS", "OBC", "SC", "ST", "Open PWD"], "JIPMER Quota (SO)": ["Open", "EWS", "OBC", "SC", "ST", "Open PWD", "EWS PWD", "OBC PWD", "SC PWD", "ST PWD"],
+     "IP University Quota": ["Open", "EWS", "OBC", "SC", "ST", "Open PWD", "OBC PWD"],
+"BHU Quota": ["Open", "EWS", "OBC", "SC", "ST", "Open PWD"],
   },
 };
 

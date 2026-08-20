@@ -38,6 +38,7 @@ const {
   budget,
 } = payload;
 
+console.log(payload.courseId);
 // Feeds the query exactly as before (reads payload.state) — colleges returned stay identical.
 const filterState = payload.predictorState;
 // The predictor state the frontend actually sends. Captured for storage + display ONLY,
@@ -179,7 +180,8 @@ if (isAdminCaller) {
     bondYears: cutoff.bondYears,
     bondPenalty: cutoff.bondPenalty,
     stipend: cutoff.stipend,
-
+    specializationShort: cutoff.specializationShort ?? null,
+    specializationFull:  cutoff.specializationFull ?? null,
     openingRank:
       cutoff.openingRank,
 
@@ -233,10 +235,10 @@ if (isAdminCaller) {
       a.closingRank -
       b.closingRank
   );
-
+const historyCourseId = Array.isArray(courseId) ? courseId[0] : courseId;
 const predictionHistory =
   await createPredictionHistory(userId, {
-    courseId,
+    courseId: historyCourseId, 
 
     rank,
     category,

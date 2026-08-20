@@ -144,7 +144,9 @@ predictedColleges: [
     bondYears:   { type: Number, default: null },
     bondPenalty: { type: Number, default: null },
     stipend:     { type: Number, default: null },
-    
+      specializationShort: String,
+    specializationFull:  String,
+    courseName: String,   // denormalized — history read raw, no populate
   }
 ]
     },

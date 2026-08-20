@@ -149,6 +149,9 @@ const buildPrediction = async (
 
     stipend:
       college.stipend ?? null,
+        specializationShort: college.specializationShort ?? null,
+    specializationFull:  college.specializationFull ?? null,
+    courseName: college.course?.name ?? null,
 
   };
 

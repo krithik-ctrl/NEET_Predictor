@@ -11,7 +11,10 @@ export const buildPredictionFilter = async ({
   year,
 }) => {
   const filter = { status: "active" };
-  if (courseId) filter.courseId = courseId;
+   // courseId may be a single id or an array (PG sends all 5 PG course ids).
+  if (courseId) {
+    filter.courseId = Array.isArray(courseId) ? { $in: courseId } : courseId;
+  }
   if (counsellingType) filter.counsellingType = counsellingType;
   if (seatType) filter.seatType = seatType;
   if (category) filter.category = category;

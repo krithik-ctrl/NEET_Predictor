@@ -31,8 +31,10 @@ const PREFERRED_YEAR = 2025;
 export const pickLastRound = (rows) => {
   const groups = new Map();
   for (const c of rows) {
-    const college = c.collegeId?._id?.toString() ?? String(c.collegeId);
-    const key = `${college}|${c.seatType}|${c.category}`;
+     const college = c.collegeId?._id?.toString() ?? String(c.collegeId);
+    const course  = c.courseId?._id?.toString() ?? String(c.courseId);
+    const spec    = c.specializationShort ?? "";
+    const key = `${college}|${course}|${spec}|${c.seatType}|${c.category}`;
     if (!groups.has(key)) groups.set(key, []);
     groups.get(key).push(c);
   }

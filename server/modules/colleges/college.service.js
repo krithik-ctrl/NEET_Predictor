@@ -10,6 +10,7 @@ export const createCollege =
       await College.findOne({
           shortName: payload.shortName,
   collegeType: payload.collegeType,
+  level: payload.level ?? "UG",
       });
 
     if (existingCollege) {
@@ -114,7 +115,7 @@ export const getCollegeById =
         "College not found"
       );
     }
-
+//console.log(college)
     return college;
   };
 
@@ -134,13 +135,13 @@ export const updateCollege =
         "College not found"
       );
     }
-
-    // Duplicate guard on identity (shortName + collegeType) if either changes
-    if (payload.shortName || payload.collegeType) {
-      const shortName = payload.shortName ?? college.shortName;
+    // Duplicate guard on identity (shortName + collegeType + level) if any changes
+    if (payload.shortName || payload.collegeType || payload.level) {
+      const shortName   = payload.shortName   ?? college.shortName;
       const collegeType = payload.collegeType ?? college.collegeType;
+      const level       = payload.level       ?? college.level;   // ADDED
       const dup = await College.findOne({
-        shortName, collegeType, _id: { $ne: collegeId },
+        shortName, collegeType, level, _id: { $ne: collegeId },
       });
       if (dup) throw new Error("College already exists");
     }

@@ -47,7 +47,17 @@ const cutoffSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-
+    // PG specialization (branch). null for MBBS/BDS rows.
+    specializationShort: {
+      type: String,
+      trim: true,
+      default: null,
+    },
+    specializationFull: {
+      type: String,
+      trim: true,
+      default: null,
+    },
     round: {
       type: String,
       enum: [
@@ -154,6 +164,7 @@ cutoffSchema.index(
   {
     collegeId: 1,
     courseId: 1,
+    specializationShort: 1,   // ADDED — MD/MS branches distinct
     year: 1,
     counsellingType: 1,
     state: 1,
@@ -162,9 +173,7 @@ cutoffSchema.index(
     round: 1,
     provider: 1,
   },
-  {
-    unique: true,
-  }
+  { unique: true }
 );
 
 /*
