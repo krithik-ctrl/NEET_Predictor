@@ -29,7 +29,7 @@ const punjabConfig = {
     "Sikh Minority Quota": ["NRI-Minority", "Open"],
     "Management Quota": ["BC", "Backward Area", "Border Area", "Defence", "JK", "Open", "RA", "SC", "Sports", "TA"],
     "NRI Quota": ["NRI", "NRI-I", "NRI-II"],
-    "All India Quota": ["AIQ", "BC", "Backward Area", "Border Area", "Defence", "JK", "Open", "RA", "SC", "Sports", "TA"],
+    "All India Quota": ["AIQ", "BC", "Backward Area", "Border Area", "Defence", "JK", "Open", "RA", "SC", "Sports", "TA" ,"Open (Converted)"],
   },
 };
 

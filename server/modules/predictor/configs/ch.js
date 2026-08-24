@@ -16,6 +16,7 @@ const chattisgarhConfig = {
         "Minority Quota",      // NEW — raw: CHTSGRH-Pvt-Minority
         "NRI Quota",
         "All India Quota",
+        "	Other State",  // NEW — raw: CHTSGRH-Pvt-OtherState
       ],
     },
   },
@@ -34,6 +35,7 @@ categories: {
   "Minority Quota": ["Minority", "General"],   // NEW — raw cats: MINORITY, UR
   "NRI Quota": ["NRI", "OBC", "General-Female" , "General"],
   "All India Quota": ["General"],  // unused in this Excel, left as-is
+  "  Other State": ["UR", "UR-Female", "OBC", "OBC-Female", "SC", "SC-Female", "ST", "ST-Female"],  // NEW — raw cats: UR, OBC, SC, ST, EWS
 },
 };
 

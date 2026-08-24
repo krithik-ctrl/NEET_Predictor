@@ -28,7 +28,7 @@ categories: {
     "SC-OP","SC-EX","SC-FF","SC-GL","SC-NC","SC-PH",
     "ST-OP","ST-GL",
   ],
-  "Management Quota": ["General-OP"],   // Excel uses UR-OP → General-OP, not plain "General"
+  "Management Quota": ["General-OP","UR"],   // Excel uses UR-OP → General-OP, not plain "General"
   "Minority Quota": ["General-OP"],     // combined Muslim+Jain; Excel doesn't split them
   "NRI Quota": ["NRI"],                 // unused — no NRI rows in this Excel
   "All India Quota": ["General"],       // unused
