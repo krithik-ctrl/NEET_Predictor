@@ -26,7 +26,7 @@ categories: {
     "OBC-OP","OBC-EX","OBC-FF","OBC-GL","OBC-NC","OBC-PH",
     "EWS-OP","EWS-EX","EWS-FF","EWS-GL","EWS-NC","EWS-PH",
     "SC-OP","SC-EX","SC-FF","SC-GL","SC-NC","SC-PH",
-    "ST-OP","ST-GL",
+    "ST-OP","ST-GL","UR Service", "BC Service", "SC Service","BS","SS"
   ],
   "Management Quota": ["General-OP","UR"],   // Excel uses UR-OP → General-OP, not plain "General"
   "Minority Quota": ["General-OP"],     // combined Muslim+Jain; Excel doesn't split them

@@ -7,11 +7,11 @@ const maharashtraConfig = {
         "Government", "Government Women", "Management", "Minority",
         "Government Hilly Area", "Government Hilly Area Women",
         "Government Defense", "Government Defense Women",
-        "Government MKB", "Government MKB Women",
+        "Government MKB", "Government MKB Women","NRI"
       ],
     },
     otherState: {
-      seatTypes: ["Management", "Minority"],
+      seatTypes: ["Management", "Minority","NRI"],
     },
   },
   categories: {
@@ -23,8 +23,9 @@ const maharashtraConfig = {
     "Government Defense Women": ["DEF1", "DEF2"],
     "Government MKB": ["OPEN"],
     "Government MKB Women": ["OPEN"],
-    "Management": ["IQ"],
+    "Management": ["IQ","IQ-Minority"],
     "Minority": ["IQ-Minority", "OPEN-Minority"],
+    "NRI": ["NRI"],
   },
 };
 export default maharashtraConfig;

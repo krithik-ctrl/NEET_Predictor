@@ -34,7 +34,7 @@ const uttarakhandConfig = {
       "OBC", "OBC - Women", "OBC - DPW",
       "SC", "SC - Women", 
       "ST", "ST - Women", "ST - DPW",
-      "EWS", "EWS - Women", 
+      "EWS", "EWS - Women", "SC - PwD"
     ],
     "Management Quota": [
       "General",

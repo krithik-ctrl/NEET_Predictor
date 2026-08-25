@@ -12,8 +12,8 @@ const himachalPradeshConfig = {
   },
 
   categories: {
-    "State Quota": ["BA", "Chld JK", "Chld TBT", "EWS", "GEN", "IRDP/BPL", "OBC", "PwD", "SC", "SGC", "ST", "W-FF", "WW-Defence", "WW-ExS"],
-    "Management Quota": ["GEN", "OBC", "SC", "ST"],
+    "State Quota": ["BA", "Chld JK", "Chld TBT", "EWS", "GEN", "IRDP/BPL", "OBC", "PwD", "SC", "SGC", "ST", "W-FF", "WW-Defence", "WW-ExS","GEN-GDO","SC-GDO","ST-GDO","SGC-GDO"],
+    "Management Quota": ["GEN", "OBC", "SC", "ST","GEN-GDO","SC-GDO"],
     "NRI Quota": ["NRI", "NRI-Sponsored"],
     "All India Quota": ["General"],
   },

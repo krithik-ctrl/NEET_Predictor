@@ -2,6 +2,8 @@ import {
   getPredictionHistory,
   getPredictionHistoryById,
   deletePredictionHistory,
+   getPredictionMeta,          // NEW
+  getPredictionColleges,
 } from "./predictionHistory.service.js";
 
 export const getPredictionHistoryController =
@@ -27,6 +29,8 @@ export const getPredictionHistoryController =
     }
   };
 
+// MODIFIED — /:id now returns metadata + filter options + chance counts
+// (lightweight), NOT the full predictedColleges array.
 export const getPredictionHistoryByIdController =
   async (
     req,
@@ -36,7 +40,7 @@ export const getPredictionHistoryByIdController =
     try {
 
       const history =
-        await getPredictionHistoryById(
+        await getPredictionMeta(          // was: getPredictionHistoryById
           req.user.userId,
           req.params.id
         );
@@ -68,6 +72,34 @@ export const deletePredictionHistoryController =
         success: true,
         message:
           "Prediction history deleted successfully",
+      });
+
+    } catch (error) {
+      next(error);
+    }
+  };
+
+
+  // NEW — GET /:id/colleges — paginated, filtered, sorted college rows.
+// Query params: page, limit, course, branch, state, type, chance, sortBy.
+export const getPredictionCollegesController =
+  async (
+    req,
+    res,
+    next
+  ) => {
+    try {
+
+      const result =
+        await getPredictionColleges(
+          req.user.userId,
+          req.params.id,
+          req.query
+        );
+
+      res.status(200).json({
+        success: true,
+        data: result,
       });
 
     } catch (error) {

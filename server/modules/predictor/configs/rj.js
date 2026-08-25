@@ -27,15 +27,16 @@ const rajasthanConfig = {
       "SC",
       "ST",
       "EWS",
+      "ST-STA",
     ],
     "Management Quota": [
-      "General",
+      "General","OBC", "MBC", "SC", "ST", "EWS",
     ],
     "NRI Quota": [
       "NRI",
     ],
     "All India Quota": [
-      "General",
+      "General","OBC", "MBC", "SC", "ST", "ST-STA", "EWS",
     ],
   },
 };

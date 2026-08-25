@@ -24,6 +24,8 @@ const dadraAndNagarHaveliAndDamanAndDiuConfig = {
       "OBC",
       "SC",
       "ST",
+      "General (DD)",
+      "General (DNH)",
     ],
 
     "All India Quota": [

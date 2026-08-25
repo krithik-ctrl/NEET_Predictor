@@ -7,6 +7,8 @@ const chandigarhConfig = {
     sameState: {
       seatTypes: [
         "UT Pool",
+        "Institutional Preference Pool",
+
       ],
     },
 
@@ -31,7 +33,14 @@ const chandigarhConfig = {
     ],
     "All India Quota": [
       "General",
+       "EWS"
     ],
+    "Institutional Preference Pool": [
+  "General",
+  "SC",
+  "EWS",
+  "General (PwD)",
+],
   },
 };
 

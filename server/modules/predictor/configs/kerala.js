@@ -25,12 +25,13 @@ const keralaConfig = {
       "AC", "BH", "MM",
       // ADDED (from KER Govt Seats, kept verbatim from source):
       "CC", "IN", "NO", "PI", "PT", "SD", "THE", "TO", "THAT ONE", "XS",
+      "CD","DK","DX","HD","MQ","OE","WB"
     ], // note: SM etc. replace "State Merit (SM)" — raw code only, not the expanded label
 
     // ADDED seatType — from KER SF-General (self-financing general, private colleges):
     "Self-Financing General": [
       "AC", "BH", "BX", "DV", "IN", "KN", "MM", "NO", "SC", "SM", "ST",
-      "THE", "TO", "THAT ONE", "VK",
+      "THE", "TO", "THAT ONE", "VK","EW","EZ","KU","LA","MU","OE"
     ],
 
     "Non-Keralite Candidate": ["AM"], // replaces "Open (Private College)"
