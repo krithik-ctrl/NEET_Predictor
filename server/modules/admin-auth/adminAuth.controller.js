@@ -57,7 +57,9 @@ export const loginAdminController =
 
       setAuthCookie(
         res,
-        token
+        token,
+        7 * 24 * 60 * 60 * 1000 // admin session: 7 days
+
       );
 setRefreshCookie(res, generateRefreshToken({ adminId: admin._id, role: admin.role }));
       res.status(200).json({
@@ -158,7 +160,7 @@ export const getAdminProfileController =
 
     // Same access-token shape as loginAdmin.
     const accessToken = jwt.sign({ adminId: admin._id, role: admin.role }, process.env.JWT_SECRET, { expiresIn: "1h" });
-    setAuthCookie(res, accessToken);
+   setAuthCookie(res, accessToken, 7 * 24 * 60 * 60 * 1000);
     setRefreshCookie(res, generateRefreshToken({ adminId: admin._id, role: admin.role }));
 
     return res.status(200).json({ success: true });
