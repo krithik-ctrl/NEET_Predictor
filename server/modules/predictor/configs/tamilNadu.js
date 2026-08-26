@@ -34,11 +34,11 @@ const tamilNaduConfig = {
     "Government Ex-Servicemen":["OC", "BC", "MBC", "SC"],
     "Government Sports":       ["OC", "BC", "BCM", "MBC", "SC"],
     "Government IRT Ward":     ["BC", "BCM", "MBC", "SC", "SCA"],
-    "CMC Minority 20%":        ["OC", "BC"],
+    "CMC Minority 20%":        ["OC", "BC","CMC 20% Minority"],
 
     "Management":         ["GEN"],
     "Management Minority":["Telugu Minority", "Christian Minority", "Malayalam Minority"],
-    "CMC 50%":            ["GEN", "CMC Staff", "CMC Minority Network"],
+    "CMC 50%":            ["GEN", "CMC Staff", "CMC Minority Network","CMC-Institutional Preference",],
 
     "NRI":        ["NRI"],
     "NRI Lapsed": ["NRI Lapsed"],

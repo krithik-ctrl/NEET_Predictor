@@ -7,6 +7,7 @@ const chattisgarhConfig = {
     sameState: {
       seatTypes: [
         "State Quota",
+        "Institutional Preference Quota",
       ],
     },
 
@@ -32,10 +33,15 @@ categories: {
     "SST",
   ],
   "Management Quota": ["General", "General-Female", "OBC", "OBC-Female", "SC", "SC-Female", "ST", "ST-Female", "General-EX", "General-PwD"],
-  "Minority Quota": ["Minority", "General"],   // NEW — raw cats: MINORITY, UR
+  "Minority Quota": ["Minority", "General","NRI-Female", "NRI-OBC", "NRI-ST",
+"NRI-MBBSorIns", "NRI-MBBSorIns-Female", "NRI-OtherState",],   // NEW — raw cats: MINORITY, UR
   "NRI Quota": ["NRI", "OBC", "General-Female" , "General"],
   "All India Quota": ["General"],  // unused in this Excel, left as-is
   "  Other State": ["UR", "UR-Female", "OBC", "OBC-Female", "SC", "SC-Female", "ST", "ST-Female"],  // NEW — raw cats: UR, OBC, SC, ST, EWS
+"Institutional Preference Quota": [
+  "UR (General)", "General-Female", "OBC", "OBC-Female",
+  "SC", "SC-Female", "ST", "ST-Female", "EWS", "SST"
+],
 },
 };
 

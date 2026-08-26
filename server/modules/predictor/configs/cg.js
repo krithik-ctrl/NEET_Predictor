@@ -23,6 +23,7 @@ const chandigarhConfig = {
   categories: {
     "UT Pool": [
       "UR (General)",
+      "IP-General",
       "OBC (NCL)",
       "SC",
       "ST",
