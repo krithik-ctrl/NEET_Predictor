@@ -18,6 +18,7 @@ const aiqConfig = {
         "AIIMS Quota",
         "JIPMER Quota",
         "JIPMER Quota (SO)",
+        "DNB Post MBBS",
       ],
     },
 
@@ -38,6 +39,7 @@ const aiqConfig = {
         "JIPMER Quota",
         "JIPMER Quota (SO)",
         "IP University Quota",
+        "DNB Post MBBS",
 "BHU Quota",
       ],
     },
@@ -109,6 +111,8 @@ const aiqConfig = {
      "AIIMS Quota": ["Open", "EWS", "OBC", "SC", "ST", "Open PWD", "EWS PWD", "OBC PWD", "SC PWD", "ST PWD"], "JIPMER Quota": ["Open", "EWS", "OBC", "SC", "ST", "Open PWD"], "JIPMER Quota (SO)": ["Open", "EWS", "OBC", "SC", "ST", "Open PWD", "EWS PWD", "OBC PWD", "SC PWD", "ST PWD"],
      "IP University Quota": ["Open", "EWS", "OBC", "SC", "ST", "Open PWD", "OBC PWD"],
 "BHU Quota": ["Open", "EWS", "OBC", "SC", "ST", "Open PWD"],
+// in categories:
+"DNB Post MBBS": ["Open", "EWS", "OBC", "SC", "ST", "Open PWD", "OBC PWD", "SC PWD"],
   },
 };
 
