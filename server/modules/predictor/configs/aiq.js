@@ -40,6 +40,7 @@ const aiqConfig = {
         "JIPMER Quota (SO)",
         "IP University Quota",
         "DNB Post MBBS",
+        "NBE Diploma",
 "BHU Quota",
       ],
     },
@@ -113,6 +114,7 @@ const aiqConfig = {
 "BHU Quota": ["Open", "EWS", "OBC", "SC", "ST", "Open PWD"],
 // in categories:
 "DNB Post MBBS": ["Open", "EWS", "OBC", "SC", "ST", "Open PWD", "OBC PWD", "SC PWD"],
+"NBE Diploma": ["Open", "EWS", "OBC", "SC", "ST", "Open PWD", "OBC PWD"],
   },
 };
 
