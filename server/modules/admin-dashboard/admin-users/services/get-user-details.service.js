@@ -100,7 +100,8 @@ export const getUserDetails =
 
         isVerified:
           user.isVerified,
-
+          rank:
+          profile?.rank ?? null,
         isActive:
           user.isActive,
 
