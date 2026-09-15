@@ -5,7 +5,7 @@ const assamConfig = {
 
   rules: {
     sameState: {
-      seatTypes: ["State Quota","SHQ Quota",],
+      seatTypes: ["State Quota","SHQ Quota","All India Quota"],
     },
     otherState: {
       seatTypes: ["NRI Quota","NEC Quota",],
@@ -17,6 +17,7 @@ const assamConfig = {
     "NRI Quota": ["NRI-13", "NRI-3", "NRI-4", "NRI-5", "NRI-6", "NRI-8"],
     "SHQ Quota": ["SHQ"],       
 "NEC Quota": ["NEC", "UR"], 
+"All India Quota": ["UR","OBC","SC","ST","EWS"]
   },
 };
 
