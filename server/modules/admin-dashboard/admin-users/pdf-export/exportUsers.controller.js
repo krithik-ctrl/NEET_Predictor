@@ -1,8 +1,9 @@
+
+import { preparePdfData } from "./services/pdf-data.service.js";
 import {
   exportUsers,
+  exportUsersExcel,
 } from "./exportUsers.service.js";
-import { preparePdfData } from "./services/pdf-data.service.js";
-
 export const exportUsersController =
   async (
     req,
@@ -66,3 +67,25 @@ export const exportUsersController =
     }
 
   };
+
+
+  export const exportUsersExcelController = async (req, res, next) => {
+  try {
+    const buffer = await exportUsersExcel(req.query, req.admin?.adminId);
+
+    const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="user-export-data-${today}.xlsx"`
+    );
+
+    res.send(buffer);
+  } catch (error) {
+    next(error);
+  }
+};

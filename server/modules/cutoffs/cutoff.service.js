@@ -3,7 +3,12 @@ import mongoose from "mongoose";
 import { Cutoff } from "./cutoff.model.js";
 import { College } from "../colleges/college.model.js";
 import { Course } from "../courses/course.model.js";
-
+// Case-insensitive prefix match for free-text filters. Anchored (^) so a
+// MongoDB index on the field can still be used; escaped to block regex injection.
+const prefix = (v) => ({
+  $regex: `^${String(v).trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`,
+  $options: "i",
+});
 export const createCutoff =
   async (payload) => {
 
@@ -102,9 +107,9 @@ console.log(query)
   if (status) filter.status = status;
   if (year) filter.year = Number(year);
   if (counsellingType) filter.counsellingType = counsellingType;
-  if (state) filter.state = state;
-  if (category) filter.category = category;
-  if (seatType) filter.seatType = seatType;
+  if (state) filter.state = prefix(state);
+  if (category) filter.category = prefix(category);
+  if (seatType) filter.seatType = prefix(seatType);
   if (round) filter.round = round;
 
   if (collegeId) {

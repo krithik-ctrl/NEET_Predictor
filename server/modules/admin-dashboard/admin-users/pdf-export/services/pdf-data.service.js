@@ -271,6 +271,8 @@ const metadata = {
     new Date(),
 
   downloadedBy,
+downloadedByRole:
+    downloader?.role ?? null,
 
  totalRecords:
   filteredData.totalRecords,
