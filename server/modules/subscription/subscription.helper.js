@@ -189,3 +189,59 @@ export const activatePremiumSubscription =
     });
 
   };
+
+
+  export const downgradeToFreeSubscription =
+  async (userId) => {
+
+    const freePlan =
+      await Plan.findOne({
+        name: "Free",
+        status: "active",
+      });
+
+    if (!freePlan) {
+      throw new Error(
+        "Free plan not found"
+      );
+    }
+
+    const activeSubscription =
+      await Subscription
+        .findOne({
+          userId,
+          status: "active",
+        })
+        .populate("planId");
+
+    const alreadyFree =
+      activeSubscription?.planId?.name === "Free";
+
+    // Cancel the current active (paid) subscription — unless already on Free.
+    if (activeSubscription && !alreadyFree) {
+      activeSubscription.status = "cancelled";
+      activeSubscription.endDate = new Date();
+      await activeSubscription.save();
+    }
+
+    // Clear the premium flag on the owner (User or Admin).
+    const user = await User.findById(userId);
+    if (user) {
+      await User.findByIdAndUpdate(userId, { isPremium: false });
+    } else {
+      await Admin.findByIdAndUpdate(userId, { isPremium: false });
+    }
+
+    // Ensure the user ends on an active Free subscription.
+    if (!alreadyFree) {
+      return await Subscription.create({
+        userId,
+        planId: freePlan._id,
+        startDate: new Date(),
+        endDate: null,
+        status: "active",
+      });
+    }
+
+    return activeSubscription;
+  };

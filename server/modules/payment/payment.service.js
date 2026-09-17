@@ -11,7 +11,7 @@ from "./payment.model.js";
 import { Plan }
 from "../plans/plan.model.js";
 
-import {activatePremiumSubscription} from "../subscription/subscription.helper.js"
+import {activatePremiumSubscription,downgradeToFreeSubscription } from "../subscription/subscription.helper.js"
 import { calculateGstAmount } from "./gst.service.js";
 
 
@@ -222,6 +222,10 @@ export const updatePaymentStatus =
       );
     }
 
+    // Snapshot BEFORE mutating so we only act on a real transition.
+    const wasSuccess =
+      payment.status === "success";
+
     payment.status =
       status;
 
@@ -236,6 +240,22 @@ export const updatePaymentStatus =
     }
 
     await payment.save();
+
+    // Keep the subscription in sync with the payment's success state:
+    //  • pending/failed → success  ⇒ activate the paid plan
+    //  • success → anything else    ⇒ downgrade back to Free
+    // The wasSuccess guard makes re-selecting the same status a no-op
+    // (no subscription churn, no date reset).
+    if (status === "success" && !wasSuccess) {
+      await activatePremiumSubscription(
+        payment.userId,
+        payment.planId
+      );
+    } else if (wasSuccess && status !== "success") {
+      await downgradeToFreeSubscription(
+        payment.userId
+      );
+    }
 
     return payment;
 
