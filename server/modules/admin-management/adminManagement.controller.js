@@ -4,6 +4,9 @@ import {
   changeAdminRole,
   changeAdminStatus,
   listAdminActivity,
+  getPermissionCatalog,
+  getAdminPermissions,
+  setAdminPermissions,
 } from "./adminManagement.service.js";
 
 /*
@@ -151,6 +154,94 @@ export const getAdminActivityController =
 
       res.status(200).json({
         success: true,
+        data,
+      });
+
+    } catch (error) {
+      next(error);
+    }
+  };
+
+/*
+|--------------------------------------------------------------------------
+| Permission Catalog
+|--------------------------------------------------------------------------
+*/
+
+export const getPermissionCatalogController =
+  async (req, res, next) => {
+    try {
+
+      const data =
+        getPermissionCatalog();
+
+      res.status(200).json({
+        success: true,
+        data,
+      });
+
+    } catch (error) {
+      next(error);
+    }
+  };
+
+/*
+|--------------------------------------------------------------------------
+| Get One Admin's Permissions
+|--------------------------------------------------------------------------
+*/
+
+export const getAdminPermissionsController =
+  async (req, res, next) => {
+    try {
+
+      const data =
+        await getAdminPermissions(
+          req.params.id
+        );
+
+      res.status(200).json({
+        success: true,
+        data,
+      });
+
+    } catch (error) {
+      next(error);
+    }
+  };
+
+/*
+|--------------------------------------------------------------------------
+| Update One Admin's Permissions
+|--------------------------------------------------------------------------
+*/
+
+export const updateAdminPermissionsController =
+  async (req, res, next) => {
+    try {
+
+      const { permissions } = req.body;
+
+      if (!Array.isArray(permissions)) {
+        const error = new Error(
+          "permissions is required and must be an array."
+        );
+        error.status = 400;
+        throw error;
+      }
+
+      const data =
+        await setAdminPermissions(
+          req.params.id,
+          permissions,
+          req.admin,
+          req
+        );
+
+      res.status(200).json({
+        success: true,
+        message:
+          "Admin permissions updated successfully.",
         data,
       });
 

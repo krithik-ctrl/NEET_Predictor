@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 
 import { Admin } from "../../modules/admin/admin.model.js";
+import { getEffectivePermissions } from "../../modules/rbac/permissions.catalog.js";
 
 export const authenticateAdmin =
   async (req, res, next) => {
@@ -63,6 +64,9 @@ if (!token) {
 
         role:
           admin.role,
+
+        permissions:
+          getEffectivePermissions(admin),
 
       };
 

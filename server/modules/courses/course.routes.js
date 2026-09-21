@@ -8,12 +8,12 @@ import {
 
 import { authenticateAdmin } from "../../auth/middleware/authenticateAdmin.js";
 
-import { authorizeAdmin } from "../../auth/middleware/authorizeAdmin.js";
+import { requirePermission } from "../../auth/middleware/requirePermission.js";
 const router = Router();
 
-router.post("/", 
+router.post("/",
   authenticateAdmin,
-  authorizeAdmin("admin")
+  requirePermission("courses.create")
   ,createCourseController);
 
 router.get("/", getCoursesController);

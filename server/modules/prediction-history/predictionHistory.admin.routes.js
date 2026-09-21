@@ -8,14 +8,14 @@ import {
 } from "./predictionHistory.admin.controller.js";
 
 import { authenticateAdmin } from "../../auth/middleware/authenticateAdmin.js";
-import { authorizeAdmin } from "../../auth/middleware/authorizeAdmin.js";
+import { requirePermission } from "../../auth/middleware/requirePermission.js";
 
 const router = Router();
 
 router.get(
   "/",
   authenticateAdmin,
-  authorizeAdmin("admin", "sub-admin"),
+  requirePermission("prediction_history.read"),
   adminGetPredictionHistoryController
 );
 
@@ -23,14 +23,14 @@ router.get(
 router.get(
   "/:id/colleges",
   authenticateAdmin,
-  authorizeAdmin("admin", "sub-admin"),
+  requirePermission("prediction_history.read"),
   adminGetPredictionCollegesController
 );
 
 router.get(
   "/:id",
   authenticateAdmin,
-  authorizeAdmin("admin", "sub-admin"),
+  requirePermission("prediction_history.read"),
   adminGetPredictionHistoryByIdController
 );
 

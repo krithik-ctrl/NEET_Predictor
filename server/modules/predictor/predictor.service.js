@@ -46,7 +46,9 @@ const filterState = payload.predictorState;
 const predictorState = payload.predictorState ?? null;
 
 const isAdminCaller =
-  role === "admin" || role === "sub-admin";
+  role === "admin" ||
+  role === "sub-admin" ||
+  role === "super-admin";
 
 let rank;
 

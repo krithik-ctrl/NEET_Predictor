@@ -5,10 +5,6 @@ import {
 } from "../../auth/middleware/authenticate.js";
 
 import {
-  authorize,
-} from "../../auth/middleware/authorize.js";
-
-import {
   createPaymentController,
   getMyPaymentsController,
   getAllPaymentsController,
@@ -18,7 +14,7 @@ import {
 } from "./payment.controller.js";
 import { authenticateAdmin } from "../../auth/middleware/authenticateAdmin.js";
 
-import { authorizeAdmin } from "../../auth/middleware/authorizeAdmin.js";
+import { requirePermission } from "../../auth/middleware/requirePermission.js";
 
 const router =
   Router();
@@ -38,28 +34,22 @@ router.get(
 
 router.get(
   "/",
-  authenticate,
-  authorize(
-    "admin"
-  ),
+  authenticateAdmin,
+  requirePermission("payments.read"),
   getAllPaymentsController
 );
 
 router.get(
   "/:id",
   authenticateAdmin,
-  authorizeAdmin(
-    "admin"
-  ),
+  requirePermission("payments.read"),
   getPaymentByIdController
 );
 
 router.patch(
   "/:id/status",
   authenticateAdmin,
-  authorizeAdmin(
-    "admin"
-  ),
+  requirePermission("payments.update_status"),
   updatePaymentStatusController
 );
 

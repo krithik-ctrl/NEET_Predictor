@@ -66,6 +66,13 @@ const adminSchema =
         ref: "Admin",
         default: null,
       },
+
+      // null = not customized → effective permissions fall back to the
+      // role default (see server/modules/rbac/permissions.catalog.js).
+      permissions: {
+        type: [String],
+        default: null,
+      },
     },
     {
       timestamps: true,

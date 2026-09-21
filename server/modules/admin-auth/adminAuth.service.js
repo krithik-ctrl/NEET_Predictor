@@ -10,6 +10,7 @@ import {
 } from "../admin-otp/adminOtp.service.js";
 
 import { logAdminActivity } from "../admin-activity/adminActivity.service.js";
+import { getEffectivePermissions } from "../rbac/permissions.catalog.js";
 
 
 
@@ -150,6 +151,9 @@ await verifyAdminOtpService(
       role:
         admin.role,
 
+      permissions:
+        getEffectivePermissions(admin),
+
     },
 
   };
@@ -198,7 +202,11 @@ export const getAdminProfile =
       );
     }
 
-    return admin;
+    return {
+      ...admin.toObject(),
+      permissions:
+        getEffectivePermissions(admin),
+    };
 
   };
 

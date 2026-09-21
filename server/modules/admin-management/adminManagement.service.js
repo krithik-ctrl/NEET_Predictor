@@ -5,6 +5,12 @@ import {
   getAdminActivity,
 } from "../admin-activity/adminActivity.service.js";
 
+import {
+  PERMISSION_CATALOG,
+  ROLE_DEFAULTS,
+  getEffectivePermissions,
+} from "../rbac/permissions.catalog.js";
+
 const ADMIN_ROLES = [
   "admin",
   "sub-admin",
@@ -297,4 +303,123 @@ export const listAdminActivity = async ({
     page,
     limit,
   });
+};
+
+/*
+|--------------------------------------------------------------------------
+| Permission Catalog
+|--------------------------------------------------------------------------
+*/
+
+export const getPermissionCatalog = () => ({
+  catalog: PERMISSION_CATALOG,
+  roleDefaults: ROLE_DEFAULTS,
+});
+
+const VALID_PERMISSION_KEYS = new Set(
+  PERMISSION_CATALOG.map(
+    (permission) => permission.key
+  )
+);
+
+/*
+|--------------------------------------------------------------------------
+| Get One Admin's Permissions (effective vs. custom)
+|--------------------------------------------------------------------------
+*/
+
+export const getAdminPermissions = async (
+  adminId
+) => {
+  const admin = await Admin.findById(adminId)
+    .select("role permissions")
+    .lean();
+
+  if (!admin) {
+    const error = new Error("Admin not found.");
+    error.status = 404;
+    throw error;
+  }
+
+  return {
+    effective: getEffectivePermissions(admin),
+    custom: Array.isArray(admin.permissions)
+      ? admin.permissions
+      : null,
+    role: admin.role,
+    roleDefault:
+      ROLE_DEFAULTS[admin.role] || [],
+  };
+};
+
+/*
+|--------------------------------------------------------------------------
+| Set One Admin's Permissions (customize)
+|--------------------------------------------------------------------------
+*/
+
+export const setAdminPermissions = async (
+  targetAdminId,
+  permissions,
+  actor,
+  req
+) => {
+  const unknownKeys = permissions.filter(
+    (key) => !VALID_PERMISSION_KEYS.has(key)
+  );
+
+  if (unknownKeys.length > 0) {
+    const error = new Error(
+      `Unknown permission key(s): ${unknownKeys.join(", ")}.`
+    );
+    error.status = 400;
+    throw error;
+  }
+
+  assertNotSelf(actor, targetAdminId);
+
+  const admin = await getTargetAdmin(
+    targetAdminId
+  );
+
+  if (admin.role === "super-admin") {
+    const error = new Error(
+      "Cannot customize permissions for a super-admin — super-admin always has full access."
+    );
+    error.status = 400;
+    throw error;
+  }
+
+  // Capture the target's current effective set BEFORE overwriting it, so we
+  // can log exactly which keys were added/removed.
+  const oldEffective = getEffectivePermissions(admin);
+
+  admin.permissions = permissions;
+  await admin.save();
+
+  const added = permissions.filter(
+    (key) => !oldEffective.includes(key)
+  );
+
+  const removed = oldEffective.filter(
+    (key) => !permissions.includes(key)
+  );
+
+  await logAdminActivity({
+    actorId: actor.adminId,
+    actorRole: actor.role,
+    action: "permissions_change",
+    targetAdminId,
+    meta: { added, removed, count: permissions.length },
+    req,
+  });
+
+  return {
+    admin: toAdminSummary(admin.toObject()),
+    effective: getEffectivePermissions(admin),
+    custom: admin.permissions,
+    role: admin.role,
+    roleDefault:
+      ROLE_DEFAULTS[admin.role] || [],
+  };
 };

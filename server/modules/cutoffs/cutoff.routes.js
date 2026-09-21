@@ -15,11 +15,7 @@ import {
   authenticateAdmin,
 } from "../../auth/middleware/authenticateAdmin.js";
 
-import {
-  
-  authorizeAdmin,
-} from "../../auth/middleware/authorizeAdmin.js";
-
+import { requirePermission } from "../../auth/middleware/requirePermission.js";
 
 import { authenticate } from "../../auth/middleware/authenticate.js";
 
@@ -30,7 +26,7 @@ router.get("/explorer", getCutoffExplorerController);
 router.post(
   "/",
   authenticateAdmin,
-  authorizeAdmin("admin"),
+  requirePermission("cutoffs.create"),
   createCutoffController
 );
 
@@ -49,14 +45,14 @@ router.get(
 router.patch(
   "/:id",
   authenticateAdmin,
-  authorizeAdmin("admin"),
+  requirePermission("cutoffs.update"),
   updateCutoffController
 );
 
 router.delete(
   "/:id",
   authenticateAdmin,
-  authorizeAdmin("admin"),
+  requirePermission("cutoffs.delete"),
   deleteCutoffController
 );
 

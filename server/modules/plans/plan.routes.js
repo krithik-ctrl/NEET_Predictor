@@ -18,7 +18,7 @@ import {
   deletePlanController,
 } from "./plan.controller.js";
 import { authenticateAdmin } from "../../auth/middleware/authenticateAdmin.js";
-import { authorizeAdmin } from "../../auth/middleware/authorizeAdmin.js";
+import { requirePermission } from "../../auth/middleware/requirePermission.js";
 
 const router =
   Router();
@@ -26,7 +26,7 @@ const router =
 router.post(
   "/",
   authenticateAdmin,
-  authorizeAdmin("admin"),
+  requirePermission("plans.create"),
   createPlanController
 );
 
@@ -43,14 +43,14 @@ router.get(
 router.patch(
   "/:id",
   authenticateAdmin,
-  authorizeAdmin("admin"),
+  requirePermission("plans.update"),
   updatePlanController
 );
 
 router.delete(
   "/:id",
   authenticateAdmin,
-  authorizeAdmin("admin"),
+  requirePermission("plans.delete"),
   deletePlanController
 );
 

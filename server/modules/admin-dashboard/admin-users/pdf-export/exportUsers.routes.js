@@ -6,15 +6,19 @@ import {
     exportUsersExcelController,
 } from "./exportUsers.controller.js";
 import { authenticateAdmin } from "../../../../auth/middleware/authenticateAdmin.js";
-import { authorizeAdmin } from "../../../../auth/middleware/authorizeAdmin.js";
 
 const router =
   Router();
 
+// NOTE: authorization for these routes is enforced once, at the mount point
+// in adminUsers.routes.js (authenticateAdmin + requirePermission("reports.export")).
+// These routes only re-run authenticateAdmin (harmless/idempotent) and no
+// longer duplicate a role check here, so a sub-admin granted "reports.export"
+// isn't blocked by a second, stricter gate.
+
 router.get(
   "/preview",                              // NEW
   authenticateAdmin,
-  authorizeAdmin("admin",),
   previewUsersController
 );
 
@@ -22,13 +26,11 @@ router.get(
 router.get(
   "/",
   authenticateAdmin,
-  authorizeAdmin("admin",),
   exportUsersController
 );
 router.get(
   "/excel",
   authenticateAdmin,
-  authorizeAdmin("admin"),
   exportUsersExcelController
 );
 export default router;

@@ -3,14 +3,14 @@ import express from "express";
 import { adminPredictCollegesController } from "./predictor.admin.controller.js";
 
 import { authenticateAdmin } from "../../auth/middleware/authenticateAdmin.js";
-import { authorizeAdmin } from "../../auth/middleware/authorizeAdmin.js";
+import { requirePermission } from "../../auth/middleware/requirePermission.js";
 
 const router = express.Router();
 
 router.post(
   "/",
   authenticateAdmin,
-  authorizeAdmin("admin", "sub-admin"),
+  requirePermission("predictor.use"),
   adminPredictCollegesController
 );
 

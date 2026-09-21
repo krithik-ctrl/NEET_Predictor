@@ -9,9 +9,25 @@ import {
   updateAdminRoleController,
   updateAdminStatusController,
   getAdminActivityController,
+  getPermissionCatalogController,
+  getAdminPermissionsController,
+  updateAdminPermissionsController,
 } from "./adminManagement.controller.js";
 
 const router = Router();
+
+/*
+|--------------------------------------------------------------------------
+| Permission Catalog
+|--------------------------------------------------------------------------
+*/
+
+router.get(
+  "/permissions/catalog",
+  authenticateAdmin,
+  requireSuperAdmin,
+  getPermissionCatalogController
+);
 
 /*
 |--------------------------------------------------------------------------
@@ -45,6 +61,20 @@ router.patch(
   authenticateAdmin,
   requireSuperAdmin,
   updateAdminStatusController
+);
+
+router.get(
+  "/admins/:id/permissions",
+  authenticateAdmin,
+  requireSuperAdmin,
+  getAdminPermissionsController
+);
+
+router.patch(
+  "/admins/:id/permissions",
+  authenticateAdmin,
+  requireSuperAdmin,
+  updateAdminPermissionsController
 );
 
 /*

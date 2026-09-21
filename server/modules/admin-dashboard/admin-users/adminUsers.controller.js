@@ -15,6 +15,8 @@ import {
   getUserDetails as getUserDetailsOperation,
 } from "./services/get-user-details.service.js";
 import {getAdminDetails} from "./services/get-admin-details.service.js";
+import { deactivateStudent } from "./services/deactivate-student.service.js";
+import { logAdminActivity } from "../../admin-activity/adminActivity.service.js";
 
 
 
@@ -178,6 +180,48 @@ export const getAdminUsersController =
       res.status(200).json({
 
         success: true,
+
+        data,
+
+      });
+
+    } catch (error) {
+
+      next(error);
+
+    }
+
+  };
+
+  export const deactivateStudentController =
+  async (
+    req,
+    res,
+    next
+  ) => {
+
+    try {
+
+      const data =
+        await deactivateStudent(
+          req.params.id
+        );
+
+      logAdminActivity({
+        actorId: req.admin.adminId,
+        actorRole: req.admin.role,
+        action: "student_deactivate",
+        targetAdminId: null,
+        meta: { userId: req.params.id },
+        req,
+      });
+
+      res.status(200).json({
+
+        success: true,
+
+        message:
+          "Student deactivated successfully.",
 
         data,
 

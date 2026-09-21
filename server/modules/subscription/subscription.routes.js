@@ -12,44 +12,42 @@ import {
   authenticateAdmin,
 } from "../../auth/middleware/authenticateAdmin.js";
 
-import {
-  authorizeAdmin,
-} from "../../auth/middleware/authorizeAdmin.js";
+import { requirePermission } from "../../auth/middleware/requirePermission.js";
 const router =
   Router();
 
 router.post(
   "/",
   authenticateAdmin,
-  authorizeAdmin("admin"),
+  requirePermission("subscriptions.create"),
   createSubscriptionController
 );
 
 router.get(
   "/",
   authenticateAdmin,
- authorizeAdmin("admin"),
+  requirePermission("subscriptions.read"),
   getSubscriptionsController
 );
 
 router.get(
   "/:id",
   authenticateAdmin,
-  authorizeAdmin("admin"),
+  requirePermission("subscriptions.read"),
   getSubscriptionByIdController
 );
 
 router.patch(
   "/:id",
   authenticateAdmin,
-  authorizeAdmin("admin"),
+  requirePermission("subscriptions.update"),
   updateSubscriptionController
 );
 
 router.delete(
   "/:id",
   authenticateAdmin,
-  authorizeAdmin("admin"),
+  requirePermission("subscriptions.delete"),
   deleteSubscriptionController
 );
 

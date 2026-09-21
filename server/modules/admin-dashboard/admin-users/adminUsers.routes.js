@@ -15,12 +15,13 @@ import {
   updateAdminController,
     getUserDetailsController,
   getAdminDetailsController,
-  deleteAdminController
+  deleteAdminController,
+  deactivateStudentController
 } from "./adminUsers.controller.js";
 
 import {authenticateAdmin} from "../../../auth/middleware/authenticateAdmin.js";
 
-import {authorizeAdmin} from "../../../auth/middleware/authorizeAdmin.js";
+import {requirePermission} from "../../../auth/middleware/requirePermission.js";
 const router =
   Router();
 
@@ -45,7 +46,7 @@ const router =
 router.use(
   "/export",
     authenticateAdmin,
-  authorizeAdmin("admin"),
+  requirePermission("reports.export"),
   exportUsersRoutes
 );
 
@@ -68,7 +69,7 @@ router.use(
 router.get(
   "/",
   authenticateAdmin,
-  authorizeAdmin("admin"),
+  requirePermission("users.read"),
   getAdminUsersController
 );
 
@@ -81,7 +82,7 @@ router.get(
 router.post(
   "/",
   authenticateAdmin,
-  authorizeAdmin("admin"),
+  requirePermission("admin_users.create"),
   createAdminController
 );
 
@@ -94,7 +95,7 @@ router.post(
 router.patch(
   "/:adminId",
   authenticateAdmin,
-  authorizeAdmin("admin"),
+  requirePermission("admin_users.update"),
   updateAdminController
 );
 
@@ -109,7 +110,7 @@ router.patch(
 router.delete(
   "/:adminId",
   authenticateAdmin,
-  authorizeAdmin("admin"),
+  requirePermission("admin_users.delete"),
   deleteAdminController
 );
 
@@ -124,8 +125,21 @@ router.delete(
 router.get(
   "/student/:userId",
   authenticateAdmin,
-  authorizeAdmin("admin"),
+  requirePermission("students.read"),
   getUserDetailsController
+);
+
+/*
+|--------------------------------------------------------------------------
+| Deactivate Student (soft delete)
+|--------------------------------------------------------------------------
+*/
+
+router.delete(
+  "/student/:id",
+  authenticateAdmin,
+  requirePermission("students.delete"),
+  deactivateStudentController
 );
 
 /*
@@ -137,7 +151,7 @@ router.get(
 router.get(
   "/:adminId",
   authenticateAdmin,
-  authorizeAdmin("admin"),
+  requirePermission("admin_users.read"),
   getAdminDetailsController
 );
 
