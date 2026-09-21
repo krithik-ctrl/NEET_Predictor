@@ -8,6 +8,7 @@ export const getAdminOverview = async () => {
     verifiedAdmins,
     unverifiedAdmins,
     subAdmins,
+    superAdmins,
   ] = await Promise.all([
     Admin.countDocuments(),
 
@@ -30,6 +31,10 @@ export const getAdminOverview = async () => {
     Admin.countDocuments({
       role: "sub-admin",
     }),
+
+    Admin.countDocuments({
+      role: "super-admin",
+    }),
   ]);
 
   return {
@@ -40,6 +45,8 @@ export const getAdminOverview = async () => {
       verified: verifiedAdmins,
       unverified: unverifiedAdmins,
       subAdmins,
+      // NEW — additive count, does not rename any existing key.
+      superAdmins,
     },
   };
 };

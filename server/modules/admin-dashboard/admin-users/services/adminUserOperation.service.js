@@ -18,7 +18,8 @@ import { createFreeSubscription } from "../../../subscription/subscription.helpe
 export const createAdmin =
   async (
     payload,
-    createdBy
+    createdBy,
+    callerRole = null
   ) => {
 
     const admin =
@@ -27,6 +28,8 @@ export const createAdmin =
         ...payload,
 
         createdBy,
+
+        callerRole,
 
       });
 
@@ -46,14 +49,17 @@ export const createAdmin =
 export const updateAdmin =
   async (
     adminId,
-    payload
+    payload,
+    callerRole = null
   ) => {
 
     return await updateAdminUser(
 
       adminId,
 
-      payload
+      payload,
+
+      callerRole
 
     );
 

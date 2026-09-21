@@ -12,7 +12,25 @@ export const createAdminUser =
     password,
     role,
     createdBy,
+    callerRole = null,
   }) => {
+
+    /*
+    |--------------------------------------------------------------------------
+    | Super-Admin Escalation Guard
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+      role === "super-admin" &&
+      callerRole !== "super-admin"
+    ) {
+      const error = new Error(
+        "Only a super-admin can assign the super-admin role."
+      );
+      error.status = 403;
+      throw error;
+    }
 
     /*
     |--------------------------------------------------------------------------

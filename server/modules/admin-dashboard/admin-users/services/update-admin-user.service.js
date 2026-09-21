@@ -3,7 +3,8 @@ import { Admin } from "../../../admin/admin.model.js";
 export const updateAdminUser =
   async (
     adminId,
-    payload
+    payload,
+    callerRole = null
   ) => {
 
     /*
@@ -128,6 +129,18 @@ export const updateAdminUser =
       payload.role !==
       undefined
     ) {
+
+      if (
+        payload.role === "super-admin" &&
+        callerRole !== "super-admin"
+      ) {
+        const error = new Error(
+          "Only a super-admin can assign the super-admin role."
+        );
+        error.status = 403;
+        throw error;
+      }
+
       admin.role =
         payload.role;
     }

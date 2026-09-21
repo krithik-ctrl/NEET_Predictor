@@ -41,6 +41,7 @@ const adminSchema =
         enum: [
           "admin",
           "sub-admin",
+          "super-admin",
         ],
         default: "admin",
       },

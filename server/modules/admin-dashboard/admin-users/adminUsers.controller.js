@@ -64,7 +64,9 @@ export const getAdminUsersController =
 
           req.body,
 
-          req.admin._id
+          req.admin._id,
+
+          req.admin.role
 
         );
 
@@ -102,7 +104,9 @@ export const getAdminUsersController =
 
           req.params.adminId,
 
-          req.body
+          req.body,
+
+          req.admin.role
 
         );
 

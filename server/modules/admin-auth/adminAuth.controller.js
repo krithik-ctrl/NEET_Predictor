@@ -8,6 +8,7 @@ import {
 import {setAuthCookie} from "../../auth/utils/setAuthCookie.js";
 import jwt from "jsonwebtoken";
 import { Admin } from "../admin/admin.model.js";
+import { logAdminActivity } from "../admin-activity/adminActivity.service.js";
 
 import { generateRefreshToken, verifyRefreshToken } from "../../auth/utils/generateRefreshToken.js";
 import { setRefreshCookie, clearRefreshCookie, REFRESH_COOKIE } from "../../auth/utils/refreshCookie.js";
@@ -89,6 +90,15 @@ export const logoutAdminController =
         res
       );
 clearRefreshCookie(res);
+
+      // Phase 1 activity logging — fire-and-forget, never throws.
+      logAdminActivity({
+        actorId: req.admin.adminId,
+        actorRole: req.admin.role,
+        action: "logout",
+        req,
+      });
+
       const response =
         await logoutAdmin();
 

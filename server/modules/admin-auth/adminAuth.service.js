@@ -9,6 +9,8 @@ import {
   resendAdminOtpService
 } from "../admin-otp/adminOtp.service.js";
 
+import { logAdminActivity } from "../admin-activity/adminActivity.service.js";
+
 
 
 
@@ -105,6 +107,13 @@ await verifyAdminOtpService(
     true;
 
   await admin.save();
+
+  // Phase 1 activity logging — fire-and-forget, never throws.
+  logAdminActivity({
+    actorId: admin._id,
+    actorRole: admin.role,
+    action: "login",
+  });
 
   const token =
     jwt.sign(

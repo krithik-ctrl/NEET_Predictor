@@ -2,6 +2,10 @@ export const authorizeAdmin =
   (...roles) =>
   (req, res, next) => {
 
+    if (req.admin?.role === "super-admin") {
+      return next();
+    }
+
     if (
       !roles.includes(
         req.admin.role

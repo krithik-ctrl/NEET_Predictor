@@ -33,6 +33,8 @@ import predictAdmin from "../modules/predictor/predictor.admin.routes.js"
 
 import predictionHistoryAdmin from "../modules/prediction-history/predictionHistory.admin.routes.js"
 
+import adminManagementRoutes from "../modules/admin-management/adminManagement.routes.js"
+
 const router = Router();
 
 router.get("/health", (req, res) => {
@@ -124,6 +126,11 @@ router.use(
 router.use(
 "/admin-predictionHistory",
 predictionHistoryAdmin
+)
+
+router.use(
+  "/super-admin",
+  adminManagementRoutes
 )
 
 

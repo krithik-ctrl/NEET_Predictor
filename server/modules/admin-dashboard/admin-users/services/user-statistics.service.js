@@ -61,6 +61,8 @@ const [
 
   freeUsers,
 
+  superAdminCount,
+
 ] = await Promise.all([
 
   Promise.all([
@@ -126,6 +128,10 @@ const [
     }),
   }),
 
+  Admin.countDocuments({
+    role: "super-admin",
+  }),
+
 ]);
 
 return {
@@ -154,6 +160,10 @@ return {
     userVerified + adminVerified,
 
   profileCompletedUsers,
+
+  // NEW — actual count of role:"super-admin" (the existing "superAdmins"
+  // key above counts role:"admin" and is left unchanged for compatibility).
+  superAdminCount,
 
 };
 
