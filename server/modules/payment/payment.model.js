@@ -15,6 +15,11 @@ const paymentSchema =
         required: true,
       },
 
+      planName: {
+        type: String,
+        default: null,
+      },
+
       amount: {
         type: Number,
         required: true, // this is the FINAL amount (base + GST) charged to the user

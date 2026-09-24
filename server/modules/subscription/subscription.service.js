@@ -67,6 +67,9 @@ export const createSubscription =
       planId:
         data.planId,
 
+      planName:
+        plan.name,
+
       endDate,
 
     });

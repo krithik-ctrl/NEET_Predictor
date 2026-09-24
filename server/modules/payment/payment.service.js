@@ -68,6 +68,8 @@ export const createPayment =
 
         planId,
 
+        planName: plan.name,
+
         amount: totalAmount,
 
         baseAmount,

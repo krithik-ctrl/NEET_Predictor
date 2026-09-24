@@ -15,6 +15,11 @@ const subscriptionSchema =
         required: true,
       },
 
+      planName: {
+        type: String,
+        default: null,
+      },
+
       startDate: {
         type: Date,
         required: true,
