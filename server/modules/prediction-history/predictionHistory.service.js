@@ -97,6 +97,9 @@ const buildPrediction = async (
     state:
       collegeData.state,
 
+    city:
+      collegeData.city ?? null,
+
     ownership:
       collegeData.ownership ?? null,
 
@@ -479,7 +482,29 @@ export const getPredictionColleges = async (userId, historyId, query = {}) => {
     // PAGINATE + COUNT in one pass.
     {
       $facet: {
-        data: [{ $skip: skip }, { $limit: limit }, { $project: { _chanceOrder: 0, _feeSort: 0 } }],
+        data: [
+          { $skip: skip },
+          { $limit: limit },
+          // City enrichment (HIST_001) — runs only on the current page (max
+          // `limit` rows), not the full pre-pagination set. Prefers the
+          // snapshot's own `city` (new predictions, once stored) and falls
+          // back to a live College lookup for older records that never
+          // captured it.
+          {
+            $lookup: {
+              from: "colleges",
+              localField: "collegeId",
+              foreignField: "_id",
+              as: "_college",
+            },
+          },
+          {
+            $addFields: {
+              city: { $ifNull: ["$city", { $arrayElemAt: ["$_college.city", 0] }] },
+            },
+          },
+          { $project: { _chanceOrder: 0, _feeSort: 0, _college: 0 } },
+        ],
         total: [{ $count: "count" }],
       },
     },

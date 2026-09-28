@@ -54,6 +54,23 @@ export const getAdminUsers =
     } = queryParams;
 
 
+// USERS_001 quick win — narrow the DB read to what search/role/status/
+// verified already imply, instead of loading every student/admin on every
+// request. `plan`/`profileCompleted` still need joined data, so filterUsers()
+// below still applies the full filter set — this is a safe, redundant-but-
+// harmless re-check over an already-narrowed set, not a behavior change.
+const dbFilter = {
+
+  search,
+
+  role,
+
+  status,
+
+  verified,
+
+};
+
 const [
 
   statistics,
@@ -68,9 +85,9 @@ const [
 
   getUserStatistics(),
 
-  getUserList(),
+  getUserList(dbFilter),
 
-  getAdminList(),
+  getAdminList(dbFilter),
 
   getCounsellorList(),
 

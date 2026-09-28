@@ -10,11 +10,57 @@ import { PredictionHistory } from "../../../prediction-history/predictionHistory
 
 import { Course } from "../../../courses/course.model.js"; // NEW - adjust path to your actual Course model location
 
+// Regex-escape a search term so user input can't break out of the pattern.
+const escapeRegex = (v) =>
+  String(v).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+// USERS_001 quick win — push the DB-native filters (search/role/status/
+// verified) into the initial find() instead of loading every user on every
+// request. `plan`/`profileCompleted` still need the joined Subscription/
+// StudentProfile data, so those stay in filterUsers() downstream exactly as
+// before — this only narrows what feeds into that step.
+const buildUserFilter = ({
+  search,
+  role,
+  status,
+  verified,
+} = {}) => {
+
+  const filter = {};
+
+  if (search?.trim()) {
+    const regex = {
+      $regex: escapeRegex(search.trim()),
+      $options: "i",
+    };
+    filter.$or = [
+      { firstName: regex },
+      { lastName: regex },
+      { email: regex },
+      { mobile: regex },
+    ];
+  }
+
+  if (role) filter.role = role;
+
+  if (status === "active") filter.isActive = true;
+  else if (status === "inactive") filter.isActive = false;
+
+  if (verified !== undefined) {
+    filter.isVerified = verified === "true";
+  }
+
+  return filter;
+
+};
+
 export const getUserList =
-  async () => {
+  async (query = {}) => {
 
     const users =
-      await User.find()
+      await User.find(
+        buildUserFilter(query)
+      )
         .lean();
 
     const userIds =

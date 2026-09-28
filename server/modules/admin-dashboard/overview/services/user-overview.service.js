@@ -45,7 +45,7 @@ export const getUserOverview = async () => {
 
     User.find({})
       .select(
-        "firstName lastName email role createdAt"
+        "firstName lastName email mobile role createdAt"
       )
       .sort({
         createdAt: -1,
@@ -69,6 +69,7 @@ export const getUserOverview = async () => {
     recentUsers: recentUsers.map((user) => ({
       name: `${user.firstName} ${user.lastName}`,
       email: user.email,
+      mobile: user.mobile,
       role: user.role,
       joinedAt: user.createdAt,
     })),

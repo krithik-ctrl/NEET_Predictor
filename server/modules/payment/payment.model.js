@@ -81,6 +81,17 @@ const paymentSchema =
     }
   );
 
+/*
+|--------------------------------------------------------------------------
+| Filter Index (REP_003/REP_004 — backs the admin Reports/Transactions
+| status filter + default sort)
+|--------------------------------------------------------------------------
+*/
+paymentSchema.index({
+  status: 1,
+  createdAt: -1,
+});
+
 export const Payment =
   mongoose.model(
     "Payment",

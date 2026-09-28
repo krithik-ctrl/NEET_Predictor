@@ -139,22 +139,85 @@ export const getMyPayments =
   };
 
 export const getAllPayments =
-  async () => {
+  async (query = {}) => {
 
-    return await Payment.find()
+    const {
+      status,
+      page,
+      limit = 20,
+      paginated,
+    } = query;
 
-      .populate(
-        "userId",
-        "firstName lastName email"
-      )
+    // REP_003/REP_004 — opt-in only (A2): the LIVE Reports page calls this
+    // with no query params today and expects a flat array back. Only switch
+    // to the filtered + paginated { data, pagination } shape when the caller
+    // explicitly asks for it via page/status/paginated, so nothing already
+    // working changes until the frontend is updated to opt in.
+    const optedIn =
+      status !== undefined ||
+      page !== undefined ||
+      paginated !== undefined;
 
-      .populate(
-        "planId"
-      )
+    if (!optedIn) {
 
-      .sort({
-        createdAt: -1,
-      });
+      return await Payment.find()
+
+        .populate(
+          "userId",
+          "firstName lastName email"
+        )
+
+        .populate(
+          "planId"
+        )
+
+        .sort({
+          createdAt: -1,
+        });
+
+    }
+
+    const filter = {};
+    if (status) filter.status = status;
+
+    const pageNum = Math.max(Number(page) || 1, 1);
+    const limitNum = Math.min(Math.max(Number(limit) || 20, 1), 100);
+    const skip = (pageNum - 1) * limitNum;
+
+    const [data, total] = await Promise.all([
+
+      Payment.find(filter)
+
+        .populate(
+          "userId",
+          "firstName lastName email"
+        )
+
+        .populate(
+          "planId"
+        )
+
+        .sort({
+          createdAt: -1,
+        })
+
+        .skip(skip)
+        .limit(limitNum)
+        .lean(),
+
+      Payment.countDocuments(filter),
+
+    ]);
+
+    return {
+      data,
+      pagination: {
+        total,
+        page: pageNum,
+        limit: limitNum,
+        totalPages: Math.ceil(total / limitNum),
+      },
+    };
 
   };
 

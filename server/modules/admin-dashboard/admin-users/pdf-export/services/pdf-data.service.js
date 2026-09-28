@@ -135,13 +135,19 @@ switch (exportType) {
 
   case "selected":
 
-    users =
-      users.filter(
-        (user) =>
-          userIds.includes(
-            String(user.id)
-          )
-      );
+    // No selection made — fall back to the FILTERED set (the query filters
+    // below still apply) instead of silently exporting zero rows.
+    if (userIds.length) {
+
+      users =
+        users.filter(
+          (user) =>
+            userIds.includes(
+              String(user.id)
+            )
+        );
+
+    }
 
     break;
 

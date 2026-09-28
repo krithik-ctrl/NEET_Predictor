@@ -105,8 +105,21 @@ console.log("After Role:", results.length);
 
     results =
       results.filter(
-        user =>
-          user.plan === plan
+        user => {
+
+          // Plan names are things like "Premium Monthly" / "Premium Yearly",
+          // never the literal string "Premium" — mirror filter-users.service.js
+          // so an exact match doesn't wipe out every premium user.
+          if (plan === "Premium") {
+            return (
+              user.plan !== "-" &&
+              user.plan.toLowerCase().startsWith("premium")
+            );
+          }
+
+          return user.plan === plan;
+
+        }
       );
 console.log("After Plan:", results.length);
   }

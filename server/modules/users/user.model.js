@@ -71,6 +71,15 @@ isVerified: {
   }
 );
 
+/*
+|--------------------------------------------------------------------------
+| Filter Indexes (USERS_001 — backs the admin Users-page search/role/
+| status/verified filters pushed into the DB query)
+|--------------------------------------------------------------------------
+*/
+userSchema.index({ role: 1 });
+userSchema.index({ isActive: 1 });
+
 export const User = mongoose.model(
   "User",
   userSchema

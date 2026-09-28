@@ -98,6 +98,12 @@ predictedColleges: [
       required: true,
       trim: true,
     },
+
+    city: {
+      type: String,
+      trim: true,
+      default: null,
+    },
   ownership: {
     type: String,
     trim: true,

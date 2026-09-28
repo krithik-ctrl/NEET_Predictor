@@ -22,9 +22,11 @@ export const createCourse = async (
 };
 
 export const getCourses = async () => {
-  return await Course.find().sort({
-    createdAt: -1,
-  });
+  return await Course.find()
+    .sort({
+      createdAt: -1,
+    })
+    .lean(); // read-only list view — skip Mongoose document overhead
 };
 
 export const getCourseById = async (

@@ -196,4 +196,11 @@ cutoffSchema.index({
   collegeId: 1,
 });
 
+// CUT_005 — backs the admin Cutoffs list's default (unfiltered) sort, which
+// otherwise falls back to a full collection scan + in-memory sort.
+cutoffSchema.index({
+  year: -1,
+  createdAt: -1,
+});
+
 export const Cutoff = mongoose.model("Cutoff", cutoffSchema);

@@ -49,17 +49,22 @@ export const createCollege =
   };
 
 export const getColleges = async (query) => {
-  const { search, state, ownership, courseIds, page = 1, limit = 20 } = query;
+  const { search, state, ownership, courseIds, course, courseId, status, page = 1, limit = 20 } = query;
 
-  const filters = { status: "active" };
+  // Only default to "active" when the caller doesn't ask for a specific
+  // status — lets the admin Active/Inactive filter actually take effect.
+  const filters = { status: status || "active" };
 
   if (state) filters.state = state;
   if (ownership) filters.ownership = ownership;
 
   // Stream filter: match colleges offering ANY of the given courses.
   // courseIds arrives as a comma-separated string (e.g. one stream = "id1,id2").
-  if (courseIds) {
-    const ids = String(courseIds)
+  // `course` / `courseId` are accepted as aliases in case the caller sends
+  // the singular param name instead.
+  const courseParam = courseIds ?? course ?? courseId;
+  if (courseParam) {
+    const ids = String(courseParam)
       .split(",")
       .map((s) => s.trim())
       .filter((s) => mongoose.Types.ObjectId.isValid(s))
@@ -78,7 +83,12 @@ export const getColleges = async (query) => {
   const skip = (Number(page) - 1) * Number(limit);
 
   const [colleges, total] = await Promise.all([
-    College.find(filters).populate("courses").sort({ createdAt: -1 }).skip(skip).limit(Number(limit)),
+    College.find(filters)
+      .populate("courses", "name level") // trim populated fields — table only needs these
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(Number(limit))
+      .lean(), // read-only list view — skip Mongoose document overhead
     College.countDocuments(filters),
   ]);
 

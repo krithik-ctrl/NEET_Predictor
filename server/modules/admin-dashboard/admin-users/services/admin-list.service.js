@@ -4,11 +4,52 @@ import { Subscription } from "../../../subscription/subscription.model.js";
 
 import { Plan } from "../../../plans/plan.model.js";
 
+const escapeRegex = (v) =>
+  String(v).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+// USERS_001 quick win — same DB-native filter push as user-list.service.js.
+const buildAdminFilter = ({
+  search,
+  role,
+  status,
+  verified,
+} = {}) => {
+
+  const filter = {};
+
+  if (search?.trim()) {
+    const regex = {
+      $regex: escapeRegex(search.trim()),
+      $options: "i",
+    };
+    filter.$or = [
+      { firstName: regex },
+      { lastName: regex },
+      { email: regex },
+      { mobile: regex },
+    ];
+  }
+
+  if (role) filter.role = role;
+
+  if (status === "active") filter.isActive = true;
+  else if (status === "inactive") filter.isActive = false;
+
+  if (verified !== undefined) {
+    filter.isVerified = verified === "true";
+  }
+
+  return filter;
+
+};
+
 export const getAdminList =
-  async () => {
+  async (query = {}) => {
 
     const admins =
-      await Admin.find()
+      await Admin.find(
+        buildAdminFilter(query)
+      )
         .lean();
 
     const adminIds =

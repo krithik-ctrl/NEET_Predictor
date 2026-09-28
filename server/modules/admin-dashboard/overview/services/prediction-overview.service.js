@@ -55,11 +55,15 @@ export const getPredictionOverview = async () => {
             _id: 0,
 
             studentName: {
-              $concat: [
-                "$user.firstName",
-                " ",
-                "$user.lastName",
-              ],
+              $trim: {
+                input: {
+                  $concat: [
+                    { $ifNull: ["$user.firstName", ""] },
+                    " ",
+                    { $ifNull: ["$user.lastName", ""] },
+                  ],
+                },
+              },
             },
 
             course: "$course.name",

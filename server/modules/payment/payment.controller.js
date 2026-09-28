@@ -67,7 +67,9 @@ export const getAllPaymentsController =
     try {
 
       const payments =
-        await getAllPayments();
+        await getAllPayments(
+          req.query
+        );
 
       res.status(200).json({
         success: true,
