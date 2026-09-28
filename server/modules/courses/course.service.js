@@ -22,7 +22,7 @@ export const createCourse = async (
 };
 
 export const getCourses = async () => {
-  return await Course.find()
+  return await Course.find({status: "active"})
     .sort({
       createdAt: -1,
     })
@@ -33,4 +33,27 @@ export const getCourseById = async (
   id
 ) => {
   return await Course.findById(id);
+};
+
+export const updateCourse = async (id, payload) => {
+  const course = await Course.findByIdAndUpdate(id, payload, {
+    new: true,
+    runValidators: true,
+  });
+  if (!course) {
+    throw new Error("Course not found");
+  }
+  return course;
+};
+
+export const deleteCourse = async (id) => {
+  const course = await Course.findByIdAndUpdate(
+    id,
+    { status: "inactive" },
+    { new: true }
+  );
+  if (!course) {
+    throw new Error("Course not found");
+  }
+  return course;
 };

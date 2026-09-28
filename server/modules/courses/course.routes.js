@@ -4,6 +4,8 @@ import {
   createCourseController,
   getCoursesController,
   getCourseByIdController,
+  updateCourseController,
+  deleteCourseController,
 } from "./course.controller.js";
 
 import { authenticateAdmin } from "../../auth/middleware/authenticateAdmin.js";
@@ -19,5 +21,19 @@ router.post("/",
 router.get("/", getCoursesController);
 
 router.get("/:id", getCourseByIdController);
+
+router.patch(
+  "/:id",
+  authenticateAdmin,
+  requirePermission("courses.update"),
+  updateCourseController
+);
+
+router.delete(
+  "/:id",
+  authenticateAdmin,
+  requirePermission("courses.delete"),
+  deleteCourseController
+);
 
 export default router;

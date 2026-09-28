@@ -2,6 +2,8 @@ import {
   createCourse,
   getCourses,
   getCourseById,
+  updateCourse,
+  deleteCourse,
 } from "./course.service.js";
 
 export const createCourseController = async (
@@ -57,6 +59,31 @@ export const getCourseByIdController = async (
     res.status(200).json({
       success: true,
       data: course,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateCourseController = async (req, res, next) => {
+  try {
+    const course = await updateCourse(req.params.id, req.body);
+    res.status(200).json({
+      success: true,
+      message: "Course updated successfully",
+      data: course,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteCourseController = async (req, res, next) => {
+  try {
+    await deleteCourse(req.params.id);
+    res.status(200).json({
+      success: true,
+      message: "Course deleted successfully",
     });
   } catch (error) {
     next(error);

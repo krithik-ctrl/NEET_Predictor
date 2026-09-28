@@ -19,9 +19,9 @@ export const getDashboardOverview =
       adminOverview,
       userOverview,
       paymentsOverview,
-    predictionsOverview,
+       choiceListsOverview,
     savedCollegesOverview,
-    choiceListsOverview,
+    predictionsOverview,
     collegesOverview,
     coursesOverview,
     cutoffOverview
@@ -37,7 +37,7 @@ export const getDashboardOverview =
       getCourseOverview(),
       getCollegeOverview()
     ]);
-
+console.log(predictionsOverview)
     return {
       ...adminOverview,
       ...userOverview,
