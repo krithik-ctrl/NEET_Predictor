@@ -37,7 +37,7 @@ export const getDashboardOverview =
       getCourseOverview(),
       getCollegeOverview()
     ]);
-console.log(predictionsOverview)
+
     return {
       ...adminOverview,
       ...userOverview,

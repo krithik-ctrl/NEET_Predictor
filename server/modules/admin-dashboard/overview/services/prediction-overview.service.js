@@ -3,98 +3,276 @@ import { User } from "../../../users/user.model.js";
 import { Course } from "../../../courses/course.model.js";
 
 export const getPredictionOverview = async () => {
-  const [totalPredictions, recentPredictions] =
-    await Promise.all([
-      PredictionHistory.countDocuments(),
 
-      PredictionHistory.aggregate([
-        {
-          $sort: {
-            createdAt: -1,
+  const [
+    totalPredictions,
+    recentPredictions,
+  ] = await Promise.all([
+
+    /*
+    |--------------------------------------------------------------------------
+    | Total Predictions
+    |--------------------------------------------------------------------------
+    */
+
+    PredictionHistory.countDocuments(),
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Recent Predictions
+    |--------------------------------------------------------------------------
+    */
+
+    PredictionHistory.aggregate([
+
+      /*
+      |--------------------------------------------------------------------------
+      | Latest First
+      |--------------------------------------------------------------------------
+      */
+
+      {
+        $sort: {
+          createdAt: -1,
+        },
+      },
+
+
+      /*
+      |--------------------------------------------------------------------------
+      | Lookup User
+      |--------------------------------------------------------------------------
+      */
+
+      {
+        $lookup: {
+          from: User.collection.name,
+          localField: "userId",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+
+
+      /*
+      |--------------------------------------------------------------------------
+      | Keep Only Predictions With Existing Users
+      |--------------------------------------------------------------------------
+      */
+
+      {
+        $match: {
+          "user.0": {
+            $exists: true,
           },
         },
+      },
 
-        {
-          $limit: 5,
+
+      /*
+      |--------------------------------------------------------------------------
+      | Latest 5 Valid Predictions
+      |--------------------------------------------------------------------------
+      */
+
+      {
+        $limit: 5,
+      },
+
+
+      /*
+      |--------------------------------------------------------------------------
+      | Lookup Course
+      |--------------------------------------------------------------------------
+      */
+
+      {
+        $lookup: {
+          from: Course.collection.name,
+          localField: "courseId",
+          foreignField: "_id",
+          as: "course",
         },
+      },
 
-        {
-          $lookup: {
-            from: User.collection.name,
-            localField: "userId",
-            foreignField: "_id",
-            as: "user",
+
+      /*
+      |--------------------------------------------------------------------------
+      | Convert User Array To Object
+      |--------------------------------------------------------------------------
+      */
+
+      {
+        $unwind: {
+          path: "$user",
+        },
+      },
+
+
+      /*
+      |--------------------------------------------------------------------------
+      | Convert Course Array To Object
+      |--------------------------------------------------------------------------
+      */
+
+      {
+        $unwind: {
+          path: "$course",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+
+
+      /*
+      |--------------------------------------------------------------------------
+      | Final Dashboard Data
+      |--------------------------------------------------------------------------
+      */
+
+      {
+        $project: {
+
+          _id: 0,
+
+
+          /*
+          |--------------------------------------------------------------------------
+          | Student Name
+          |--------------------------------------------------------------------------
+          */
+
+          studentName: {
+
+            $trim: {
+
+              input: {
+
+                $concat: [
+
+                  {
+                    $ifNull: [
+                      "$user.firstName",
+                      "",
+                    ],
+                  },
+
+                  " ",
+
+                  {
+                    $ifNull: [
+                      "$user.lastName",
+                      "",
+                    ],
+                  },
+
+                ],
+
+              },
+
+            },
+
           },
-        },
 
-        {
-          $lookup: {
-            from: Course.collection.name,
-            localField: "courseId",
-            foreignField: "_id",
-            as: "course",
+
+          /*
+          |--------------------------------------------------------------------------
+          | Course
+          |--------------------------------------------------------------------------
+          */
+
+          course: {
+
+            $ifNull: [
+              "$course.name",
+              "-",
+            ],
+
           },
-        },
 
-        {
-          $unwind: {
-            path: "$user",
-            preserveNullAndEmptyArrays: true,
+
+          /*
+          |--------------------------------------------------------------------------
+          | Rank
+          |--------------------------------------------------------------------------
+          */
+
+          rank: {
+
+            $ifNull: [
+
+              {
+                $arrayElemAt: [
+                  "$predictedColleges.studentRank",
+                  0,
+                ],
+              },
+
+              "-",
+
+            ],
+
           },
-        },
 
-        {
-          $unwind: {
-            path: "$course",
-            preserveNullAndEmptyArrays: true,
-          },
-        },
 
-        {
-          $project: {
-            _id: 0,
+          /*
+          |--------------------------------------------------------------------------
+          | Result
+          |--------------------------------------------------------------------------
+          */
 
-            studentName: {
-              $trim: {
-                input: {
-                  $concat: [
-                    { $ifNull: ["$user.firstName", ""] },
-                    " ",
-                    { $ifNull: ["$user.lastName", ""] },
+          result: {
+
+            $concat: [
+
+              {
+                $toString: {
+
+                  $ifNull: [
+                    "$totalResults",
+                    0,
                   ],
+
                 },
               },
-            },
 
-            course: "$course.name",
+              " colleges",
 
-            rank: {
-              $ifNull: [
-                "$predictedColleges.0.studentRank",
-                "-"
-              ],
-            },
+            ],
 
-            result: {
-              $concat: [
-                {
-                  $toString: "$totalResults",
-                },
-                " colleges",
-              ],
-            },
-
-            date: "$createdAt",
           },
+
+
+          /*
+          |--------------------------------------------------------------------------
+          | Date
+          |--------------------------------------------------------------------------
+          */
+
+          date: "$createdAt",
+
         },
-      ]),
-    ]);
+      },
+
+    ]),
+
+  ]);
+
+
+  /*
+  |--------------------------------------------------------------------------
+  | Return Overview
+  |--------------------------------------------------------------------------
+  */
 
   return {
+
     predictions: {
       total: totalPredictions,
     },
 
     recentPredictions,
+
   };
+
 };
