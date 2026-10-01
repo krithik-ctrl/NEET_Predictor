@@ -13,6 +13,7 @@ from "../plans/plan.model.js";
 
 import {activatePremiumSubscription,downgradeToFreeSubscription } from "../subscription/subscription.helper.js"
 import { calculateGstAmount } from "./gst.service.js";
+import { hardDeleteByIds } from "../../common/utils/bulkDelete.js";
 
 
 
@@ -145,22 +146,17 @@ export const getAllPayments =
       status,
       page,
       limit = 20,
-      paginated,
     } = query;
 
-    // REP_003/REP_004 — opt-in only (A2): the LIVE Reports page calls this
-    // with no query params today and expects a flat array back. Only switch
-    // to the filtered + paginated { data, pagination } shape when the caller
-    // explicitly asks for it via page/status/paginated, so nothing already
-    // working changes until the frontend is updated to opt in.
-    const optedIn =
-      status !== undefined ||
-      page !== undefined ||
-      paginated !== undefined;
+    const filter = {};
+    if (status) filter.status = status;
 
-    if (!optedIn) {
+    // ADMIN_V2 — flat array by default (the LIVE Reports page calls this
+    // with no params). Only `?page` switches to the paginated
+    // { data, pagination } shape. `?status` filters either shape.
+    if (page === undefined) {
 
-      return await Payment.find()
+      return await Payment.find(filter)
 
         .populate(
           "userId",
@@ -176,9 +172,6 @@ export const getAllPayments =
         });
 
     }
-
-    const filter = {};
-    if (status) filter.status = status;
 
     const pageNum = Math.max(Number(page) || 1, 1);
     const limitNum = Math.min(Math.max(Number(limit) || 20, 1), 100);
@@ -402,3 +395,12 @@ if (payment.status === "success") {
     return payment;
 
   };
+/*
+|--------------------------------------------------------------------------
+| ADMIN_V2 — Bulk hard delete (payments.delete)
+|--------------------------------------------------------------------------
+*/
+
+export const bulkDeletePayments =
+  async (ids, skipped) =>
+    hardDeleteByIds(Payment, ids, skipped);

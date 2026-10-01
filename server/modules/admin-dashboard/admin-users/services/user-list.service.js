@@ -195,6 +195,14 @@ status: user.isActive
     preferredCourseName:
       course?.name || null,  
 
+    // ADMIN_V2 — top-level, NA-safe. A student with no StudentProfile
+    // document counts as not completed; rank is null when not set.
+    profileCompleted:
+      profile?.profileCompleted === true,
+
+    rank:
+      profile?.rank ?? null,
+
   };
 
 });

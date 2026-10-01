@@ -3,6 +3,21 @@ import { User } from "./user.model.js";
 import {
   createFreeSubscription,
 } from "../subscription/subscription.helper.js";
+import {
+  lockRankIfUnset,
+  parseRank,
+} from "../student-profile/studentProfile.service.js";
+
+// Optional signup rank: never blocks account creation / OTP on failure.
+const captureSignupRank = async (userId, rawRank) => {
+  const rank = parseRank(rawRank);
+  if (rank === null) return;
+  try {
+    await lockRankIfUnset(userId, rank);
+  } catch (error) {
+    console.error(`[SIGNUP] Failed to save rank for user ${userId}:`, error.message);
+  }
+};
 
 export const createUser =
   async (payload) => {
@@ -156,6 +171,7 @@ export const createPendingUser =
     lastName,
     email,
     mobile,
+    rank,
   }) => {
 
     const existingUser =
@@ -164,6 +180,12 @@ export const createPendingUser =
       });
 
     if (existingUser) {
+
+      // Retry/back case: fill a missing rank for a still-pending account
+      // (never overwrites a saved rank; verified accounts are left alone).
+      if (!existingUser.isVerified) {
+        await captureSignupRank(existingUser._id, rank);
+      }
 
       return {
         user: existingUser,
@@ -208,6 +230,8 @@ export const createPendingUser =
     await createFreeSubscription(
       user._id
     );
+
+    await captureSignupRank(user._id, rank);
 
     return {
 

@@ -68,10 +68,11 @@ export const updateAdmin =
 
 
   export const deleteAdmin =
-  async (adminId) => {
+  async (adminId, caller = null) => {
 
     return await deleteAdminUser(
-      adminId
+      adminId,
+      caller
     );
 
   };

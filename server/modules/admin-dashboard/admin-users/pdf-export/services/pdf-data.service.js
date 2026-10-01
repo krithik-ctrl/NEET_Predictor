@@ -219,15 +219,13 @@ const statistics = {
     user => !user.isVerified
   ).length,
 
+  // Price-based: price > 0 = premium; price 0 or no plan = free.
   premiumUsers: users.filter(
-    user => user.plan !== "-" &&
-            user.plan !== "Free"
+    user => Number(user.planPrice) > 0
   ).length,
 
   freeUsers: users.filter(
-    user =>
-      user.plan === "-" ||
-      user.plan === "Free"
+    user => !(Number(user.planPrice) > 0)
   ).length,
 };
 

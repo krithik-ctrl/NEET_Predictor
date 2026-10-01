@@ -18,12 +18,9 @@ export const getUserStatistics =
     |--------------------------------------------------------------------------
     */
 
-    const freePlan =
-      await Plan.findOne({
-
-        name: /free/i,
-
-      }).lean();
+    // Free = price 0 (name-independent; plans get renamed).
+    const freePlanIds =
+      await Plan.find({ price: 0 }).distinct("_id");
 
     /*
     |--------------------------------------------------------------------------
@@ -114,18 +111,12 @@ const [
 
   Subscription.countDocuments({
     status: "active",
-    ...(freePlan && {
-      planId: {
-        $ne: freePlan._id,
-      },
-    }),
+    planId: { $nin: freePlanIds },
   }),
 
   Subscription.countDocuments({
     status: "active",
-    ...(freePlan && {
-      planId: freePlan._id,
-    }),
+    planId: { $in: freePlanIds },
   }),
 
   Admin.countDocuments({

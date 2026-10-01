@@ -1,4 +1,5 @@
 import { Course } from "./course.model.js";
+import { markNotFound } from "../../common/utils/bulkDelete.js";
 
 export const createCourse = async (
   payload
@@ -57,3 +58,43 @@ export const deleteCourse = async (id) => {
   }
   return course;
 };
+
+/*
+|--------------------------------------------------------------------------
+| ADMIN_V2 — Bulk delete. Mirrors the single DELETE /courses/:id, which is
+| a SOFT delete (status → "inactive"): courses are referenced by colleges,
+| cutoffs, student profiles and predictions, and no hard delete was asked
+| for. Already-inactive courses are reported as "not_found".
+|--------------------------------------------------------------------------
+*/
+
+export const bulkDeleteCourses =
+  async (ids, skipped) => {
+
+    const found =
+      ids.length
+        ? await Course.find(
+            { _id: { $in: ids }, status: { $ne: "inactive" } },
+            { _id: 1 }
+          ).lean()
+        : [];
+
+    const foundIds = found.map((doc) => doc._id);
+
+    markNotFound(ids, foundIds, skipped);
+
+    const result =
+      foundIds.length
+        ? await Course.updateMany(
+            { _id: { $in: foundIds } },
+            { $set: { status: "inactive" } }
+          )
+        : { modifiedCount: 0 };
+
+    return {
+      deletedCount: result.modifiedCount,
+      foundIds,
+      mode: "soft",
+    };
+
+  };

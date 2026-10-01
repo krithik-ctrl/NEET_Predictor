@@ -1,6 +1,7 @@
 import {
   createSubscription,
   getSubscriptions,
+  getSubscriptionsPaginated,
   getSubscriptionById,
   updateSubscription,
   deleteSubscription,
@@ -41,8 +42,15 @@ export const getSubscriptionsController =
   async (req, res, next) => {
     try {
 
+      // ADMIN_V2 — ?page/?limit → { data, pagination }; without them the
+      // legacy full array is returned (unchanged).
+      const wantsPage =
+        req.query.page !== undefined || req.query.limit !== undefined;
+
       const subscriptions =
-        await getSubscriptions();
+        wantsPage
+          ? await getSubscriptionsPaginated(req.query)
+          : await getSubscriptions();
 
       res.status(200).json({
         success: true,

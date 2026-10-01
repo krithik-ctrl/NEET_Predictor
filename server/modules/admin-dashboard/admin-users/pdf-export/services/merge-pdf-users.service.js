@@ -68,6 +68,10 @@ export const mergePdfUsers = ({
       plan:
         student.plan?.name || "-",
 
+      // Free vs premium is decided by price, not name (plans get renamed).
+      planPrice:
+        student.plan?.price ?? null,
+
           preferredCourse:
         student.preferredCourse || null,        // now an ID
 
@@ -151,6 +155,9 @@ export const mergePdfUsers = ({
 
       plan:
         "-",
+
+      planPrice:
+        null,
 
       preferredCourse:            // NEW
         null,

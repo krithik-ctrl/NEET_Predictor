@@ -154,7 +154,8 @@ predictedColleges: [
     specializationFull:  String,
     courseName: String,   // denormalized — history read raw, no populate
   }
-]
+],
+expiresAt: { type: Date, default: null },
     },
     {
       timestamps: true,
@@ -171,7 +172,7 @@ predictionHistorySchema.index({
   userId: 1,
   createdAt: -1,
 });
-
+predictionHistorySchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 export const PredictionHistory =
   mongoose.model(
     "PredictionHistory",

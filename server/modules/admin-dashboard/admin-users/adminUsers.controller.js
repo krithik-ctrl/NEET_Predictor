@@ -15,7 +15,10 @@ import {
   getUserDetails as getUserDetailsOperation,
 } from "./services/get-user-details.service.js";
 import {getAdminDetails} from "./services/get-admin-details.service.js";
-import { deactivateStudent } from "./services/deactivate-student.service.js";
+import {
+  deleteStudent,
+  bulkDeleteStudents,
+} from "./services/delete-student.service.js";
 import { logAdminActivity } from "../../admin-activity/adminActivity.service.js";
 
 
@@ -143,7 +146,8 @@ export const getAdminUsersController =
     try {
 
       await deleteAdmin(
-        req.params.adminId
+        req.params.adminId,
+        req.admin
       );
 
       res.status(200).json({
@@ -193,6 +197,8 @@ export const getAdminUsersController =
 
   };
 
+  // Kept the old export name so the existing route wiring is unchanged —
+  // this is now a PERMANENT delete with cascade (ADMIN_V2 Phase 1).
   export const deactivateStudentController =
   async (
     req,
@@ -203,16 +209,19 @@ export const getAdminUsersController =
     try {
 
       const data =
-        await deactivateStudent(
+        await deleteStudent(
           req.params.id
         );
 
       logAdminActivity({
         actorId: req.admin.adminId,
         actorRole: req.admin.role,
-        action: "student_deactivate",
+        action: "student_delete",
         targetAdminId: null,
-        meta: { userId: req.params.id },
+        meta: {
+          userId: req.params.id,
+          cascade: data.cascade,
+        },
         req,
       });
 
@@ -221,9 +230,64 @@ export const getAdminUsersController =
         success: true,
 
         message:
-          "Student deactivated successfully.",
+          "Student deleted permanently.",
 
         data,
+
+      });
+
+    } catch (error) {
+
+      next(error);
+
+    }
+
+  };
+
+  export const bulkDeleteStudentsController =
+  async (
+    req,
+    res,
+    next
+  ) => {
+
+    try {
+
+      const {
+        deletedCount,
+        requested,
+        skipped,
+        cascade,
+        deletedIds = [],
+      } = await bulkDeleteStudents(
+        req.body
+      );
+
+      if (deletedCount > 0) {
+        logAdminActivity({
+          actorId: req.admin.adminId,
+          actorRole: req.admin.role,
+          action: "student_bulk_delete",
+          targetAdminId: null,
+          meta: {
+            userIds: deletedIds,
+            cascade,
+          },
+          req,
+        });
+      }
+
+      res.status(200).json({
+
+        success: true,
+
+        deletedCount,
+
+        requested,
+
+        skipped,
+
+        cascade,
 
       });
 

@@ -30,8 +30,8 @@ const titleCase = (v) => {
   return s === "-" ? s : s.charAt(0).toUpperCase() + s.slice(1);
 };
 
-// Plans other than "-"/"Free" are premium; everything else shows as "Free".
-const planLabel = (p) => (p && p !== "-" && p !== "Free" ? p : "Free");
+// Paid plans (price > 0) show their name; everything else shows as "Free".
+const planLabel = (u) => (Number(u?.planPrice) > 0 ? u.plan : "Free");
 
 const BRAND = "1D4ED8";        // header fill
 const HEADER_TEXT = "FFFFFF";  // header font
@@ -143,7 +143,7 @@ export const generateUsersExcel = async (exportData) => {
       name: val([u.firstName, u.lastName].filter(Boolean).join(" ")),
       role: titleCase(u.role),
       status: titleCase(u.status),
-      plan: planLabel(u.plan),
+      plan: planLabel(u),
       email: val(u.email),
       mobile: val(u.mobile),
       state: val(u.state),

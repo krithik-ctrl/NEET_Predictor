@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import { Cutoff } from "./cutoff.model.js";
 import { College } from "../colleges/college.model.js";
 import { Course } from "../courses/course.model.js";
+import { hardDeleteByIds } from "../../common/utils/bulkDelete.js";
 // Case-insensitive prefix match for free-text filters. Anchored (^) so a
 // MongoDB index on the field can still be used; escaped to block regex injection.
 const prefix = (v) => ({
@@ -451,3 +452,26 @@ export const getCutoffExplorer = async (query) => {
     },
   };
 };
+/*
+|--------------------------------------------------------------------------
+| ADMIN_V2 — Bulk HARD delete (decision 2: allowed, admin-only, warned).
+| Note: the single DELETE /cutoffs/:id is still a soft delete (inactive).
+|--------------------------------------------------------------------------
+*/
+
+export const bulkDeleteCutoffs =
+  async (ids, skipped) => {
+
+    const result =
+      await hardDeleteByIds(Cutoff, ids, skipped);
+
+    return {
+      ...result,
+      mode: "hard",
+      warning:
+        result.deletedCount > 0
+          ? "Cutoffs were permanently deleted and cannot be restored. The predictor will no longer use them. Existing prediction histories are not affected (they store their own copy of the results)."
+          : null,
+    };
+
+  };

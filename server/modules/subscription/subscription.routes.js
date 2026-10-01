@@ -13,6 +13,8 @@ import {
 } from "../../auth/middleware/authenticateAdmin.js";
 
 import { requirePermission } from "../../auth/middleware/requirePermission.js";
+import { bulkDeleteHandler } from "../../common/utils/bulkDelete.js";
+import { bulkDeleteSubscriptions } from "./subscription.service.js";
 const router =
   Router();
 
@@ -49,6 +51,14 @@ router.delete(
   authenticateAdmin,
   requirePermission("subscriptions.delete"),
   deleteSubscriptionController
+);
+
+// ADMIN_V2 — bulk delete (max 100) — see API_CHANGES_V2.md
+router.post(
+  "/bulk-delete",
+  authenticateAdmin,
+  requirePermission("subscriptions.delete"),
+  bulkDeleteHandler(bulkDeleteSubscriptions, { action: "subscription_bulk_delete" })
 );
 
 export default router;

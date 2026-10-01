@@ -5,6 +5,7 @@ import studentProfileRoutes from "../modules/student-profile/studentProfile.rout
 import collegeRoutes from "../modules/colleges/college.routes.js";
 import cutoffRoutes from "../modules/cutoffs/cutoff.routes.js";
 import predictorRoutes from "../modules/predictor/predictor.routes.js";
+import predictionUsageRoutes from "../modules/predictor/predictionUsage.routes.js";
 import savedCollegeRoutes
 from "../modules/saved-colleges/savedCollege.routes.js";
 import choiceListRoutes from "../modules/choice-list/choiceList.routes.js";
@@ -62,6 +63,10 @@ router.use(
 router.use(
   "/predictor",
   predictorRoutes
+);
+router.use(
+  "/predictions",
+  predictionUsageRoutes
 );
 router.use(
   "/saved-colleges",

@@ -16,12 +16,15 @@ import {
     getUserDetailsController,
   getAdminDetailsController,
   deleteAdminController,
-  deactivateStudentController
+  deactivateStudentController,
+  bulkDeleteStudentsController
 } from "./adminUsers.controller.js";
 
 import {authenticateAdmin} from "../../../auth/middleware/authenticateAdmin.js";
 
 import {requirePermission} from "../../../auth/middleware/requirePermission.js";
+import { bulkDeleteHandler } from "../../../common/utils/bulkDelete.js";
+import { bulkDeleteAdminUsers } from "./services/delete-admin-user.service.js";
 const router =
   Router();
 
@@ -88,6 +91,32 @@ router.post(
 
 /*
 |--------------------------------------------------------------------------
+| Bulk Delete Students (permanent, cascade, max 100)
+|--------------------------------------------------------------------------
+*/
+
+router.post(
+  "/bulk-delete",
+  authenticateAdmin,
+  requirePermission("students.delete"),
+  bulkDeleteStudentsController
+);
+
+/*
+|--------------------------------------------------------------------------
+| Bulk Delete Admins (ADMIN_V2, max 100)
+|--------------------------------------------------------------------------
+*/
+
+router.post(
+  "/admins/bulk-delete",
+  authenticateAdmin,
+  requirePermission("admin_users.delete"),
+  bulkDeleteHandler(bulkDeleteAdminUsers, { action: "admin_bulk_delete" })
+);
+
+/*
+|--------------------------------------------------------------------------
 | Update Admin
 |--------------------------------------------------------------------------
 */
@@ -131,7 +160,7 @@ router.get(
 
 /*
 |--------------------------------------------------------------------------
-| Deactivate Student (soft delete)
+| Delete Student (permanent, cascade — was soft delete before ADMIN_V2)
 |--------------------------------------------------------------------------
 */
 

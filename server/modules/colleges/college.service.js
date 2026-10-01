@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 
 import { College } from "./college.model.js";
 import { Course } from "../courses/course.model.js";
+import { Cutoff } from "../cutoffs/cutoff.model.js";
+import { SavedCollege } from "../saved-colleges/savedCollege.model.js";
+import { ChoiceListItem } from "../choice-list/choiceListItem.model.js";
+import { hardDeleteByIds } from "../../common/utils/bulkDelete.js";
 
 export const createCollege =
   async (payload) => {
@@ -236,3 +240,49 @@ export const updateCollege =
     ownerships: ownerships.filter(isReal).sort(),
   };
 };
+
+/*
+|--------------------------------------------------------------------------
+| ADMIN_V2 — Bulk HARD delete (decision 2: allowed, admin-only, warned).
+| Referencing cutoffs / saved colleges / choice-list items are NOT removed;
+| their counts are returned so the admin can see what is now dangling.
+| Note: the single DELETE /colleges/:id is still a soft delete (inactive).
+|--------------------------------------------------------------------------
+*/
+
+export const bulkDeleteColleges =
+  async (ids, skipped) => {
+
+    const [cutoffs, savedColleges, choiceListItems] =
+      ids.length
+        ? await Promise.all([
+            Cutoff.countDocuments({ collegeId: { $in: ids } }),
+            SavedCollege.countDocuments({ collegeId: { $in: ids } }),
+            ChoiceListItem.countDocuments({ collegeId: { $in: ids } }),
+          ])
+        : [0, 0, 0];
+
+    const result =
+      await hardDeleteByIds(College, ids, skipped);
+
+    const hasRefs =
+      cutoffs + savedColleges + choiceListItems > 0;
+
+    return {
+      ...result,
+      mode: "hard",
+      warning:
+        result.deletedCount > 0
+          ? "Colleges were permanently deleted and cannot be restored." +
+            (hasRefs
+              ? " Cutoffs, saved colleges and choice-list items that referenced them were NOT deleted and will no longer show college details."
+              : "")
+          : null,
+      references: {
+        cutoffs,
+        savedColleges,
+        choiceListItems,
+      },
+    };
+
+  };

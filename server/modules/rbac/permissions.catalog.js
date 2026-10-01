@@ -25,6 +25,8 @@ export const PERMISSION_CATALOG = [
   // Courses
   { key: "courses.read", label: "View courses", group: "Courses" },
   { key: "courses.create", label: "Create course", group: "Courses" },
+  { key: "courses.update", label: "Update course", group: "Courses" },
+  { key: "courses.delete", label: "Delete course (soft)", group: "Courses" },
 
   // Plans
   { key: "plans.read", label: "View plans", group: "Plans" },
@@ -41,6 +43,7 @@ export const PERMISSION_CATALOG = [
   // Payments
   { key: "payments.read", label: "View payment details", group: "Payments" },
   { key: "payments.update_status", label: "Update payment status", group: "Payments" },
+  { key: "payments.delete", label: "Permanently delete payment records", group: "Payments" },
 
   // Admin Users (managing admin/sub-admin accounts + the merged user list)
   { key: "users.read", label: "View merged user list (students, admins, counsellors)", group: "Admin Users" },
@@ -51,13 +54,14 @@ export const PERMISSION_CATALOG = [
 
   // Students
   { key: "students.read", label: "View a student's details", group: "Students" },
-  { key: "students.delete", label: "Deactivate (soft-delete) a student", group: "Students" },
+  { key: "students.delete", label: "Permanently delete students (single or bulk, with their data)", group: "Students" },
 
   // Reports
   { key: "reports.export", label: "Export users to PDF/Excel", group: "Reports" },
 
   // Prediction History
   { key: "prediction_history.read", label: "View admin prediction history", group: "Prediction History" },
+  { key: "prediction_history.delete", label: "Permanently delete prediction histories", group: "Prediction History" },
 
   // Predictor
   { key: "predictor.use", label: "Run the admin college predictor", group: "Predictor" },

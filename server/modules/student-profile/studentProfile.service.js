@@ -172,3 +172,48 @@ export const resolveLockedRank = async (userId, incomingRank) => {
 
   return profile.rank;
 };
+
+/*
+|--------------------------------------------------------------------------
+| Capture rank at signup — sets StudentProfile.rank (the field the
+| predictor's lock reads) only if no rank is saved yet. Never overwrites.
+| Returns the locked rank (or null). Same lock semantics as resolveLockedRank.
+|--------------------------------------------------------------------------
+*/
+
+// Positive integer (number or numeric string) → Number; anything else → null.
+export const parseRank = (value) => {
+  if (value === undefined || value === null || value === "") return null;
+  const n = Number(value);
+  return Number.isInteger(n) && n > 0 ? n : null;
+};
+
+export const lockRankIfUnset = async (userId, rank) => {
+  // Fill only an unset rank on an existing profile (atomic, no overwrite).
+  const updated = await StudentProfile.findOneAndUpdate(
+    { userId, rank: null },
+    { $set: { rank } },
+    { new: true }
+  );
+
+  if (updated) return updated.rank;
+
+  const existing = await StudentProfile.findOne({ userId });
+
+  if (existing) return existing.rank; // already locked — keep it
+
+  try {
+    const created = await StudentProfile.create({
+      userId,
+      rank,
+      profileCompleted: false,
+    });
+    return created.rank;
+  } catch (error) {
+    // Concurrent create (unique userId) — the other write wins.
+    if (error?.code === 11000) {
+      return (await StudentProfile.findOne({ userId }))?.rank ?? null;
+    }
+    throw error;
+  }
+};

@@ -3,7 +3,10 @@ import {
   getPredictionHistoryById,
     getPredictionMeta,          // NEW
   getPredictionColleges,
+  getPredictionHistoryPaginated,   // ADMIN_V2
+  adminDeletePredictionHistory,    // ADMIN_V2
 } from "./predictionHistory.service.js";
+import { logAdminActivity } from "../admin-activity/adminActivity.service.js";
 
 export const adminGetPredictionHistoryController = async (
   req,
@@ -11,9 +14,14 @@ export const adminGetPredictionHistoryController = async (
   next
 ) => {
   try {
-    const history = await getPredictionHistory(
-      req.admin.adminId
-    );
+    // ADMIN_V2 — opt-in pagination: ?page/?limit → { data, pagination }.
+    // Without them the legacy flat array is returned (unchanged).
+    const wantsPage =
+      req.query.page !== undefined || req.query.limit !== undefined;
+
+    const history = wantsPage
+      ? await getPredictionHistoryPaginated(req.admin.adminId, req.query)
+      : await getPredictionHistory(req.admin.adminId);
 
     res.status(200).json({
       success: true,
@@ -62,6 +70,34 @@ export const adminGetPredictionCollegesController = async (
     res.status(200).json({
       success: true,
       data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// ADMIN_V2 — DELETE /:id — hard-delete any user's prediction history.
+export const adminDeletePredictionHistoryController = async (
+  req,
+  res,
+  next
+) => {
+  try {
+    const data = await adminDeletePredictionHistory(req.params.id);
+
+    logAdminActivity({
+      actorId: req.admin.adminId,
+      actorRole: req.admin.role,
+      action: "prediction_history_delete",
+      targetAdminId: null,
+      meta: { historyId: req.params.id, userId: data.userId },
+      req,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Prediction history deleted permanently.",
+      data,
     });
   } catch (error) {
     next(error);

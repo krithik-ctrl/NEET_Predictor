@@ -97,12 +97,13 @@ if (plan) {
 
     if (!user.plan) return false;
 
+    // "Free"/"Premium" are tiers, decided by price (plans get renamed).
     if (plan === "Free") {
-      return user.plan.name === "Free";
+      return Number(user.plan.price) === 0;
     }
 
     if (plan === "Premium") {
-      return user.plan.name.toLowerCase().startsWith("premium");
+      return Number(user.plan.price) > 0;
     }
 
     return user.plan.name === plan;
@@ -151,17 +152,26 @@ if (plan) {
   |--------------------------------------------------------------------------
   */
 
+  // ADMIN_V2 — only "true"/"false" filter (anything else, e.g. an empty
+  // "All" value, is ignored). Students only: admin rows have no profile.
+  // A student without a StudentProfile document counts as NOT completed
+  // (previously such students were dropped from ?profileCompleted=false).
+  const profileFlag =
+    String(profileCompleted ?? "").trim().toLowerCase();
+
   if (
-    profileCompleted !== undefined
+    profileFlag === "true" ||
+    profileFlag === "false"
   ) {
 
     const value =
-      profileCompleted === "true";
+      profileFlag === "true";
 
     results =
       results.filter(
         user =>
-          user.profile?.profileCompleted === value
+          user.accountType !== "admin" &&
+          (user.profile?.profileCompleted === true) === value
       );
 
   }

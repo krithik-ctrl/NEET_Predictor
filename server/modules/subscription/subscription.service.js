@@ -1,3 +1,4 @@
+import { hardDeleteByIds } from "../../common/utils/bulkDelete.js";
 import { Subscription }
 from "./subscription.model.js";
 
@@ -148,3 +149,48 @@ export const deleteSubscription =
     return;
 
   };
+/*
+|--------------------------------------------------------------------------
+| ADMIN_V2 — Paginated list (?page / ?limit). No page/limit → legacy
+| unpaginated array (unchanged), so the live page keeps working.
+|--------------------------------------------------------------------------
+*/
+
+export const getSubscriptionsPaginated =
+  async (query = {}) => {
+
+    const pageNum = Math.max(Number(query.page) || 1, 1);
+    const limitNum = Math.min(Math.max(Number(query.limit) || 20, 1), 100);
+
+    const [data, total] = await Promise.all([
+      Subscription
+        .find()
+        .populate("userId")
+        .populate("planId")
+        .sort({ createdAt: -1 })
+        .skip((pageNum - 1) * limitNum)
+        .limit(limitNum),
+      Subscription.countDocuments(),
+    ]);
+
+    return {
+      data,
+      pagination: {
+        total,
+        page: pageNum,
+        limit: limitNum,
+        totalPages: Math.ceil(total / limitNum),
+      },
+    };
+
+  };
+
+/*
+|--------------------------------------------------------------------------
+| ADMIN_V2 — Bulk hard delete (same as the single delete)
+|--------------------------------------------------------------------------
+*/
+
+export const bulkDeleteSubscriptions =
+  async (ids, skipped) =>
+    hardDeleteByIds(Subscription, ids, skipped);

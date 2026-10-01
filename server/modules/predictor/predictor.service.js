@@ -19,6 +19,9 @@ import { User } from "../users/user.model.js";
 import { Admin } from "../admin/admin.model.js";
 import { resolveLockedRank } from "../student-profile/studentProfile.service.js";
 
+// Free-plan daily prediction cap — single source of truth (predictor + /predictions/usage).
+export const FREE_DAILY_PREDICTION_LIMIT = 3;
+
 export const predictColleges = async (
   userId,
   payload,
@@ -85,7 +88,7 @@ if (isAdminCaller) {
   if (!subscription.isPremium) {
     const todayPredictions = await countTodayPredictions(userId);
 
-    if (todayPredictions >= 3) {
+    if (todayPredictions >= FREE_DAILY_PREDICTION_LIMIT) {
       throw new Error(
         "Daily prediction limit reached. Upgrade to Premium for unlimited predictions."
       );
@@ -240,7 +243,7 @@ if (isAdminCaller) {
 const historyCourseId = Array.isArray(courseId) ? courseId[0] : courseId;
 const predictionHistory =
   await createPredictionHistory(userId, {
-    courseId: historyCourseId, 
+    courseId: historyCourseId,
 
     rank,
     category,
@@ -267,8 +270,7 @@ const predictionHistory =
     moderate,
 
     risky,
-  });
-
+  }, { isAdmin: isAdminCaller });
 return {
   historyId:
     predictionHistory._id,
@@ -382,4 +384,30 @@ export const getCollegeTypeAvailability = async ({
       Both: government + privateCount > 0,
     },
   };
+};
+
+/*
+|--------------------------------------------------------------------------
+| Prediction usage (read-only) — today's count vs the free daily limit.
+| Premium = paid plan (price > 0) via the price-based checkSubscription.
+|--------------------------------------------------------------------------
+*/
+
+export const getPredictionUsage = async (userId) => {
+
+  const [subscription, used] = await Promise.all([
+    checkSubscription(userId),
+    countTodayPredictions(userId),
+  ]);
+
+  const isPremium = subscription.isPremium === true;
+
+  return {
+    used,
+    limit: isPremium ? null : FREE_DAILY_PREDICTION_LIMIT,
+    remaining: isPremium ? null : Math.max(0, FREE_DAILY_PREDICTION_LIMIT - used),
+    isPremium,
+    unlimited: isPremium,
+  };
+
 };

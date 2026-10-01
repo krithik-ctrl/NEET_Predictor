@@ -3,163 +3,116 @@ import mongoose from "mongoose";
 import { PredictionHistory } from "./predictionHistory.model.js";
 import { College } from "../colleges/college.model.js";
 
-
+import{Admin} from "../admin/admin.model.js";
+import { hardDeleteByIds } from "../../common/utils/bulkDelete.js";
 
 export const createPredictionHistory = async (
   userId,
-  payload
+  payload,
+  options = {}
 ) => {
 
   if (!userId) {
     throw new Error("User ID is required");
   }
-
-//   const buildPrediction = async (
-//     college,
-//     predictionType
-//   ) => {
-
-//     const collegeDoc =
-//       await College.findById(
-//         college.college
-//       ).select("name state");
-
-//    return {
-
-//   collegeId:
-//     college.college._id,
-
-//   collegeName:
-//     college.college.name,
-
-//   state:
-//     college.college.state,
-
-//   courseId:
-//     college.course ?? payload.courseId,
-
-//   cutoffId:
-//     college.cutoffId,
   
-//   ownership:
-//     college.college.ownership,
+console.log("payload:", payload);
+console.log("--------")
+console.log("userId:", userId)
+  const { isAdmin = false } = options;
 
-//   predictionType,
+  const ADMIN_TTL_MS = 5 * 60 * 60 * 1000; // 5 hours
 
-//   quota:
-//     college.quota,
+  const expiresAt = isAdmin
+    ? new Date(Date.now() + ADMIN_TTL_MS)
+    : null;
+console.log("expiresAt:", expiresAt);
+  const buildPrediction = async (
+    college,
+    predictionType
+  ) => {
 
-//   seatType:
-//     college.seatType,
+    const collegeData = college.college;
 
-//   category:
-//     college.category,
+    return {
 
-//   round:
-//     college.round,
+      collegeId:
+        collegeData._id ?? null,
 
-//   year:
-//     college.year,
+      collegeName:
+        collegeData.name,
 
-//   openingRank:
-//     college.openingRank,
+      state:
+        collegeData.state,
 
-//   closingRank:
-//     college.closingRank,
+      city:
+        collegeData.city ?? null,
 
-//   studentRank:
-//     college.studentRank,
+      ownership:
+        collegeData.ownership ?? null,
 
-//   fees:
-//     college.fees,
+      courseId:
+        college.course ?? payload.courseId,
 
-// };
+      cutoffId:
+        college.cutoffId ?? null,
 
-//   };
+      predictionType,
 
+      quota:
+        college.quota,
 
+      seatType:
+        college.seatType,
 
+      category:
+        college.category,
 
-const buildPrediction = async (
-  college,
-  predictionType
-) => {
+      round:
+        college.round,
 
-  const collegeData = college.college;
-  return {
+      year:
+        college.year,
 
-    collegeId:
-      collegeData._id ?? null,
+      openingRank:
+        college.openingRank ?? null,
 
-    collegeName:
-      collegeData.name,
+      closingRank:
+        college.closingRank ?? null,
 
-    state:
-      collegeData.state,
+      studentRank:
+        college.studentRank,
 
-    city:
-      collegeData.city ?? null,
+      fees:
+        college.fees ?? null,
 
-    ownership:
-      collegeData.ownership ?? null,
+      seats:
+        college.seats ?? null,
 
-    courseId:
-      college.course ?? payload.courseId,
+      beds:
+        college.beds ?? null,
 
-    cutoffId:
-      college.cutoffId ?? null,
+      bondYears:
+        college.bondYears ?? null,
 
-    predictionType,
+      bondPenalty:
+        college.bondPenalty ?? null,
 
-    quota:
-      college.quota,
+      stipend:
+        college.stipend ?? null,
 
-    seatType:
-      college.seatType,
+      specializationShort:
+        college.specializationShort ?? null,
 
-    category:
-      college.category,
+      specializationFull:
+        college.specializationFull ?? null,
 
-    round:
-      college.round,
+      courseName:
+        college.course?.name ?? null,
 
-    year:
-      college.year,
-
-    openingRank:
-      college.openingRank ?? null,
-
-    closingRank:
-      college.closingRank ?? null,
-
-    studentRank:
-      college.studentRank,
-
-    fees:
-      college.fees ?? null,
-
-    seats:
-      college.seats ?? null,
-
-    beds:
-      college.beds ?? null,
-
-    bondYears:
-      college.bondYears ?? null,
-
-    bondPenalty:
-      college.bondPenalty ?? null,
-
-    stipend:
-      college.stipend ?? null,
-        specializationShort: college.specializationShort ?? null,
-    specializationFull:  college.specializationFull ?? null,
-    courseName: college.course?.name ?? null,
+    };
 
   };
-
-};
-
 
   const predictedColleges = [
 
@@ -239,6 +192,8 @@ const buildPrediction = async (
       payload.riskyCount,
 
     predictedColleges,
+
+    expiresAt,
 
   });
 
@@ -670,3 +625,66 @@ export const getPredictionMeta = async (userId, historyId) => {
      collegeCount, 
   };
 };
+/*
+|--------------------------------------------------------------------------
+| ADMIN_V2 — Admin delete (any user's prediction history, hard delete)
+|--------------------------------------------------------------------------
+*/
+
+export const adminDeletePredictionHistory =
+  async (historyId) => {
+
+    if (!/^[0-9a-fA-F]{24}$/.test(String(historyId))) {
+      const error = new Error("Invalid history ID");
+      error.status = 400;
+      throw error;
+    }
+
+    const history =
+      await PredictionHistory.findByIdAndDelete(historyId);
+
+    if (!history) {
+      const error = new Error("Prediction history not found");
+      error.status = 404;
+      throw error;
+    }
+
+    return { id: history._id, userId: history.userId };
+  };
+
+export const adminBulkDeletePredictionHistories =
+  async (ids, skipped) =>
+    hardDeleteByIds(PredictionHistory, ids, skipped);
+
+/*
+|--------------------------------------------------------------------------
+| ADMIN_V2 — Admin's own list, opt-in pagination (?page / ?limit).
+| No page/limit → legacy flat array (unchanged).
+|--------------------------------------------------------------------------
+*/
+
+export const getPredictionHistoryPaginated =
+  async (userId, query = {}) => {
+
+    const pageNum = Math.max(Number(query.page) || 1, 1);
+    const limitNum = Math.min(Math.max(Number(query.limit) || 20, 1), 100);
+
+    const [data, total] = await Promise.all([
+      PredictionHistory.find({ userId })
+        .populate("courseId")
+        .sort({ createdAt: -1 })
+        .skip((pageNum - 1) * limitNum)
+        .limit(limitNum),
+      PredictionHistory.countDocuments({ userId }),
+    ]);
+
+    return {
+      data,
+      pagination: {
+        total,
+        page: pageNum,
+        limit: limitNum,
+        totalPages: Math.ceil(total / limitNum),
+      },
+    };
+  };

@@ -107,14 +107,14 @@ console.log("After Role:", results.length);
       results.filter(
         user => {
 
-          // Plan names are things like "Premium Monthly" / "Premium Yearly",
-          // never the literal string "Premium" — mirror filter-users.service.js
-          // so an exact match doesn't wipe out every premium user.
+          // "Free"/"Premium" are tiers decided by price, not plan name
+          // (plans get renamed) — mirrors filter-users.service.js.
+          if (plan === "Free") {
+            return user.plan !== "-" && Number(user.planPrice) === 0;
+          }
+
           if (plan === "Premium") {
-            return (
-              user.plan !== "-" &&
-              user.plan.toLowerCase().startsWith("premium")
-            );
+            return Number(user.planPrice) > 0;
           }
 
           return user.plan === plan;

@@ -6,6 +6,7 @@ from "./subscription.model.js";
 
 import { User } from "../users/user.model.js";
 import { Admin } from "../admin/admin.model.js";
+import { getFreePlanOrThrow, isFreePlan, isPaidPlan } from "../plans/plan.tier.js";
 
 export const createFreeSubscription =
   async (userId) => {
@@ -22,16 +23,16 @@ export const createFreeSubscription =
       );
     }
 
+    // Free plan = the active price-0 plan (name-independent).
     const freePlan =
-      await Plan.findOne({
-        name: "Free",
-        status: "active",
-      });
+      await getFreePlanOrThrow(`auto-subscribe user ${userId}`);
 
-    if (!freePlan) {
-      throw new Error(
-        "Free plan not found"
-      );
+    // Idempotent: never stack a second active subscription.
+    const existing =
+      await Subscription.findOne({ userId, status: "active" });
+
+    if (existing) {
+      return existing;
     }
 
     return await Subscription.create({
@@ -92,14 +93,12 @@ console.log(userId)
       plan:
         subscription.planId.name,
 
+      // Price-based, not name-based: price 0 = free, price > 0 = premium.
       isFree:
-        subscription.planId.name ===
-        "Free",
+        isFreePlan(subscription.planId),
 
       isPremium:
-        subscription.planId.name.startsWith(
-          "Premium"
-        ),
+        isPaidPlan(subscription.planId),
 
     };
 
@@ -195,16 +194,7 @@ export const activatePremiumSubscription =
   async (userId) => {
 
     const freePlan =
-      await Plan.findOne({
-        name: "Free",
-        status: "active",
-      });
-
-    if (!freePlan) {
-      throw new Error(
-        "Free plan not found"
-      );
-    }
+      await getFreePlanOrThrow(`downgrade user ${userId}`);
 
     const activeSubscription =
       await Subscription
@@ -215,7 +205,7 @@ export const activatePremiumSubscription =
         .populate("planId");
 
     const alreadyFree =
-      activeSubscription?.planId?.name === "Free";
+      isFreePlan(activeSubscription?.planId);
 
     // Cancel the current active (paid) subscription — unless already on Free.
     if (activeSubscription && !alreadyFree) {

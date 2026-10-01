@@ -128,6 +128,8 @@ export const getAdminList =
 
         profileCompleted: null,
 
+        rank: null, // ADMIN_V2 — admins have no student rank
+
         predictionCount: 0,
 
         createdAt:

@@ -1,4 +1,4 @@
-import { predictColleges,getCategoriesType,getSeatTypes,getCollegeTypeAvailability } from "./predictor.service.js";
+import { predictColleges,getCategoriesType,getSeatTypes,getCollegeTypeAvailability,getPredictionUsage } from "./predictor.service.js";
 
 export const predictCollegesController =
   async (req, res, next) => {
@@ -91,3 +91,22 @@ export const collegeTypeAvailabilityController = async (req, res, next) => {
     next(err);
   }
 };
+
+export const getPredictionUsageController =
+  async (req, res, next) => {
+    try {
+
+      const usage =
+        await getPredictionUsage(
+          req.user.userId
+        );
+
+      res.status(200).json({
+        success: true,
+        data: usage,
+      });
+
+    } catch (error) {
+      next(error);
+    }
+  };

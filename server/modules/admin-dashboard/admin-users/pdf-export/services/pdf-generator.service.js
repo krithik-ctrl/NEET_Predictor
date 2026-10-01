@@ -37,7 +37,8 @@ const fmtDateTime = (d) =>
   d
     ? new Date(d).toLocaleString("en-IN", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })
     : "-";
-const isPremiumPlan = (p) => p && p !== "-" && p !== "Free";
+// Premium = paid plan (price > 0); decided by price, not plan name.
+const isPremiumPlan = (u) => Number(u?.planPrice) > 0;
 
 export const generateUsersPdf = async (pdfData) => {
   const { metadata, users = [], statistics = {} } = pdfData;
@@ -187,7 +188,7 @@ export const generateUsersPdf = async (pdfData) => {
       name: `${u.firstName || ""} ${u.lastName || ""}`.trim() || "-",
       role: roleLabel(u.role),
       status: u.status === "active" ? "Active" : "Inactive",
-      plan: isPremiumPlan(u.plan) ? u.plan : "Free",
+      plan: isPremiumPlan(u) ? u.plan : "Free",
       predictions: u.predictionCount ?? 0,
       joined: fmtDate(u.joinedDate),
     })),
@@ -202,7 +203,7 @@ export const generateUsersPdf = async (pdfData) => {
     ensure(96);
     const name = `${u.firstName || ""} ${u.lastName || ""}`.trim() || "Unknown";
     const active = u.status === "active";
-    const premium = isPremiumPlan(u.plan);
+    const premium = isPremiumPlan(u);
     const student = u.role === "student";
 
     doc.font("Helvetica-Bold").fontSize(12).fillColor(INK).text(`${i + 1}. ${name}`, M, y, { width: contentW, lineBreak: false });
