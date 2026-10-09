@@ -17,7 +17,7 @@ import {
 
 import { User } from "../users/user.model.js";
 import { Admin } from "../admin/admin.model.js";
-import { resolveLockedRank } from "../student-profile/studentProfile.service.js";
+import { resolveLockedRank, setPreferredCourseIfUnset } from "../student-profile/studentProfile.service.js";
 
 // Free-plan daily prediction cap — single source of truth (predictor + /predictions/usage).
 export const FREE_DAILY_PREDICTION_LIMIT = 3;
@@ -271,6 +271,17 @@ const predictionHistory =
 
     risky,
   }, { isAdmin: isAdminCaller });
+
+// Auto-capture the student's course on first prediction (set-if-unset, not locked).
+// Best-effort: a failure here must never fail the prediction itself.
+if (!isAdminCaller) {
+  try {
+    await setPreferredCourseIfUnset(userId, courseId);
+  } catch (error) {
+    console.error("preferredCourse capture failed:", error?.message);
+  }
+}
+
 return {
   historyId:
     predictionHistory._id,

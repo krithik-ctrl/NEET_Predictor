@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { StudentProfile } from "./studentProfile.model.js";
 import { Course } from "../courses/course.model.js";
 import { User } from "../users/user.model.js";
@@ -216,4 +217,29 @@ export const lockRankIfUnset = async (userId, rank) => {
     }
     throw error;
   }
+};
+
+/*
+|--------------------------------------------------------------------------
+| Capture course from a prediction — sets StudentProfile.preferredCourse
+| only if it is not set yet (atomic, never overwrites, NOT locked: the
+| student can still change it via PATCH /student-profile).
+| Accepts a single course id or an array (PG) — the first id is stored.
+|--------------------------------------------------------------------------
+*/
+
+export const setPreferredCourseIfUnset = async (userId, courseId) => {
+  const primaryCourseId = Array.isArray(courseId) ? courseId[0] : courseId;
+
+  if (!primaryCourseId || !mongoose.isValidObjectId(primaryCourseId)) return;
+
+  const courseExists = await Course.exists({ _id: primaryCourseId });
+
+  if (!courseExists) return;
+
+  // `preferredCourse: null` matches both a missing field and an explicit null.
+  await StudentProfile.updateOne(
+    { userId, preferredCourse: null },
+    { $set: { preferredCourse: primaryCourseId } }
+  );
 };
