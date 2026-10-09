@@ -160,7 +160,7 @@ export const getAllPayments =
 
         .populate(
           "userId",
-          "firstName lastName email"
+          "firstName lastName email mobile"
         )
 
         .populate(
@@ -183,7 +183,7 @@ export const getAllPayments =
 
         .populate(
           "userId",
-          "firstName lastName email"
+          "firstName lastName email mobile"
         )
 
         .populate(
