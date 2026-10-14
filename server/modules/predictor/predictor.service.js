@@ -1,4 +1,5 @@
 import { buildPredictionFilter } from "./services/predictionFilter.service.js";
+import mongoose from "mongoose";
 import { Cutoff } from "../cutoffs/cutoff.model.js";
 import { createPredictionHistory, countTodayPredictions,} from "../prediction-history/predictionHistory.service.js";
 import {
@@ -306,10 +307,70 @@ return {
   risky,
 };
 };
+/*
+|--------------------------------------------------------------------------
+| Data-driven options (optional courseId)
+|--------------------------------------------------------------------------
+| When courseId is sent, the config lists are intersected with the values
+| that actually have active cutoffs for that course (+ counselling, + state
+| for STATE), so the dropdowns never offer empty combinations. Config order
+| is preserved. Without courseId, behaviour is unchanged (full config).
+| Read-only: the prediction engine is not touched.
+*/
+
+// Normalises courseId (string or PG array) → array of ids, or null if not sent.
+const normalizeOptionCourseIds = (courseId) => {
+  const ids = (Array.isArray(courseId) ? courseId : [courseId])
+    .filter((id) => id !== undefined && id !== null && String(id).trim() !== "")
+    .map((id) => String(id).trim());
+
+  if (!ids.length) return null;
+
+  if (!ids.every((id) => mongoose.isValidObjectId(id))) {
+    const error = new Error("Invalid courseId.");
+    error.status = 400;
+    throw error;
+  }
+
+  return ids;
+};
+
+// Same shape the prediction filter uses for course / counselling / state.
+const buildOptionFilter = ({ courseIds, counsellingType, predictorState, seatType }) => {
+  const filter = {
+    status: "active",
+    courseId: courseIds.length === 1 ? courseIds[0] : { $in: courseIds },
+    counsellingType,
+  };
+  if (counsellingType === "STATE" && predictorState) filter.state = predictorState;
+  if (seatType) filter.seatType = seatType;
+  return filter;
+};
+
+// STATE-counselling states that have active cutoffs for the course (sorted).
+export const getPredictorStates = async ({ courseId }) => {
+  const courseIds = normalizeOptionCourseIds(courseId);
+  if (!courseIds) {
+    const error = new Error("courseId is required.");
+    error.status = 400;
+    throw error;
+  }
+
+  const states = await Cutoff.distinct(
+    "state",
+    buildOptionFilter({ courseIds, counsellingType: "STATE" })
+  );
+
+  return states
+    .filter((state) => typeof state === "string" && state.trim() !== "")
+    .sort((a, b) => a.localeCompare(b));
+};
+
 export const getSeatTypes = async ({
   counsellingType,
   predictorState,
   domicileState,
+  courseId,
 }) => {
 
   const seatTypes =
@@ -323,7 +384,29 @@ export const getSeatTypes = async ({
 
     });
 
-  return seatTypes;
+  const courseIds = normalizeOptionCourseIds(courseId);
+  if (!courseIds) return seatTypes;
+
+  const available = new Set(
+    await Cutoff.distinct(
+      "seatType",
+      buildOptionFilter({ courseIds, counsellingType, predictorState })
+    )
+  );
+
+  // Never mutate the shared config module — return a pruned copy.
+  const prunedCategories = Object.fromEntries(
+    Object.entries(seatTypes.config.categories).filter(([name]) => available.has(name))
+  );
+
+  return {
+    ...seatTypes,
+    config: { ...seatTypes.config, categories: prunedCategories },
+    seatTypes: Array.isArray(seatTypes.seatTypes)
+      ? seatTypes.seatTypes.filter((name) => available.has(name))
+      : seatTypes.seatTypes,
+    availableSeatTypes: Object.keys(prunedCategories),
+  };
 
 };
 
@@ -332,6 +415,7 @@ export const getCategoriesType = async ({
   predictorState,
   domicileState,
   seatType,
+  courseId,
 }) => {
 
   const {
@@ -346,13 +430,25 @@ export const getCategoriesType = async ({
 
   });
 
-  return getCategories({
+  const categories = getCategories({
 
     config,
 
     seatType,
 
   });
+
+  const courseIds = normalizeOptionCourseIds(courseId);
+  if (!courseIds) return categories;
+
+  const available = new Set(
+    await Cutoff.distinct(
+      "category",
+      buildOptionFilter({ courseIds, counsellingType, predictorState, seatType })
+    )
+  );
+
+  return categories.filter((name) => available.has(name));
 
 };
 
