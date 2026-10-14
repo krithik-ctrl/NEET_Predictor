@@ -4,6 +4,7 @@ import {
   createCourseController,
   getCoursesController,
   getCourseByIdController,
+  getAdminCoursesController,
   updateCourseController,
   deleteCourseController,
 } from "./course.controller.js";
@@ -21,6 +22,14 @@ router.post("/",
   ,createCourseController);
 
 router.get("/", getCoursesController);
+
+// Admin list (all statuses). Must stay above "/:id" so "admin" isn't read as an id.
+router.get(
+  "/admin",
+  authenticateAdmin,
+  requirePermission("courses.read"),
+  getAdminCoursesController
+);
 
 router.get("/:id", getCourseByIdController);
 

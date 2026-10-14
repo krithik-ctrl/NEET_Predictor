@@ -22,12 +22,44 @@ export const createCourse = async (
   return course;
 };
 
-export const getCourses = async () => {
-  return await Course.find({status: "active"})
+// Fixed display order for GET /courses. Names are matched case-insensitively;
+// courses not listed here keep their existing (createdAt desc) order after these.
+const COURSE_DISPLAY_ORDER = [
+  "MBBS",
+  "BDS",
+  "BAMS",
+  "BHMS",
+  "BUMS",
+  "BSMS",
+  "BNYS",
+];
+
+const COURSE_PRIORITY = new Map(
+  COURSE_DISPLAY_ORDER.map((name, index) => [name.toLowerCase(), index])
+);
+
+const coursePriority = (course) => {
+  const key =
+    typeof course?.name === "string"
+      ? course.name.trim().toLowerCase()
+      : "";
+  return COURSE_PRIORITY.has(key)
+    ? COURSE_PRIORITY.get(key)
+    : COURSE_DISPLAY_ORDER.length;
+};
+
+// Public/student callers get active courses only (default). The admin list
+// passes status "all" (or "inactive") so disabled courses can be re-enabled.
+export const getCourses = async ({ status = "active" } = {}) => {
+  const filter = status === "all" ? {} : { status };
+  const courses = await Course.find(filter)
     .sort({
       createdAt: -1,
     })
     .lean(); // read-only list view — skip Mongoose document overhead
+
+  // Array.prototype.sort is stable, so unlisted courses retain fetch order.
+  return courses.sort((a, b) => coursePriority(a) - coursePriority(b));
 };
 
 export const getCourseById = async (
